@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — Primed Trading</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00e87a;
+    --green-glow: rgba(0,232,122,0.15);
+    --black: #000000;
+    --dark2: #0a0f0a;
+    --dark3: #111811;
+    --gray: #8a9a8a;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--white); font-family: 'Barlow', sans-serif; overflow-x: hidden; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,232,122,0.08);
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-logo-text { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: 3px; text-transform: uppercase; color: var(--white); }
+  .nav-logo-text span { color: var(--green); }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--gray); font-size: 13px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a.active { color: var(--green); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .tv-pill { display: flex; align-items: center; gap: 7px; border: 1px solid rgba(0,232,122,0.25); padding: 7px 14px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--green); }
+  .nav-cta { background: var(--green); color: var(--black); padding: 10px 24px; font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; border: none; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+  .nav-cta:hover { background: var(--white); }
+
+  /* ── HERO ── */
+  .pricing-hero {
+    padding: 160px 48px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .pricing-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(0,232,122,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,232,122,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at 50% 0%, black 20%, transparent 70%);
+  }
+  .hero-glow { position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 700px; height: 500px; background: radial-gradient(circle, rgba(0,232,122,0.1) 0%, transparent 60%); pointer-events: none; }
+
+  .section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 6px; text-transform: uppercase; color: var(--green); margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .section-label::before, .section-label::after { content: ''; width: 30px; height: 1px; background: var(--green); }
+
+  .pricing-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: clamp(52px, 8vw, 96px); line-height: 0.9; text-transform: uppercase; letter-spacing: -2px; margin-bottom: 20px; position: relative; z-index: 1; }
+  .pricing-title span { color: var(--green); }
+
+  .pricing-sub { font-size: 18px; color: var(--gray); max-width: 520px; margin: 0 auto; line-height: 1.7; font-weight: 300; position: relative; z-index: 1; }
+  .pricing-sub strong { color: var(--white); font-weight: 500; }
+
+  /* ── TOGGLE ── */
+  .toggle-wrap {
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    margin: 48px 0 64px;
+    position: relative; z-index: 1;
+  }
+  .toggle-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); transition: color 0.2s; }
+  .toggle-label.active { color: var(--white); }
+  .toggle { width: 52px; height: 28px; background: var(--dark3); border: 1px solid rgba(0,232,122,0.2); border-radius: 14px; cursor: pointer; position: relative; transition: background 0.3s; }
+  .toggle.on { background: var(--green); }
+  .toggle-dot { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: var(--white); border-radius: 50%; transition: transform 0.3s; }
+  .toggle.on .toggle-dot { transform: translateX(24px); background: var(--black); }
+  .save-badge { background: rgba(0,232,122,0.1); border: 1px solid rgba(0,232,122,0.3); color: var(--green); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; }
+
+  /* ── CARDS ── */
+  .cards-wrap { max-width: 900px; margin: 0 auto; padding: 0 48px 120px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+
+  .price-card { background: var(--dark2); padding: 52px 44px; position: relative; overflow: hidden; }
+  .price-card.featured { background: var(--dark3); border: 1px solid rgba(0,232,122,0.25); }
+  .price-card.featured::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--green); }
+
+  .card-tag { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gray); margin-bottom: 12px; }
+  .featured .card-tag { color: var(--green); }
+
+  .card-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 44px; text-transform: uppercase; letter-spacing: -1px; line-height: 1; margin-bottom: 20px; }
+
+  .card-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 8px; }
+  .price-amount { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 72px; color: var(--green); line-height: 1; }
+  .price-free { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 72px; color: var(--white); line-height: 1; }
+  .price-period { font-size: 16px; color: var(--gray); font-weight: 300; align-self: flex-end; padding-bottom: 8px; }
+  .price-annual { font-size: 13px; color: var(--green); font-weight: 500; margin-bottom: 28px; min-height: 20px; }
+
+  .card-desc { font-size: 15px; color: var(--gray); line-height: 1.6; font-weight: 300; margin-bottom: 36px; padding-bottom: 36px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .card-desc strong { color: var(--white); font-weight: 500; }
+
+  .features-list { list-style: none; margin-bottom: 44px; display: flex; flex-direction: column; gap: 14px; }
+  .features-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; line-height: 1.5; }
+  .check { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
+  .check-yes { color: var(--green); font-size: 16px; font-weight: 900; }
+  .check-no { color: rgba(255,255,255,0.15); font-size: 16px; }
+  .feat-text { color: var(--gray); }
+  .feat-text strong { color: var(--white); font-weight: 500; }
+  .feat-highlight { color: var(--green); font-weight: 500; }
+
+  .card-divider { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.2); margin-bottom: 14px; }
+
+  .card-btn {
+    display: block; width: 100%; padding: 18px;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 16px; letter-spacing: 3px; text-transform: uppercase;
+    text-align: center; text-decoration: none; cursor: pointer; border: none;
+    transition: all 0.2s;
+  }
+  .btn-free { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.2); }
+  .btn-free:hover { border-color: var(--white); }
+  .btn-pro { background: var(--green); color: var(--black); }
+  .btn-pro:hover { background: var(--white); transform: translateY(-2px); box-shadow: 0 20px 60px rgba(0,232,122,0.25); }
+
+  .card-note { text-align: center; font-size: 12px; color: rgba(255,255,255,0.25); letter-spacing: 1px; margin-top: 14px; }
+
+  /* ── COMPARISON TABLE ── */
+  .compare { background: var(--dark2); padding: 80px 48px; }
+  .compare-inner { max-width: 900px; margin: 0 auto; }
+  .compare-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 42px; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 48px; }
+  .compare-title span { color: var(--green); }
+
+  .compare-table { width: 100%; border-collapse: collapse; }
+  .compare-table th { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 3px; text-transform: uppercase; padding: 16px 20px; text-align: left; border-bottom: 2px solid var(--green); }
+  .compare-table th:not(:first-child) { text-align: center; }
+  .compare-table th.pro-col { color: var(--green); }
+  .compare-table td { padding: 16px 20px; font-size: 14px; color: var(--gray); border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .compare-table td:not(:first-child) { text-align: center; }
+  .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .compare-table .cat-row td { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 4px; text-transform: uppercase; color: rgba(0,232,122,0.5); padding-top: 28px; padding-bottom: 8px; border-bottom: none; }
+  .yes { color: var(--green); font-size: 18px; font-weight: 900; }
+  .no { color: rgba(255,255,255,0.15); font-size: 18px; }
+  .val { color: var(--white); font-weight: 500; font-size: 13px; }
+  .val-green { color: var(--green); font-weight: 600; font-size: 13px; }
+
+  /* ── FAQ ── */
+  .faq { background: var(--black); padding: 80px 48px; }
+  .faq-inner { max-width: 700px; margin: 0 auto; }
+  .faq-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 42px; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 48px; }
+  .faq-title span { color: var(--green); }
+
+  .faq-item { border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .faq-q { width: 100%; background: none; border: none; color: var(--white); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: 0.5px; text-align: left; padding: 24px 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: color 0.2s; }
+  .faq-q:hover { color: var(--green); }
+  .faq-arrow { font-size: 20px; transition: transform 0.3s; color: var(--green); }
+  .faq-item.open .faq-arrow { transform: rotate(45deg); }
+  .faq-a { font-size: 14px; color: var(--gray); line-height: 1.8; font-weight: 300; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s; }
+  .faq-item.open .faq-a { max-height: 300px; padding-bottom: 24px; }
+
+  /* ── BOTTOM CTA ── */
+  .bottom-cta { background: var(--dark2); padding: 100px 48px; text-align: center; position: relative; overflow: hidden; }
+  .bottom-cta::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0,232,122,0.07) 0%, transparent 60%); }
+  .cta-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
+  .cta-headline { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: clamp(48px, 7vw, 80px); text-transform: uppercase; line-height: 0.9; letter-spacing: -2px; margin-bottom: 20px; }
+  .cta-headline span { color: var(--green); }
+  .cta-sub { font-size: 16px; color: var(--gray); line-height: 1.7; font-weight: 300; margin-bottom: 40px; }
+  .cta-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .cta-btn-primary { background: var(--green); color: var(--black); padding: 18px 44px; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 16px; letter-spacing: 3px; text-transform: uppercase; border: none; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+  .cta-btn-primary:hover { background: var(--white); transform: translateY(-2px); box-shadow: 0 20px 60px rgba(0,232,122,0.25); }
+  .cta-btn-ghost { color: var(--white); font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 3px; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 2px; transition: all 0.2s; display: flex; align-items: center; }
+  .cta-btn-ghost:hover { color: var(--green); border-color: var(--green); }
+
+  /* ── FOOTER ── */
+  footer { background: var(--dark2); padding: 48px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+  .footer-brand { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 20px; letter-spacing: 3px; text-transform: uppercase; }
+  .footer-brand span { color: var(--green); }
+  .footer-tagline { font-size: 12px; letter-spacing: 4px; text-transform: uppercase; color: var(--gray); margin-top: 4px; }
+  .footer-links { display: flex; gap: 32px; list-style: none; flex-wrap: wrap; }
+  .footer-links a { text-decoration: none; color: var(--gray); font-size: 12px; letter-spacing: 2px; text-transform: uppercase; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--white); }
+  .footer-legal { font-size: 11px; color: rgba(255,255,255,0.2); letter-spacing: 1px; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+  .fade-up { animation: fadeUp 0.7s ease both; }
+  .fade-up-2 { animation: fadeUp 0.7s 0.1s ease both; }
+  .fade-up-3 { animation: fadeUp 0.7s 0.2s ease both; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 860px) {
+    nav { padding: 16px 24px; }
+    .nav-links, .tv-pill { display: none; }
+    .pricing-hero, .cards-wrap, .compare, .faq, .bottom-cta, footer { padding-left: 24px; padding-right: 24px; }
+    .cards-wrap { grid-template-columns: 1fr; max-width: 480px; }
+    .cta-actions { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg width="44" height="44" viewBox="0 0 120 120" fill="none">
+      <rect x="8" y="52" width="7" height="30" fill="#00e87a" rx="1"/>
+      <line x1="11.5" y1="46" x2="11.5" y2="52" stroke="#00e87a" stroke-width="2"/>
+      <line x1="11.5" y1="82" x2="11.5" y2="88" stroke="#00e87a" stroke-width="2"/>
+      <rect x="20" y="40" width="7" height="36" fill="#00e87a" rx="1"/>
+      <line x1="23.5" y1="33" x2="23.5" y2="40" stroke="#00e87a" stroke-width="2"/>
+      <line x1="23.5" y1="76" x2="23.5" y2="83" stroke="#00e87a" stroke-width="2"/>
+      <rect x="32" y="28" width="7" height="40" fill="#00e87a" rx="1"/>
+      <line x1="35.5" y1="20" x2="35.5" y2="28" stroke="#00e87a" stroke-width="2"/>
+      <line x1="35.5" y1="68" x2="35.5" y2="76" stroke="#00e87a" stroke-width="2"/>
+      <rect x="44" y="18" width="7" height="44" fill="#00e87a" rx="1"/>
+      <line x1="47.5" y1="10" x2="47.5" y2="18" stroke="#00e87a" stroke-width="2"/>
+      <line x1="47.5" y1="62" x2="47.5" y2="70" stroke="#00e87a" stroke-width="2"/>
+      <line x1="18" y1="95" x2="58" y2="55" stroke="#00e87a" stroke-width="3" stroke-linecap="round"/>
+      <line x1="24" y1="100" x2="64" y2="60" stroke="#00e87a" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+      <defs>
+        <linearGradient id="pg" x1="55" y1="15" x2="55" y2="105" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#ffffff"/>
+          <stop offset="100%" stop-color="#00e87a"/>
+        </linearGradient>
+      </defs>
+      <path d="M58 18 L58 102 M58 18 L85 18 Q105 18 105 42 Q105 66 85 66 L58 66" stroke="url(#pg)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+    <div class="nav-logo-text">PRIMED <span>TRADING</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#features">Features</a></li>
+    <li><a href="index.html#how">How It Works</a></li>
+    <li><a href="index.html#strategies">Strategies</a></li>
+    <li><a href="pricing.html" class="active">Pricing</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="tv-pill">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <rect width="14" height="14" rx="2" fill="#00e87a"/>
+        <path d="M2 10l3-5 2.5 3.5 2-2.5 2.5 4" stroke="#000" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      TradingView Data
+    </div>
+    <a href="index.html#waitlist" class="nav-cta">Claim Your Spot</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="pricing-hero">
+  <div class="hero-glow"></div>
+  <div class="section-label fade-up">Simple Pricing</div>
+  <h1 class="pricing-title fade-up-2">Train free.<br><span>Pay when</span><br>you're ready.</h1>
+  <p class="pricing-sub fade-up-3">
+    You've already spent enough on blown evals and courses that didn't deliver.
+    <strong>Start free. No credit card. No catch.</strong> Upgrade only when you're ready to get funded.
+  </p>
+
+  <!-- BILLING TOGGLE -->
+  <div class="toggle-wrap">
+    <span class="toggle-label active" id="lbl-monthly">Monthly</span>
+    <div class="toggle" id="billing-toggle" onclick="toggleBilling()">
+      <div class="toggle-dot"></div>
+    </div>
+    <span class="toggle-label" id="lbl-annual">Annual</span>
+    <span class="save-badge">Save 30%</span>
+  </div>
+</div>
+
+<!-- PRICING CARDS -->
+<div class="cards-wrap">
+
+  <!-- FREE -->
+  <div class="price-card">
+    <div class="card-tag">Start here</div>
+    <div class="card-name">Free</div>
+    <div class="card-price">
+      <div class="price-free">$0</div>
+    </div>
+    <div class="price-annual">Always free. No expiry.</div>
+    <p class="card-desc">
+      The full training experience — no timer, no tricks. Get reps in, build the habit, and <strong>feel what it's like to trade with a system</strong> before spending a single dollar.
+    </p>
+
+    <div class="card-divider">What's included</div>
+    <ul class="features-list">
+      <li><span class="check check-yes">✓</span><span class="feat-text"><strong>Unlimited sim sessions</strong></span></li>
+      <li><span class="check check-yes">✓</span><span class="feat-text"><strong>All 5 strategies</strong> — FVG, ICT, ORB, Trendline Model, Scalp System</span></li>
+      <li><span class="check check-yes">✓</span><span class="feat-text"><strong>Coach Prime</strong> — session coaching after every trade</span></li>
+      <li><span class="check check-yes">✓</span><span class="feat-text"><strong>Trading journal</strong> — full session history</span></li>
+      <li><span class="check check-yes">✓</span><span class="feat-text"><strong>PDF export + reports</strong> — download and review anytime</span></li>
+      <li><span class="check check-yes">✓</span><span class="feat-text"><strong>Session review + test</strong> — rule compliance scoring</span></li>
+      <li><span class="check check-yes">✓</span><span class="feat-text">TradingView powered charts</span></li>
+      <li><span class="check check-no">✗</span><span class="feat-text" style="opacity:0.4;">MNQ (Micro contract) only</span></li>
+      <li><span class="check check-no">✗</span><span class="feat-text" style="opacity:0.4;">Prop firm readiness score</span></li>
+      <li><span class="check check-no">✗</span><span class="feat-text" style="opacity:0.4;">Mock eval mode</span></li>
+    </ul>
+
+    <a href="onboarding.html" class="card-btn btn-free">Start Free — No Card Needed</a>
+    <p class="card-note">No credit card. No trial period. Just free.</p>
+  </div>
+
+  <!-- PRO -->
+  <div class="price-card featured">
+    <div class="card-tag">Most popular</div>
+    <div class="card-name">Pro</div>
+    <div class="card-price">
+      <div class="price-amount" id="pro-price">$39</div>
+      <div class="price-period" id="pro-period">/month</div>
+    </div>
+    <div class="price-annual" id="pro-annual-note">&nbsp;</div>
+    <p class="card-desc">
+      Everything you need to <strong>pass your prop firm evaluation</strong>. The readiness engine, mock evals, full contract access, and Coach Prime's deepest analysis. This is the path to funded.
+    </p>
+
+    <div class="card-divider">Everything in Free, plus</div>
+    <ul class="features-list">
+      <li><span class="check check-yes">✓</span><span class="feat-text"><strong>NQ full size contracts</strong> — trade at real eval sizing</span></li>
+      <li>
+        <span class="check check-yes">✓</span>
+        <span class="feat-text"><strong class="feat-highlight">Prop Firm Readiness Score</strong> — 4-stage engine that tells you when you're ready</span>
+      </li>
+      <li>
+        <span class="check check-yes">✓</span>
+        <span class="feat-text"><strong class="feat-highlight">Mock Eval Mode</strong> — practice under real TopStep & Apex rules and drawdown limits</span>
+      </li>
+      <li><span class="check check-yes">✓</span><span class="feat-text"><strong>Custom strategy builder</strong> — define your own entry, stop & target rules</span></li>
+      <li><span class="check check-yes">✓</span><span class="feat-text"><strong class="feat-highlight">Prop firm recommendation engine</strong> — tells you which firm matches your style</span></li>
+      <li><span class="check check-yes">✓</span><span class="feat-text">ES + MES contract support</span></li>
+      <li><span class="check check-yes">✓</span><span class="feat-text">Priority Coach Prime analysis</span></li>
+      <li><span class="check check-yes">✓</span><span class="feat-text"><strong class="feat-highlight">Intra Session Coaching</strong><span style="display:block;font-size:12px;color:var(--gray);margin-top:3px;font-weight:300;">Setup identification live for each session.</span></span></li>
+    </ul>
+
+    <a href="onboarding.html" class="card-btn btn-pro" id="pro-cta">Start Pro Free — 60 Days Beta</a>
+    <p class="card-note">Beta users get Pro free for 60 days. Cancel anytime.</p>
+  </div>
+
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="compare">
+  <div class="compare-inner">
+    <div class="section-label" style="justify-content:flex-start;margin-bottom:32px;">Side by Side</div>
+    <div class="compare-title">Free vs <span>Pro</span></div>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th style="width:50%">Feature</th>
+          <th>Free</th>
+          <th class="pro-col">Pro</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="cat-row"><td colspan="3">Simulation</td></tr>
+        <tr><td>Sim sessions per month</td><td><span class="val">Unlimited</span></td><td><span class="val-green">Unlimited</span></td></tr>
+        <tr><td>Contract access</td><td><span class="val">MNQ only</span></td><td><span class="val-green">NQ, MNQ, ES, MES</span></td></tr>
+        <tr><td>TradingView charts</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+        <tr><td>Real delayed market data</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+
+        <tr class="cat-row"><td colspan="3">Strategies</td></tr>
+        <tr><td>All 5 built-in strategies</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+        <tr><td>Custom strategy builder</td><td><span class="no">✗</span></td><td><span class="yes">✓</span></td></tr>
+        <tr><td>Pre-trade checklists</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+
+        <tr class="cat-row"><td colspan="3">Coach Prime</td></tr>
+        <tr><td>Session coaching</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+        <tr><td>Priority analysis depth</td><td><span class="no">✗</span></td><td><span class="yes">✓</span></td></tr>
+        <tr><td>Intra session coaching</td><td><span class="no">✗</span></td><td><span class="yes">✓</span></td></tr>
+        <tr><td>Rule compliance scoring</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+        <tr><td>Session review + test</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+
+        <tr class="cat-row"><td colspan="3">Journal</td></tr>
+        <tr><td>Trade journal</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+        <tr><td>PDF export + reports</td><td><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+
+        <tr class="cat-row"><td colspan="3">Path to Funded</td></tr>
+        <tr><td>Prop firm readiness score</td><td><span class="no">✗</span></td><td><span class="yes">✓</span></td></tr>
+        <tr><td>Mock eval mode</td><td><span class="no">✗</span></td><td><span class="yes">✓</span></td></tr>
+        <tr><td>Prop firm recommendation</td><td><span class="no">✗</span></td><td><span class="yes">✓</span></td></tr>
+
+        <tr class="cat-row"><td colspan="3">Price</td></tr>
+        <tr><td>Monthly</td><td><span class="val">$0 forever</span></td><td><span class="val-green">$39/month</span></td></tr>
+        <tr><td>Annual</td><td><span class="val">$0 forever</span></td><td><span class="val-green">$27/month</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq">
+  <div class="faq-inner">
+    <div class="section-label" style="justify-content:flex-start;margin-bottom:32px;">Questions</div>
+    <div class="faq-title">Got <span>questions?</span></div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Is the free plan actually free forever? <span class="faq-arrow">+</span></button>
+      <div class="faq-a">Yes. No credit card required, no trial period, no hidden expiry. The free plan is designed to give you real value — unlimited sessions, all 5 strategies, and Coach Prime coaching. We want you to feel the difference before you decide to go Pro.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Why can't I use full NQ contracts on the free plan? <span class="faq-arrow">+</span></button>
+      <div class="faq-a">MNQ (Micro) is 1/10th the size of NQ — perfect for building skills, habits, and rule compliance without the psychological weight of full contract risk. When you're ready to trade NQ full size in a prop eval, that's when Pro makes sense. The system and coaching works identically on both.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What is the Prop Firm Readiness Score? <span class="faq-arrow">+</span></button>
+      <div class="faq-a">It's a 4-stage progression engine that tracks your performance across every session. It measures rule compliance, consistency, and simulated eval performance — and tells you when the data says you're ready to attempt a real funded evaluation. No more going live on gut feeling.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What is Mock Eval Mode? <span class="faq-arrow">+</span></button>
+      <div class="faq-a">Mock Eval Mode mirrors the exact rules of real prop firm evaluations — daily loss limits, trailing drawdown, max contracts, profit targets. You practice passing the eval before you pay for it. The goal is to pass it 3 times in a row in sim before you spend $150–$300 on a real attempt.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Who is Coach Prime? <span class="faq-arrow">+</span></button>
+      <div class="faq-a">Coach Prime is PrimedTrading's built-in coaching system. After every session it analyzes your trades, scores your rule compliance, identifies your patterns, and delivers a personalized improvement plan. Think of it as having a trading coach review your work after every single session — without the $500/hour price tag.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Can I cancel Pro anytime? <span class="faq-arrow">+</span></button>
+      <div class="faq-a">Yes. Cancel anytime, no questions asked. If you cancel, you keep Pro access until the end of your billing period, then drop to the free plan. Your journal, session history, and progress data are never deleted.</div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What's the beta deal? <span class="faq-arrow">+</span></button>
+      <div class="faq-a">The first 50 traders who join get Pro completely free for 60 days. No credit card, no commitment. We're building this with early users and we want real traders testing every feature. After 60 days, Pro is $39/month — or $27/month on annual.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BOTTOM CTA -->
+<div class="bottom-cta">
+  <div class="cta-inner">
+    <div class="section-label" style="justify-content:center;margin-bottom:24px;">Ready?</div>
+    <div class="cta-headline">Start free.<br><span>Get funded.</span></div>
+    <p class="cta-sub">No credit card. No risk. Just a system that works — and a coach that shows up after every session.</p>
+    <div class="cta-actions">
+      <a href="onboarding.html" class="cta-btn-primary">Claim Your Free Spot</a>
+      <a href="index.html#how" class="cta-btn-ghost">See How It Works →</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand">Primed <span>Trading</span></div>
+    <div class="footer-tagline">Prepare. Practice. Perform.</div>
+  </div>
+  <ul class="footer-links">
+    <li><a href="index.html#features">Features</a></li>
+    <li><a href="index.html#strategies">Strategies</a></li>
+    <li><a href="pricing.html">Pricing</a></li>
+    <li><a href="#">Blog</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <div class="footer-legal">© 2026 Primed Trading. For educational purposes only.<br>Trading futures involves substantial risk of loss.</div>
+</footer>
+
+<script>
+  let isAnnual = false;
+
+  function toggleBilling() {
+    isAnnual = !isAnnual;
+    const toggle = document.getElementById('billing-toggle');
+    const lblM = document.getElementById('lbl-monthly');
+    const lblA = document.getElementById('lbl-annual');
+    const price = document.getElementById('pro-price');
+    const period = document.getElementById('pro-period');
+    const note = document.getElementById('pro-annual-note');
+    const cta = document.getElementById('pro-cta');
+
+    toggle.classList.toggle('on', isAnnual);
+    lblM.classList.toggle('active', !isAnnual);
+    lblA.classList.toggle('active', isAnnual);
+
+    if (isAnnual) {
+      price.textContent = '$27';
+      period.textContent = '/month';
+      note.textContent = 'Billed $324/year — save $144';
+      cta.textContent = 'Start Pro Annual — 60 Days Free';
+    } else {
+      price.textContent = '$39';
+      period.textContent = '/month';
+      note.innerHTML = '&nbsp;';
+      cta.textContent = 'Start Pro Free — 60 Days Beta';
+    }
+  }
+
+  function toggleFaq(btn) {
+    const item = btn.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.price-card, .faq-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>

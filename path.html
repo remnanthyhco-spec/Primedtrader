@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Path — Primed Trader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00e87a;
+    --green-glow: rgba(0,232,122,0.15);
+    --black: #000000;
+    --dark2: #0a0f0a;
+    --dark3: #111811;
+    --gray: #8a9a8a;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--white); font-family: 'Barlow', sans-serif; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 3px; background: rgba(255,255,255,0.06); }
+  .progress-fill { height: 100%; background: var(--green); width: 75%; box-shadow: 0 0 12px rgba(0,232,122,0.5); }
+
+  /* ── TOP BAR ── */
+  .top-bar { display: flex; align-items: center; justify-content: space-between; padding: 24px 48px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-text { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 20px; letter-spacing: 3px; text-transform: uppercase; color: var(--white); }
+  .logo-text span { color: var(--green); }
+  .step-indicator { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--gray); }
+  .step-indicator span { color: var(--green); }
+  .skip-btn { font-size: 12px; color: rgba(255,255,255,0.25); letter-spacing: 2px; text-transform: uppercase; background: none; border: none; cursor: pointer; font-family: 'Barlow', sans-serif; transition: color 0.2s; text-decoration: none; }
+  .skip-btn:hover { color: var(--gray); }
+
+  /* ── MAIN ── */
+  .main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px 48px 60px; position: relative; overflow: hidden; }
+  .bg-glow { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 700px; height: 400px; background: radial-gradient(ellipse, rgba(0,232,122,0.06) 0%, transparent 60%); pointer-events: none; }
+
+  /* ── PHASE 1 — REALITY CHECK ── */
+  .phase { display: none; max-width: 700px; width: 100%; position: relative; z-index: 1; }
+  .phase.active { display: block; animation: slideIn 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+  @keyframes slideIn { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }
+
+  .coach-tag { display: inline-flex; align-items: center; gap: 10px; background: rgba(0,232,122,0.08); border: 1px solid rgba(0,232,122,0.2); padding: 8px 16px; margin-bottom: 28px; }
+  .coach-avatar { width: 28px; height: 28px; background: var(--green); display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 13px; color: var(--black); }
+  .coach-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--green); }
+
+  .phase-eyebrow { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 6px; text-transform: uppercase; color: var(--gray); margin-bottom: 12px; }
+  .phase-headline { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: clamp(38px, 6vw, 64px); line-height: 0.95; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 20px; }
+  .phase-headline span { color: var(--green); }
+  .phase-headline .dim { color: rgba(255,255,255,0.3); }
+  .phase-body { font-size: 16px; color: var(--gray); line-height: 1.8; font-weight: 300; margin-bottom: 36px; max-width: 600px; }
+  .phase-body strong { color: var(--white); font-weight: 500; }
+
+  /* reality stats */
+  .reality-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 3px; margin-bottom: 40px; }
+  .r-stat { background: var(--dark2); padding: 24px 20px; border-left: 2px solid var(--green); }
+  .r-stat-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 40px; color: var(--green); line-height: 1; margin-bottom: 6px; }
+  .r-stat-label { font-size: 12px; color: var(--gray); line-height: 1.4; font-weight: 300; }
+  .r-stat-label strong { color: var(--white); font-weight: 500; display: block; margin-bottom: 2px; }
+
+  /* ── PHASE 2 — PROP FIRM SELECTION ── */
+  .firm-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 36px; }
+  .firm-card { background: var(--dark2); border: 1px solid rgba(255,255,255,0.08); padding: 24px 20px; cursor: pointer; position: relative; transition: all 0.25s; text-align: center; }
+  .firm-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--green); transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
+  .firm-card:hover { border-color: rgba(0,232,122,0.3); background: var(--dark3); }
+  .firm-card:hover::before { transform: scaleX(1); }
+  .firm-card.selected { border-color: var(--green); background: rgba(0,232,122,0.06); }
+  .firm-card.selected::before { transform: scaleX(1); }
+  .firm-check { position: absolute; top: 12px; right: 12px; width: 20px; height: 20px; border: 1.5px solid rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .firm-card.selected .firm-check { background: var(--green); border-color: var(--green); }
+  .firm-card.selected .firm-check::after { content: ''; width: 10px; height: 6px; border-left: 2px solid var(--black); border-bottom: 2px solid var(--black); transform: rotate(-45deg) translateY(-1px); display: block; }
+  .firm-logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 22px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; margin-top: 8px; }
+  .firm-desc { font-size: 11px; color: var(--gray); line-height: 1.4; }
+  .firm-tag { display: inline-block; margin-top: 10px; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 3px 8px; border-radius: 20px; }
+  .firm-tag.popular { background: rgba(0,232,122,0.1); border: 1px solid rgba(0,232,122,0.2); color: var(--green); }
+  .firm-tag.fast { background: rgba(255,180,0,0.1); border: 1px solid rgba(255,180,0,0.2); color: #ffb400; }
+  .firm-tag.flexible { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--gray); }
+
+  .multi-note { font-size: 12px; color: rgba(255,255,255,0.3); letter-spacing: 1px; margin-bottom: 32px; }
+  .multi-note span { color: var(--green); }
+
+  /* ── PHASE 3 — PATH CHOICE ── */
+  .path-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin-bottom: 36px; }
+  .path-card { background: var(--dark2); padding: 40px 32px; cursor: pointer; position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); border-bottom: 3px solid transparent; }
+  .path-card::before { content: ''; position: absolute; inset: 0; background: var(--green); transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); z-index: 0; }
+  .path-card:hover::before { transform: translateY(0); }
+  .path-card:hover { border-bottom-color: var(--green); }
+  .path-card > * { position: relative; z-index: 1; }
+  .path-icon { font-size: 36px; margin-bottom: 20px; display: block; transition: transform 0.3s; }
+  .path-card:hover .path-icon { transform: scale(1.15); }
+  .path-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 28px; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1; margin-bottom: 12px; transition: color 0.3s; }
+  .path-card:hover .path-title { color: var(--black); }
+  .path-desc { font-size: 14px; color: var(--gray); line-height: 1.6; font-weight: 300; transition: color 0.3s; }
+  .path-card:hover .path-desc { color: rgba(0,0,0,0.7); }
+  .path-tag { display: inline-block; margin-top: 20px; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 5px 12px; border-radius: 0; transition: all 0.3s; }
+  .path-tag-free { background: rgba(0,232,122,0.1); border: 1px solid rgba(0,232,122,0.3); color: var(--green); }
+  .path-tag-pro { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); color: var(--gray); }
+  .path-card:hover .path-tag-free { background: rgba(0,0,0,0.15); border-color: rgba(0,0,0,0.3); color: var(--black); }
+  .path-card:hover .path-tag-pro { background: rgba(0,0,0,0.15); border-color: rgba(0,0,0,0.2); color: rgba(0,0,0,0.6); }
+  .pro-note { font-size: 11px; color: rgba(255,255,255,0.25); margin-top: 8px; letter-spacing: 1px; transition: color 0.3s; }
+  .path-card:hover .pro-note { color: rgba(0,0,0,0.4); }
+
+  /* firm summary pill */
+  .firm-summary { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+  .firm-pill { background: rgba(0,232,122,0.08); border: 1px solid rgba(0,232,122,0.2); padding: 6px 14px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--green); }
+
+  /* ── BUTTONS ── */
+  .btn-next { background: var(--green); color: var(--black); padding: 16px 44px; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 16px; letter-spacing: 3px; text-transform: uppercase; border: none; cursor: pointer; transition: all 0.2s; }
+  .btn-next:hover { background: var(--white); transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0,232,122,0.25); }
+  .btn-next:disabled { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-back { background: none; border: 1px solid rgba(255,255,255,0.12); color: var(--gray); padding: 16px 24px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+  .btn-back:hover { border-color: rgba(255,255,255,0.3); color: var(--white); }
+  .nav-btns { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
+
+  @media (max-width: 640px) {
+    .top-bar { padding: 20px 24px; }
+    .main { padding: 20px 24px 48px; }
+    .firm-grid { grid-template-columns: 1fr 1fr; }
+    .path-grid { grid-template-columns: 1fr; }
+    .reality-stats { grid-template-columns: 1fr; }
+    .nav-btns { flex-direction: column-reverse; align-items: stretch; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PROGRESS -->
+<div class="progress-bar"><div class="progress-fill"></div></div>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <a href="index.html" class="logo">
+    <svg width="36" height="36" viewBox="0 0 120 120" fill="none">
+      <rect x="8" y="52" width="7" height="30" fill="#00e87a" rx="1"/>
+      <line x1="11.5" y1="46" x2="11.5" y2="52" stroke="#00e87a" stroke-width="2"/>
+      <line x1="11.5" y1="82" x2="11.5" y2="88" stroke="#00e87a" stroke-width="2"/>
+      <rect x="20" y="40" width="7" height="36" fill="#00e87a" rx="1"/>
+      <line x1="23.5" y1="33" x2="23.5" y2="40" stroke="#00e87a" stroke-width="2"/>
+      <line x1="23.5" y1="76" x2="23.5" y2="83" stroke="#00e87a" stroke-width="2"/>
+      <rect x="32" y="28" width="7" height="40" fill="#00e87a" rx="1"/>
+      <line x1="35.5" y1="20" x2="35.5" y2="28" stroke="#00e87a" stroke-width="2"/>
+      <line x1="35.5" y1="68" x2="35.5" y2="76" stroke="#00e87a" stroke-width="2"/>
+      <rect x="44" y="18" width="7" height="44" fill="#00e87a" rx="1"/>
+      <line x1="47.5" y1="10" x2="47.5" y2="18" stroke="#00e87a" stroke-width="2"/>
+      <line x1="47.5" y1="62" x2="47.5" y2="70" stroke="#00e87a" stroke-width="2"/>
+      <line x1="18" y1="95" x2="58" y2="55" stroke="#00e87a" stroke-width="3" stroke-linecap="round"/>
+      <defs><linearGradient id="pg4" x1="55" y1="15" x2="55" y2="105" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#00e87a"/></linearGradient></defs>
+      <path d="M58 18 L58 102 M58 18 L85 18 Q105 18 105 42 Q105 66 85 66 L58 66" stroke="url(#pg4)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+    <div class="logo-text">PRIMED <span>TRADER</span></div>
+  </a>
+  <div class="step-indicator">Phase <span id="phase-num">1</span> of 2</div>
+  <a href="dashboard.html" class="skip-btn">Skip to dashboard →</a>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="bg-glow"></div>
+
+  <!-- ── PHASE 1+2 COMBINED: REALITY + FIRM SELECTION ── -->
+  <div class="phase active" id="phase-1">
+    <div class="coach-tag">
+      <div class="coach-avatar">CP</div>
+      <div class="coach-name">Coach Prime</div>
+    </div>
+
+    <!-- reality hook — compact at top -->
+    <div class="phase-eyebrow">Before we begin</div>
+    <h1 class="phase-headline">
+      Passing a prop firm<br>
+      <span class="dim">is hard.</span>
+      Being disciplined<br>
+      <span class="dim">is hard.</span>
+      <span>We fix that.</span>
+    </h1>
+
+    <!-- reality stats — compact row -->
+    <div class="reality-stats" style="margin-bottom:36px;">
+      <div class="r-stat">
+        <div class="r-stat-num">90%</div>
+        <div class="r-stat-label"><strong>Fail in 90 days</strong>No structure. No system.</div>
+      </div>
+      <div class="r-stat">
+        <div class="r-stat-num">1 in 3</div>
+        <div class="r-stat-label"><strong>Blow their first eval</strong>Before a single funded trade</div>
+      </div>
+      <div class="r-stat">
+        <div class="r-stat-num">$0</div>
+        <div class="r-stat-label"><strong>Cost to train here</strong>No excuses left</div>
+      </div>
+    </div>
+
+    <!-- divider -->
+    <div style="border-top:1px solid rgba(0,232,122,0.12);margin-bottom:36px;padding-top:36px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(28px,4vw,44px);text-transform:uppercase;letter-spacing:-1px;margin-bottom:8px;">
+        Which firm are you <span style="color:var(--green)">training for?</span>
+      </div>
+      <p style="font-size:15px;color:var(--gray);font-weight:300;line-height:1.6;margin-bottom:6px;">
+        Coach Prime will tailor your entire training around their <strong style="color:var(--white);font-weight:500;">exact rules, drawdown limits, and profit targets.</strong>
+      </p>
+      <p class="multi-note" style="margin-bottom:24px;">Select all that apply — <span>you can change this anytime</span></p>
+    </div>
+
+    <!-- FIRM CARDS — main focus -->
+    <div class="firm-grid">
+      <div class="firm-card" onclick="toggleFirm(this,'apex')">
+        <div class="firm-check"></div>
+        <div class="firm-logo">Apex</div>
+        <div class="firm-desc">Trailing drawdown, high volume, aggressive targets</div>
+        <div class="firm-tag popular">Most Popular</div>
+      </div>
+      <div class="firm-card" onclick="toggleFirm(this,'topstep')">
+        <div class="firm-check"></div>
+        <div class="firm-logo">TopStep</div>
+        <div class="firm-desc">Strict daily loss limits, classic structured eval</div>
+        <div class="firm-tag popular">Industry Standard</div>
+      </div>
+      <div class="firm-card" onclick="toggleFirm(this,'takeprofit')">
+        <div class="firm-check"></div>
+        <div class="firm-logo">Take Profit</div>
+        <div class="firm-desc">Flexible rules, beginner friendly, lower targets</div>
+        <div class="firm-tag flexible">Flexible Rules</div>
+      </div>
+      <div class="firm-card" onclick="toggleFirm(this,'alpha')">
+        <div class="firm-check"></div>
+        <div class="firm-logo">Alpha Trader</div>
+        <div class="firm-desc">Fast payouts, competitive profit targets</div>
+        <div class="firm-tag fast">Fast Payouts</div>
+      </div>
+      <div class="firm-card" onclick="toggleFirm(this,'tradify')">
+        <div class="firm-check"></div>
+        <div class="firm-logo">Tradify</div>
+        <div class="firm-desc">Straightforward eval structure, no daily limits</div>
+        <div class="firm-tag flexible">No Daily Limit</div>
+      </div>
+      <div class="firm-card" onclick="toggleFirm(this,'other')" style="border-style:dashed;">
+        <div class="firm-check"></div>
+        <div class="firm-logo" style="font-size:16px;">Not Listed</div>
+        <div class="firm-desc">Different firm or haven't decided yet</div>
+        <div class="firm-tag flexible">Other</div>
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-next" id="btn-phase-1" onclick="nextPhase()" disabled>Build My Plan →</button>
+    </div>
+  </div>
+
+  <!-- ── PHASE 2: PATH CHOICE ── -->
+  <div class="phase" id="phase-2">
+    <div class="coach-tag">
+      <div class="coach-avatar">CP</div>
+      <div class="coach-name">Coach Prime</div>
+    </div>
+    <div class="phase-eyebrow">Phase 2 — Choose Your Path</div>
+    <h2 class="phase-headline">
+      How do you<br>want to<br><span>start?</span>
+    </h2>
+    <p class="phase-body">
+      You're targeting: <span id="firm-summary-text" style="color:var(--green);font-weight:500;">—</span><br><br>
+      Coach Prime has your profile. Now choose how you want to begin.
+    </p>
+
+    <div class="path-grid">
+      <div class="path-card" onclick="goTo('dashboard.html')">
+        <span class="path-icon">🏋️</span>
+        <div class="path-title">Start Training Now</div>
+        <p class="path-desc">Jump straight into your first sim session. Practice your strategy on real NQ data, get scored by Coach Prime, and start building your edge today.</p>
+        <div class="path-tag path-tag-free">✓ Free Plan</div>
+      </div>
+      <div class="path-card" onclick="goTo('pricing.html')">
+        <span class="path-icon">📋</span>
+        <div class="path-title">Build a Consistency Plan</div>
+        <p class="path-desc">Get a structured 30-90 day roadmap built around your target firm's exact rules. Track your readiness score, run mock evals, and know exactly when you're ready to fund.</p>
+        <div class="path-tag path-tag-pro">🏆 Pro Plan</div>
+        <div class="pro-note">Includes prop firm readiness score, mock eval mode &amp; firm-specific coaching — part of the Pro plan</div>
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-back" onclick="prevPhase()">← Back</button>
+    </div>
+
+    <div style="text-align:center;margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);">
+      <p style="font-size:12px;color:rgba(255,255,255,0.25);letter-spacing:1px;margin-bottom:8px;">Not sure which plan is right for you?</p>
+      <a href="pricing.html" style="font-size:13px;color:rgba(255,255,255,0.35);text-decoration:none;letter-spacing:2px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:700;border-bottom:1px solid rgba(255,255,255,0.15);padding-bottom:2px;transition:all 0.2s;" onmouseover="this.style.color='var(--green)';this.style.borderColor='var(--green)'" onmouseout="this.style.color='rgba(255,255,255,0.35)';this.style.borderColor='rgba(255,255,255,0.15)'">Compare Free vs Pro →</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let currentPhase = 1;
+  const selectedFirms = new Set();
+
+  const firmNames = {
+    apex: 'Apex', topstep: 'TopStep', takeprofit: 'Take Profit',
+    alpha: 'Alpha Trader', tradify: 'Tradify', other: 'Other Firm'
+  };
+
+  function nextPhase() {
+    document.getElementById('phase-' + currentPhase).classList.remove('active');
+    currentPhase++;
+    document.getElementById('phase-' + currentPhase).classList.add('active');
+    document.getElementById('phase-num').textContent = currentPhase;
+    if (currentPhase === 2) updateFirmSummary();
+    window.scrollTo(0, 0);
+  }
+
+  function prevPhase() {
+    document.getElementById('phase-' + currentPhase).classList.remove('active');
+    currentPhase--;
+    document.getElementById('phase-' + currentPhase).classList.add('active');
+    document.getElementById('phase-num').textContent = currentPhase;
+    window.scrollTo(0, 0);
+  }
+
+  function toggleFirm(el, firm) {
+    el.classList.toggle('selected');
+    if (selectedFirms.has(firm)) {
+      selectedFirms.delete(firm);
+    } else {
+      selectedFirms.add(firm);
+    }
+    document.getElementById('btn-phase-1').disabled = selectedFirms.size === 0;
+  }
+
+  function updateFirmSummary() {
+    const names = Array.from(selectedFirms).map(f => firmNames[f]).join(', ');
+    document.getElementById('firm-summary-text').textContent = names || '—';
+  }
+
+  function goTo(url) {
+    window.location.href = url;
+  }
+</script>
+</body>
+</html>

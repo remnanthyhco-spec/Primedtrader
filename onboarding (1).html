@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome — Primed Trading</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00e87a;
+    --green-glow: rgba(0,232,122,0.15);
+    --black: #000000;
+    --dark2: #0a0f0a;
+    --dark3: #111811;
+    --gray: #8a9a8a;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { height: 100%; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: 3px;
+    background: rgba(255,255,255,0.06);
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--green);
+    transition: width 0.5s cubic-bezier(0.16,1,0.3,1);
+    box-shadow: 0 0 12px rgba(0,232,122,0.5);
+  }
+
+  /* ── TOP BAR ── */
+  .top-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 48px;
+    position: relative; z-index: 10;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-text { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 20px; letter-spacing: 3px; text-transform: uppercase; color: var(--white); }
+  .logo-text span { color: var(--green); }
+  .step-indicator { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--gray); }
+  .step-indicator span { color: var(--green); }
+  .skip-btn { font-size: 12px; color: rgba(255,255,255,0.25); letter-spacing: 2px; text-transform: uppercase; background: none; border: none; cursor: pointer; font-family: 'Barlow', sans-serif; transition: color 0.2s; }
+  .skip-btn:hover { color: var(--gray); }
+
+  /* ── MAIN LAYOUT ── */
+  .onboard-main {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 20px 48px 60px;
+    position: relative; overflow: hidden;
+  }
+  .bg-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 600px; height: 400px; background: radial-gradient(ellipse, rgba(0,232,122,0.07) 0%, transparent 60%); pointer-events: none; }
+
+  /* ── STEP CONTAINER ── */
+  .step { display: none; max-width: 680px; width: 100%; position: relative; z-index: 1; animation: stepIn 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+  .step.active { display: block; }
+  @keyframes stepIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes stepOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-40px); } }
+
+  /* ── COACH PRIME AVATAR ── */
+  .coach-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: rgba(0,232,122,0.08); border: 1px solid rgba(0,232,122,0.2);
+    padding: 8px 16px; margin-bottom: 28px;
+  }
+  .coach-avatar {
+    width: 28px; height: 28px; background: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 13px; color: var(--black);
+  }
+  .coach-name { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--green); }
+
+  /* ── STEP CONTENT ── */
+  .step-eyebrow { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 6px; text-transform: uppercase; color: var(--gray); margin-bottom: 12px; }
+  .step-headline { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: clamp(40px, 6vw, 68px); line-height: 0.95; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 16px; }
+  .step-headline span { color: var(--green); }
+  .step-headline .outline { -webkit-text-stroke: 2px var(--white); color: transparent; }
+  .step-body { font-size: 16px; color: var(--gray); line-height: 1.7; font-weight: 300; max-width: 520px; margin-bottom: 40px; }
+  .step-body strong { color: var(--white); font-weight: 500; }
+
+  /* ── OPTION CARDS ── */
+  .options-grid { display: grid; gap: 12px; margin-bottom: 36px; }
+  .options-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .options-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  .rec-badge { display:inline-block; margin-top:12px; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:4px 10px; border-radius:20px; }
+  .rec-scalp { background:rgba(0,232,122,0.1); border:1px solid rgba(0,232,122,0.3); color:var(--green); }
+  .rec-day { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:var(--gray); }
+  .rec-both { background:rgba(0,232,122,0.06); border:1px solid rgba(0,232,122,0.2); color:var(--green); opacity:0.8; }
+    background: var(--dark2); border: 1px solid rgba(255,255,255,0.08);
+    padding: 24px 20px; cursor: pointer; position: relative; overflow: hidden;
+    transition: all 0.25s;
+  }
+  .option-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--green); transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
+  .option-card:hover { border-color: rgba(0,232,122,0.3); background: var(--dark3); }
+  .option-card:hover::before { transform: scaleX(1); }
+  .option-card.selected { border-color: var(--green); background: rgba(0,232,122,0.06); }
+  .option-card.selected::before { transform: scaleX(1); }
+
+  .option-icon { font-size: 28px; margin-bottom: 12px; display: block; }
+  .option-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 20px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .option-desc { font-size: 12px; color: var(--gray); line-height: 1.5; font-weight: 300; }
+  .option-check { position: absolute; top: 14px; right: 14px; width: 20px; height: 20px; border: 1.5px solid rgba(255,255,255,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .option-card.selected .option-check { background: var(--green); border-color: var(--green); }
+  .option-card.selected .option-check::after { content: ''; width: 10px; height: 6px; border-left: 2px solid var(--black); border-bottom: 2px solid var(--black); transform: rotate(-45deg) translateY(-1px); display: block; }
+
+  /* ── GOAL SLIDER ── */
+  .goal-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 36px; }
+  .goal-item {
+    display: flex; align-items: center; gap: 20px;
+    background: var(--dark2); border: 1px solid rgba(255,255,255,0.08);
+    padding: 20px 24px; cursor: pointer; transition: all 0.25s;
+  }
+  .goal-item:hover { border-color: rgba(0,232,122,0.3); }
+  .goal-item.selected { border-color: var(--green); background: rgba(0,232,122,0.06); }
+  .goal-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0; transition: all 0.2s; }
+  .goal-item.selected .goal-dot { background: var(--green); border-color: var(--green); box-shadow: 0 0 8px rgba(0,232,122,0.5); }
+  .goal-content { flex: 1; }
+  .goal-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 18px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+  .goal-desc { font-size: 13px; color: var(--gray); font-weight: 300; }
+  .goal-time { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 2px; color: var(--green); text-transform: uppercase; }
+
+  /* ── ACCOUNT SETUP ── */
+  .setup-form { display: flex; flex-direction: column; gap: 16px; margin-bottom: 36px; }
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  .form-label { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gray); }
+  .form-input {
+    background: var(--dark2); border: 1px solid rgba(255,255,255,0.1);
+    padding: 14px 18px; color: var(--white); font-family: 'Barlow', sans-serif; font-size: 15px;
+    outline: none; transition: border-color 0.2s; width: 100%;
+  }
+  .form-input:focus { border-color: var(--green); }
+  .form-input::placeholder { color: rgba(255,255,255,0.2); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-note { font-size: 12px; color: rgba(255,255,255,0.25); line-height: 1.6; }
+  .form-note a { color: var(--green); text-decoration: none; }
+
+  /* ── WELCOME EXTRAS ── */
+  .welcome-features { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 40px; }
+  .w-feat { display: flex; align-items: flex-start; gap: 12px; }
+  .w-feat-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; margin-top: 7px; }
+  .w-feat-text { font-size: 14px; color: var(--gray); line-height: 1.5; }
+  .w-feat-text strong { color: var(--white); font-weight: 500; }
+
+  /* ── NAME INPUT ── */
+  .name-input-wrap { margin-bottom: 36px; }
+  .big-input {
+    background: transparent; border: none; border-bottom: 2px solid rgba(255,255,255,0.15);
+    padding: 12px 0; color: var(--white); font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 36px; outline: none; width: 100%; transition: border-color 0.2s;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .big-input:focus { border-color: var(--green); }
+  .big-input::placeholder { color: rgba(255,255,255,0.15); }
+
+  /* ── BUTTONS ── */
+  .step-nav { display: flex; align-items: center; gap: 16px; }
+  .btn-next {
+    background: var(--green); color: var(--black);
+    padding: 16px 44px;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 16px; letter-spacing: 3px; text-transform: uppercase;
+    border: none; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-next:hover { background: var(--white); transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0,232,122,0.25); }
+  .btn-next:disabled { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.3); cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-back { background: none; border: 1px solid rgba(255,255,255,0.12); color: var(--gray); padding: 16px 24px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+  .btn-back:hover { border-color: rgba(255,255,255,0.3); color: var(--white); }
+
+  /* ── COMPLETION ── */
+  .complete-screen { display: none; max-width: 600px; width: 100%; text-align: center; position: relative; z-index: 1; animation: stepIn 0.6s cubic-bezier(0.16,1,0.3,1) both; }
+  .complete-screen.active { display: block; }
+  .complete-ring { width: 100px; height: 100px; border: 3px solid var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 32px; position: relative; animation: ringPop 0.6s 0.2s cubic-bezier(0.16,1,0.3,1) both; box-shadow: 0 0 40px rgba(0,232,122,0.3); }
+  @keyframes ringPop { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .complete-check { font-size: 44px; }
+  .complete-headline { font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: clamp(44px, 7vw, 72px); text-transform: uppercase; line-height: 0.9; letter-spacing: -1px; margin-bottom: 16px; }
+  .complete-headline span { color: var(--green); }
+  .complete-sub { font-size: 16px; color: var(--gray); line-height: 1.7; font-weight: 300; margin-bottom: 40px; }
+  .complete-sub strong { color: var(--white); font-weight: 500; }
+  .complete-summary { background: var(--dark2); border: 1px solid rgba(0,232,122,0.15); padding: 24px 28px; margin-bottom: 36px; text-align: left; display: flex; flex-direction: column; gap: 14px; }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+  .summary-label { color: var(--gray); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; }
+  .summary-val { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 16px; color: var(--green); text-transform: uppercase; letter-spacing: 1px; }
+  .btn-dashboard { display: block; width: 100%; background: var(--green); color: var(--black); padding: 20px; font-family: 'Barlow Condensed', sans-serif; font-weight: 900; font-size: 18px; letter-spacing: 3px; text-transform: uppercase; border: none; cursor: pointer; text-decoration: none; text-align: center; transition: all 0.2s; margin-bottom: 12px; }
+  .btn-dashboard:hover { background: var(--white); transform: translateY(-2px); box-shadow: 0 20px 60px rgba(0,232,122,0.3); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .top-bar { padding: 20px 24px; }
+    .onboard-main { padding: 20px 24px 48px; }
+    .options-grid.cols-2, .options-grid.cols-3 { grid-template-columns: 1fr; }
+    .welcome-features { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .step-nav { flex-direction: column-reverse; align-items: stretch; }
+    .btn-next, .btn-back { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar">
+  <div class="progress-fill" id="progress" style="width:20%"></div>
+</div>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <a href="index.html" class="logo">
+    <svg width="36" height="36" viewBox="0 0 120 120" fill="none">
+      <rect x="8" y="52" width="7" height="30" fill="#00e87a" rx="1"/>
+      <line x1="11.5" y1="46" x2="11.5" y2="52" stroke="#00e87a" stroke-width="2"/>
+      <line x1="11.5" y1="82" x2="11.5" y2="88" stroke="#00e87a" stroke-width="2"/>
+      <rect x="20" y="40" width="7" height="36" fill="#00e87a" rx="1"/>
+      <line x1="23.5" y1="33" x2="23.5" y2="40" stroke="#00e87a" stroke-width="2"/>
+      <line x1="23.5" y1="76" x2="23.5" y2="83" stroke="#00e87a" stroke-width="2"/>
+      <rect x="32" y="28" width="7" height="40" fill="#00e87a" rx="1"/>
+      <line x1="35.5" y1="20" x2="35.5" y2="28" stroke="#00e87a" stroke-width="2"/>
+      <line x1="35.5" y1="68" x2="35.5" y2="76" stroke="#00e87a" stroke-width="2"/>
+      <rect x="44" y="18" width="7" height="44" fill="#00e87a" rx="1"/>
+      <line x1="47.5" y1="10" x2="47.5" y2="18" stroke="#00e87a" stroke-width="2"/>
+      <line x1="47.5" y1="62" x2="47.5" y2="70" stroke="#00e87a" stroke-width="2"/>
+      <line x1="18" y1="95" x2="58" y2="55" stroke="#00e87a" stroke-width="3" stroke-linecap="round"/>
+      <defs><linearGradient id="pg2" x1="55" y1="15" x2="55" y2="105" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#00e87a"/></linearGradient></defs>
+      <path d="M58 18 L58 102 M58 18 L85 18 Q105 18 105 42 Q105 66 85 66 L58 66" stroke="url(#pg2)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+    <div class="logo-text">PRIMED <span>TRADING</span></div>
+  </a>
+  <div class="step-indicator">Step <span id="step-num">1</span> of 5</div>
+  <button class="skip-btn" onclick="skipToEnd()">Skip setup →</button>
+</div>
+
+<!-- MAIN -->
+<div class="onboard-main">
+  <div class="bg-glow"></div>
+
+  <!-- ── STEP 1: WELCOME ── -->
+  <div class="step active" id="step-1">
+    <div class="coach-tag">
+      <div class="coach-avatar">CP</div>
+      <div class="coach-name">Coach Prime</div>
+    </div>
+    <div class="step-eyebrow">Welcome to Primed Trading</div>
+    <h1 class="step-headline">
+      I've been<br>
+      <span class="outline">waiting</span><br>
+      for <span>you.</span>
+    </h1>
+    <p class="step-body">
+      My name is <strong>Coach Prime</strong> and I'll be with you every step of the way. No more trading blind. No more blowing evals. No more wondering what went wrong.<br><br>
+      You showed up. That's already more than most. Now let's build your system — starting right now.
+    </p>
+
+    <div class="name-input-wrap">
+      <div class="form-label" style="margin-bottom:10px;">First, what should I call you?</div>
+      <input class="big-input" id="trader-name" type="text" placeholder="Your name" oninput="checkName()" autocomplete="off"/>
+    </div>
+
+    <div class="welcome-features">
+      <div class="w-feat"><div class="w-feat-dot"></div><div class="w-feat-text"><strong>Unlimited sim sessions</strong> — free forever</div></div>
+      <div class="w-feat"><div class="w-feat-dot"></div><div class="w-feat-text"><strong>Coach Prime</strong> after every session</div></div>
+      <div class="w-feat"><div class="w-feat-dot"></div><div class="w-feat-text"><strong>5 proven strategies</strong> ready to go</div></div>
+      <div class="w-feat"><div class="w-feat-dot"></div><div class="w-feat-text"><strong>No credit card</strong> — start immediately</div></div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn-next" id="btn-1" onclick="nextStep()" disabled>Let's Go →</button>
+    </div>
+  </div>
+
+  <!-- ── STEP 2: STRATEGY ── -->
+  <div class="step" id="step-2">
+    <div class="coach-tag">
+      <div class="coach-avatar">CP</div>
+      <div class="coach-name">Coach Prime</div>
+    </div>
+    <div class="step-eyebrow">Step 2 — Your Strategy</div>
+    <h2 class="step-headline">Pick your<br><span>playbook.</span></h2>
+    <p class="step-body">Every great trader has a system. Pick the one that resonates with you — or the one you want to master. You can change this anytime.</p>
+
+    <div class="options-grid" style="grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="option-card" onclick="selectOption(this,'strategy','fvg')">
+        <div class="option-check"></div>
+        <span class="option-icon">📊</span>
+        <div class="option-title">Fair Value Gap</div>
+        <p class="option-desc">ICT-based price imbalance entries. High probability when done right.</p>
+        <div class="rec-badge rec-both">⚡ Scalper &amp; Day Trader</div>
+      </div>
+      <div class="option-card" onclick="selectOption(this,'strategy','ict')">
+        <div class="option-check"></div>
+        <span class="option-icon">🎯</span>
+        <div class="option-title">ICT Kill Zone</div>
+        <p class="option-desc">Liquidity sweeps + displacement during NY session windows.</p>
+        <div class="rec-badge rec-day">📅 Recommended: Day Trader</div>
+      </div>
+      <div class="option-card" onclick="selectOption(this,'strategy','orb')">
+        <div class="option-check"></div>
+        <span class="option-icon">📈</span>
+        <div class="option-title">Opening Range Breakout</div>
+        <p class="option-desc">One mechanical trade per session. Clean, structured, repeatable.</p>
+        <div class="rec-badge rec-day">📅 Recommended: Day Trader</div>
+      </div>
+      <div class="option-card" onclick="selectOption(this,'strategy','trendline')">
+        <div class="option-check"></div>
+        <span class="option-icon">📉</span>
+        <div class="option-title">Trendline Model</div>
+        <p class="option-desc">Naked price action. Trendline bounces and breaks. No indicators.</p>
+        <div class="rec-badge rec-day">📅 Recommended: Day Trader</div>
+      </div>
+      <div class="option-card" onclick="selectOption(this,'strategy','scalp')">
+        <div class="option-check"></div>
+        <span class="option-icon">⚡</span>
+        <div class="option-title">Scalp System</div>
+        <p class="option-desc">1-min structure breaks. Fast entries, tight stops, quick targets.</p>
+        <div class="rec-badge rec-scalp">⚡ Recommended: Scalper</div>
+      </div>
+      <div class="option-card" onclick="selectOption(this,'strategy','custom')" style="border-style:dashed;">
+        <div class="option-check"></div>
+        <span class="option-icon">🛠</span>
+        <div class="option-title">Build My Own</div>
+        <p class="option-desc">Define your own entry, stop, and target rules from scratch.</p>
+        <div class="rec-badge rec-both">⚡ Scalper &amp; Day Trader</div>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn-back" onclick="prevStep()">← Back</button>
+      <button class="btn-next" id="btn-2" onclick="nextStep()" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- ── STEP 3: STYLE ── -->
+  <div class="step" id="step-3">
+    <div class="coach-tag">
+      <div class="coach-avatar">CP</div>
+      <div class="coach-name">Coach Prime</div>
+    </div>
+    <div class="step-eyebrow">Step 3 — Your Trading Style</div>
+    <h2 class="step-headline">How do<br>you <span>trade?</span></h2>
+    <p class="step-body">This shapes how Coach Prime coaches you and how your sessions are structured. Scalpers and day traders need different feedback — be honest with yourself.</p>
+
+    <div class="options-grid cols-2">
+      <div class="option-card" onclick="selectOption(this,'style','scalper')" style="padding:32px 24px;">
+        <div class="option-check"></div>
+        <span class="option-icon">⚡</span>
+        <div class="option-title">Scalper</div>
+        <p class="option-desc">Trades held 5 minutes or less. Fast decisions, tight stops, high frequency. You live on the 1-min and 3-min charts.</p>
+        <div style="margin-top:16px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);font-weight:700;">Max 3 trades/session</div>
+      </div>
+      <div class="option-card" onclick="selectOption(this,'style','daytrader')" style="padding:32px 24px;">
+        <div class="option-check"></div>
+        <span class="option-icon">📅</span>
+        <div class="option-title">Day Trader</div>
+        <p class="option-desc">Trades held up to the full session. Patience, bigger targets, fewer setups. You work the 5-min, 15-min, and 1-hour charts.</p>
+        <div style="margin-top:16px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);font-weight:700;">1-3 quality setups/session</div>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn-back" onclick="prevStep()">← Back</button>
+      <button class="btn-next" id="btn-3" onclick="nextStep()" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- ── STEP 4: GOAL ── -->
+  <div class="step" id="step-4">
+    <div class="coach-tag">
+      <div class="coach-avatar">CP</div>
+      <div class="coach-name">Coach Prime</div>
+    </div>
+    <div class="step-eyebrow">Step 4 — Your Goal</div>
+    <h2 class="step-headline">What are<br>you <span>training</span><br>for?</h2>
+    <p class="step-body">Be real with me. Your goal shapes your timeline, your coaching focus, and when I tell you you're ready. No judgment — just honesty.</p>
+
+    <div class="goal-options">
+      <div class="goal-item" onclick="selectGoal(this,'eval')">
+        <div class="goal-dot"></div>
+        <div class="goal-content">
+          <div class="goal-title">Pass a prop firm evaluation</div>
+          <div class="goal-desc">TopStep, Apex, MyFunded Futures or similar. I want to get funded.</div>
+        </div>
+        <div class="goal-time">Goal: 30–90 days</div>
+      </div>
+      <div class="goal-item" onclick="selectGoal(this,'consistent')">
+        <div class="goal-dot"></div>
+        <div class="goal-content">
+          <div class="goal-title">Become a consistent trader</div>
+          <div class="goal-desc">I want to build a real system and stop making emotional decisions.</div>
+        </div>
+        <div class="goal-time">Goal: 60–120 days</div>
+      </div>
+      <div class="goal-item" onclick="selectGoal(this,'strategy')">
+        <div class="goal-dot"></div>
+        <div class="goal-content">
+          <div class="goal-title">Master a specific strategy</div>
+          <div class="goal-desc">I want to get really good at one setup before expanding my playbook.</div>
+        </div>
+        <div class="goal-time">Goal: 30–60 days</div>
+      </div>
+      <div class="goal-item" onclick="selectGoal(this,'explore')">
+        <div class="goal-dot"></div>
+        <div class="goal-content">
+          <div class="goal-title">Just exploring for now</div>
+          <div class="goal-desc">I'm learning the markets and want to build good habits from the start.</div>
+        </div>
+        <div class="goal-time">No pressure</div>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn-back" onclick="prevStep()">← Back</button>
+      <button class="btn-next" id="btn-4" onclick="nextStep()" disabled>Continue →</button>
+    </div>
+  </div>
+
+  <!-- ── STEP 5: ACCOUNT SETUP ── -->
+  <div class="step" id="step-5">
+    <div class="coach-tag">
+      <div class="coach-avatar">CP</div>
+      <div class="coach-name">Coach Prime</div>
+    </div>
+    <div class="step-eyebrow">Step 5 — Create Your Account</div>
+    <h2 class="step-headline">Almost<br><span>there.</span></h2>
+    <p class="step-body">One last thing. Create your account so your sessions, journal, and progress are saved. <strong>Free forever — no card needed.</strong></p>
+
+    <div class="setup-form">
+      <div class="form-row">
+        <div class="form-group">
+          <div class="form-label">First Name</div>
+          <input class="form-input" id="first-name" type="text" placeholder="First name" oninput="checkSetup()"/>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Last Name</div>
+          <input class="form-input" id="last-name" type="text" placeholder="Last name" oninput="checkSetup()"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Email Address</div>
+        <input class="form-input" id="setup-email" type="email" placeholder="your@email.com" oninput="checkSetup()"/>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Create Password</div>
+        <input class="form-input" id="setup-password" type="password" placeholder="Min. 8 characters" oninput="checkSetup()"/>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Confirm Password</div>
+        <input class="form-input" id="setup-confirm" type="password" placeholder="Repeat password" oninput="checkSetup()"/>
+      </div>
+      <p class="form-note">By creating an account you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. We will never sell your data or spam your inbox.</p>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn-back" onclick="prevStep()">← Back</button>
+      <button class="btn-next" id="btn-5" onclick="completeOnboarding()" disabled>Launch My Dashboard →</button>
+    </div>
+    <p style="margin-top:16px;text-align:center;font-size:12px;color:rgba(255,255,255,0.25);letter-spacing:1px;">
+      Want the full path to funded? 
+      <a href="pricing.html" style="color:rgba(255,255,255,0.4);text-decoration:underline;transition:color 0.2s;" onmouseover="this.style.color='var(--green)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">See Pro plan →</a>
+    </p>
+
+  <!-- ── COMPLETE SCREEN ── -->
+  <div class="complete-screen" id="complete">
+
+    <!-- CELEBRATION GRAPHIC -->
+    <div class="celebration-wrap">
+      <svg width="100%" viewBox="0 0 480 220" style="max-width:480px;display:block;margin:0 auto 8px;">
+        <!-- confetti pieces -->
+        <rect x="40" y="20" width="10" height="10" rx="2" fill="#00e87a" opacity="0.9" transform="rotate(20,45,25)"><animate attributeName="y" from="20" to="180" dur="2.5s" repeatCount="indefinite" begin="0s"/><animate attributeName="opacity" from="0.9" to="0" dur="2.5s" repeatCount="indefinite" begin="0s"/></rect>
+        <rect x="90" y="10" width="8" height="8" rx="1" fill="#fff" opacity="0.7" transform="rotate(45,94,14)"><animate attributeName="y" from="10" to="200" dur="2.2s" repeatCount="indefinite" begin="0.3s"/><animate attributeName="opacity" from="0.7" to="0" dur="2.2s" repeatCount="indefinite" begin="0.3s"/></rect>
+        <rect x="150" y="5" width="12" height="6" rx="2" fill="#00e87a" opacity="0.8"><animate attributeName="y" from="5" to="190" dur="2.8s" repeatCount="indefinite" begin="0.1s"/><animate attributeName="opacity" from="0.8" to="0" dur="2.8s" repeatCount="indefinite" begin="0.1s"/></rect>
+        <rect x="210" y="15" width="8" height="8" rx="2" fill="#fff" opacity="0.6" transform="rotate(30,214,19)"><animate attributeName="y" from="15" to="195" dur="2.4s" repeatCount="indefinite" begin="0.5s"/><animate attributeName="opacity" from="0.6" to="0" dur="2.4s" repeatCount="indefinite" begin="0.5s"/></rect>
+        <rect x="270" y="8" width="10" height="10" rx="2" fill="#00e87a" opacity="0.9" transform="rotate(15,275,13)"><animate attributeName="y" from="8" to="185" dur="2.6s" repeatCount="indefinite" begin="0.2s"/><animate attributeName="opacity" from="0.9" to="0" dur="2.6s" repeatCount="indefinite" begin="0.2s"/></rect>
+        <rect x="330" y="12" width="7" height="12" rx="2" fill="#fff" opacity="0.7"><animate attributeName="y" from="12" to="192" dur="2.3s" repeatCount="indefinite" begin="0.4s"/><animate attributeName="opacity" from="0.7" to="0" dur="2.3s" repeatCount="indefinite" begin="0.4s"/></rect>
+        <rect x="390" y="6" width="11" height="7" rx="2" fill="#00e87a" opacity="0.8" transform="rotate(25,395,10)"><animate attributeName="y" from="6" to="188" dur="2.7s" repeatCount="indefinite" begin="0.6s"/><animate attributeName="opacity" from="0.8" to="0" dur="2.7s" repeatCount="indefinite" begin="0.6s"/></rect>
+        <rect x="440" y="18" width="9" height="9" rx="2" fill="#fff" opacity="0.6" transform="rotate(40,444,22)"><animate attributeName="y" from="18" to="198" dur="2.1s" repeatCount="indefinite" begin="0.8s"/><animate attributeName="opacity" from="0.6" to="0" dur="2.1s" repeatCount="indefinite" begin="0.8s"/></rect>
+        <circle cx="70" cy="30" r="5" fill="#00e87a" opacity="0.7"><animate attributeName="cy" from="30" to="200" dur="2.4s" repeatCount="indefinite" begin="0.7s"/><animate attributeName="opacity" from="0.7" to="0" dur="2.4s" repeatCount="indefinite" begin="0.7s"/></circle>
+        <circle cx="180" cy="20" r="4" fill="#fff" opacity="0.6"><animate attributeName="cy" from="20" to="190" dur="2.6s" repeatCount="indefinite" begin="0.2s"/><animate attributeName="opacity" from="0.6" to="0" dur="2.6s" repeatCount="indefinite" begin="0.2s"/></circle>
+        <circle cx="300" cy="25" r="6" fill="#00e87a" opacity="0.8"><animate attributeName="cy" from="25" to="195" dur="2.2s" repeatCount="indefinite" begin="0.9s"/><animate attributeName="opacity" from="0.8" to="0" dur="2.2s" repeatCount="indefinite" begin="0.9s"/></circle>
+        <circle cx="420" cy="15" r="4" fill="#fff" opacity="0.5"><animate attributeName="cy" from="15" to="185" dur="2.9s" repeatCount="indefinite" begin="0.4s"/><animate attributeName="opacity" from="0.5" to="0" dur="2.9s" repeatCount="indefinite" begin="0.4s"/></circle>
+
+        <!-- trophy -->
+        <g transform="translate(190,40)">
+          <!-- glow -->
+          <ellipse cx="50" cy="90" rx="50" ry="12" fill="#00e87a" opacity="0.15"/>
+          <!-- cup body -->
+          <path d="M20,10 L80,10 L72,60 Q50,80 28,60 Z" fill="#00e87a" stroke="#00c965" stroke-width="2"/>
+          <!-- cup shine -->
+          <path d="M30,15 L40,15 L38,45 Q35,55 32,50 Z" fill="#fff" opacity="0.2"/>
+          <!-- handles -->
+          <path d="M20,15 Q5,20 8,40 Q10,52 20,48" fill="none" stroke="#00e87a" stroke-width="3" stroke-linecap="round"/>
+          <path d="M80,15 Q95,20 92,40 Q90,52 80,48" fill="none" stroke="#00e87a" stroke-width="3" stroke-linecap="round"/>
+          <!-- stem -->
+          <rect x="43" y="78" width="14" height="18" rx="2" fill="#00e87a"/>
+          <!-- base -->
+          <rect x="28" y="94" width="44" height="10" rx="3" fill="#00e87a" stroke="#00c965" stroke-width="1.5"/>
+          <!-- star on cup -->
+          <text x="50" y="46" text-anchor="middle" font-size="22" fill="#000" opacity="0.6">★</text>
+        </g>
+
+        <!-- left burst lines -->
+        <line x1="155" y1="95" x2="130" y2="75" stroke="#00e87a" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+        <line x1="148" y1="108" x2="118" y2="105" stroke="#00e87a" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+        <line x1="155" y1="122" x2="128" y2="135" stroke="#00e87a" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+        <!-- right burst lines -->
+        <line x1="325" y1="95" x2="350" y2="75" stroke="#00e87a" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+        <line x1="332" y1="108" x2="362" y2="105" stroke="#00e87a" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+        <line x1="325" y1="122" x2="352" y2="135" stroke="#00e87a" stroke-width="2" stroke-linecap="round" opacity="0.4"/>
+
+        <!-- WIN text -->
+        <text x="240" y="195" text-anchor="middle" font-family="'Barlow Condensed',Arial,sans-serif" font-weight="900" font-size="13" fill="#00e87a" letter-spacing="8" opacity="0.8">YOU'RE PRIMED</text>
+      </svg>
+    </div>
+
+    <h2 class="complete-headline">You <span>made it.</span></h2>
+    <p class="complete-sub">
+      <strong id="complete-name">Trader</strong>, most people talk about changing their trading. You just took action. Coach Prime has your profile locked in and your system is ready to go.<br><br>
+      <span style="color:var(--green);font-weight:500;">This is where your journey to funded begins.</span>
+    </p>
+
+    <div class="complete-summary">
+      <div class="summary-row">
+        <span class="summary-label">Strategy</span>
+        <span class="summary-val" id="sum-strategy">—</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Style</span>
+        <span class="summary-val" id="sum-style">—</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Goal</span>
+        <span class="summary-val" id="sum-goal">—</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Plan</span>
+        <span class="summary-val" style="color:var(--white);">Free — Unlimited Sessions</span>
+      </div>
+    </div>
+
+    <a href="path.html" class="btn-dashboard">Enter My Dashboard →</a>
+
+    <!-- NEXT PHASE LINK -->
+    <div style="margin-top:24px;padding:20px 24px;background:rgba(0,232,122,0.04);border:1px solid rgba(0,232,122,0.12);text-align:center;">
+      <div style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--gray);margin-bottom:8px;">Ready to unlock the full path?</div>
+      <a href="pricing.html" style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;letter-spacing:2px;text-transform:uppercase;color:var(--green);text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">
+        Explore Pro — The Path to Funded
+        <span style="font-size:18px;">→</span>
+      </a>
+      <div style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:6px;letter-spacing:1px;">60 days free for beta members</div>
+    </div>
+
+    <div style="font-size:12px;color:rgba(255,255,255,0.2);text-align:center;letter-spacing:1px;margin-top:16px;">Coach Prime is ready. Your first session starts now.</div>
+  </div>
+
+</div>
+
+<script>
+  let currentStep = 1;
+  const totalSteps = 5;
+
+  const selections = {
+    name: '',
+    strategy: '',
+    style: '',
+    goal: ''
+  };
+
+  const strategyLabels = { fvg:'Fair Value Gap', ict:'ICT Kill Zone', orb:'Opening Range Breakout', trendline:'Trendline Model', scalp:'Scalp System', custom:'Custom Strategy' };
+  const styleLabels = { scalper:'Scalper', daytrader:'Day Trader' };
+  const goalLabels = { eval:'Pass Prop Eval', consistent:'Consistent Trader', strategy:'Master a Strategy', explore:'Exploring' };
+
+  function updateProgress() {
+    const pct = (currentStep / (totalSteps + 1)) * 100;
+    document.getElementById('progress').style.width = pct + '%';
+    document.getElementById('step-num').textContent = currentStep;
+  }
+
+  function nextStep() {
+    if (currentStep >= totalSteps) return;
+    document.getElementById('step-' + currentStep).style.animation = 'stepOut 0.3s ease both';
+    setTimeout(() => {
+      document.getElementById('step-' + currentStep).classList.remove('active');
+      currentStep++;
+      const next = document.getElementById('step-' + currentStep);
+      next.style.animation = '';
+      next.classList.add('active');
+
+      // Personalise step 2 with name
+      if (currentStep === 2 && selections.name) {
+        const eyebrow = next.querySelector('.step-eyebrow');
+        eyebrow.textContent = `Alright ${selections.name} — Step 2`;
+      }
+      updateProgress();
+    }, 280);
+  }
+
+  function prevStep() {
+    if (currentStep <= 1) return;
+    document.getElementById('step-' + currentStep).classList.remove('active');
+    currentStep--;
+    const prev = document.getElementById('step-' + currentStep);
+    prev.style.animation = 'stepIn 0.4s ease both';
+    prev.classList.add('active');
+    updateProgress();
+  }
+
+  function checkName() {
+    const val = document.getElementById('trader-name').value.trim();
+    selections.name = val;
+    document.getElementById('btn-1').disabled = val.length < 2;
+  }
+
+  function selectOption(el, type, value) {
+    const grid = el.parentElement;
+    grid.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selections[type] = value;
+    const btnId = type === 'strategy' ? 'btn-2' : 'btn-3';
+    document.getElementById(btnId).disabled = false;
+  }
+
+  function selectGoal(el, value) {
+    document.querySelectorAll('.goal-item').forEach(g => g.classList.remove('selected'));
+    el.classList.add('selected');
+    selections.goal = value;
+    document.getElementById('btn-4').disabled = false;
+  }
+
+  function checkSetup() {
+    const first = document.getElementById('first-name').value.trim();
+    const email = document.getElementById('setup-email').value.trim();
+    const pass = document.getElementById('setup-password').value;
+    const confirm = document.getElementById('setup-confirm').value;
+    document.getElementById('btn-5').disabled = !(first && email.includes('@') && pass.length >= 8 && pass === confirm);
+  }
+
+  function completeOnboarding() {
+    // Hide all steps
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('complete').classList.add('active');
+
+    // Fill summary
+    const name = document.getElementById('first-name').value.trim() || selections.name || 'Trader';
+    document.getElementById('complete-name').textContent = name;
+    document.getElementById('sum-strategy').textContent = strategyLabels[selections.strategy] || '—';
+    document.getElementById('sum-style').textContent = styleLabels[selections.style] || '—';
+    document.getElementById('sum-goal').textContent = goalLabels[selections.goal] || '—';
+
+    // Fill progress to 100%
+    document.getElementById('progress').style.width = '100%';
+    document.getElementById('step-num').textContent = '5';
+    document.querySelector('.step-indicator').innerHTML = '<span style="color:var(--green)">✓ Complete</span>';
+    document.querySelector('.skip-btn').style.display = 'none';
+  }
+
+  function skipToEnd() {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    currentStep = totalSteps;
+    document.getElementById('step-5').classList.add('active');
+    document.getElementById('progress').style.width = '90%';
+    document.getElementById('step-num').textContent = '5';
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>
