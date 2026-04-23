@@ -461,7 +461,7 @@
 
     <div class="step-nav">
       <button class="btn-back" onclick="prevStep()">← Back</button>
-      <button class="btn-next" id="btn-5" onclick="completeOnboarding()" disabled>Launch My Dashboard →</button>
+      <button class="btn-next" id="btn-5" onclick="completeOnboarding()" disabled>Let's Go →</button>
     </div>
     <p style="margin-top:16px;text-align:center;font-size:12px;color:rgba(255,255,255,0.25);letter-spacing:1px;">
       Want the full path to funded? 
@@ -644,22 +644,7 @@
   }
 
   function completeOnboarding() {
-    // Hide all steps
-    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-    document.getElementById('complete').classList.add('active');
-
-    // Fill summary
-    const name = document.getElementById('first-name').value.trim() || selections.name || 'Trader';
-    document.getElementById('complete-name').textContent = name;
-    document.getElementById('sum-strategy').textContent = strategyLabels[selections.strategy] || '—';
-    document.getElementById('sum-style').textContent = styleLabels[selections.style] || '—';
-    document.getElementById('sum-goal').textContent = goalLabels[selections.goal] || '—';
-
-    // Fill progress to 100%
-    document.getElementById('progress').style.width = '100%';
-    document.getElementById('step-num').textContent = '5';
-    document.querySelector('.step-indicator').innerHTML = '<span style="color:var(--green)">✓ Complete</span>';
-    document.querySelector('.skip-btn').style.display = 'none';
+    window.location.href = 'path.html';
   }
 
   function skipToEnd() {
