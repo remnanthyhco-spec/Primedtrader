@@ -303,6 +303,8 @@
   };
 
   function nextPhase() {
+    // Save selected firms to localStorage so dashboard can read them
+    localStorage.setItem('pt_selected_firms', JSON.stringify(Array.from(selectedFirms)));
     document.getElementById('phase-' + currentPhase).classList.remove('active');
     currentPhase++;
     document.getElementById('phase-' + currentPhase).classList.add('active');
