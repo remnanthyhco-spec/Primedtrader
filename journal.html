@@ -18,7 +18,7 @@
   body{display:flex;}
 
   /* SIDEBAR */
-  .sidebar{width:56px;min-width:56px;background:var(--dark);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:14px 0;z-index:20;}
+  .sidebar{width:56px;min-width:56px;background:var(--dark);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:14px 0;z-index:20;height:100vh;position:sticky;top:0;}
   .sb-logo{width:32px;height:32px;margin-bottom:20px;cursor:pointer;}
   .sb-nav{display:flex;flex-direction:column;gap:2px;flex:1;width:100%;padding:0 6px;}
   .sb-item{width:44px;height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray);font-size:17px;transition:all 0.18s;position:relative;}
@@ -170,11 +170,7 @@
     <div class="sb-item" onclick="window.location.href='coachprime.html'"><span>💬</span><div class="tip">Coach Prime</div></div>
   </div>
   </div>
-  <div class="sb-bottom">
-    <div class="sb-item"><span>⚙</span><div class="tip">Settings</div></div>
-    <div class="sb-item"><span>?</span><div class="tip">Help</div></div>
-    <div class="sb-item danger" onclick="window.location.href='index.html'"><span>⇥</span><div class="tip">Log Out</div></div>
-  </div>
+
 </div>
 
 <!-- MAIN -->
@@ -182,6 +178,7 @@
   <div class="topbar">
     <div class="page-title">Trading Journal</div>
     <div class="tb-sp"></div>
+    <button onclick="window.location.href='index.html'" style="background:none;border:1px solid rgba(255,255,255,0.1);color:var(--gray);padding:6px 14px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='var(--gray)'">Log Out</button>
     <input type="date" class="filter-input" id="filter-start">
     <span style="color:var(--gray);font-size:12px;">—</span>
     <input type="date" class="filter-input" id="filter-end">
