@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Primed Trader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --green:#00e87a;--green-dim:rgba(0,232,122,0.12);
+    --navy:#0c0f14;--dark:#080b10;--dark2:#0f1420;--dark3:#141928;--dark4:#1a2030;
+    --border:rgba(255,255,255,0.07);--gray:#7a8599;--white:#e8ecf0;
+    --red:#ff4560;--yellow:#f0c040;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;overflow:hidden;background:var(--navy);color:var(--white);font-family:'Barlow',sans-serif;}
+  body{display:flex;}
+
+  /* SIDEBAR */
+  .sidebar{width:56px;min-width:56px;background:var(--dark);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:14px 0;z-index:20;}
+  .sb-logo{width:32px;height:32px;margin-bottom:20px;cursor:pointer;}
+  .sb-nav{display:flex;flex-direction:column;gap:2px;flex:1;width:100%;padding:0 6px;}
+  .sb-item{width:44px;height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray);font-size:17px;transition:all 0.18s;position:relative;}
+  .sb-item:hover{background:var(--dark3);color:var(--white);}
+  .sb-item.active{background:var(--green-dim);color:var(--green);}
+  .tip{position:absolute;left:52px;top:50%;transform:translateY(-50%);background:var(--dark4);border:1px solid var(--border);color:var(--white);font-size:11px;font-weight:600;padding:5px 10px;white-space:nowrap;border-radius:4px;opacity:0;pointer-events:none;transition:opacity 0.15s;letter-spacing:1px;text-transform:uppercase;z-index:100;}
+  .sb-item:hover .tip{opacity:1;}
+  .sb-bottom{padding:0 6px 6px;display:flex;flex-direction:column;gap:2px;}
+  .sb-item.danger:hover{background:rgba(255,69,96,0.1);color:var(--red);}
+
+  /* MAIN */
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+
+  /* TOPBAR */
+  .topbar{height:52px;min-height:52px;background:var(--dark);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;}
+  .acct-badge{display:flex;align-items:center;gap:8px;background:var(--dark2);border:1px solid var(--border);padding:5px 12px;border-radius:4px;}
+  .acct-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:dotpulse 2s infinite;flex-shrink:0;}
+  @keyframes dotpulse{0%,100%{opacity:1}50%{opacity:0.4}}
+  .acct-id{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;}
+  .acct-plan{background:var(--green);color:#000;font-size:9px;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:2px;}
+  .firm-btn{display:flex;align-items:center;gap:8px;background:var(--dark2);border:1px solid rgba(255,255,255,0.12);padding:6px 14px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--white);text-decoration:none;transition:all 0.2s;}
+  .firm-btn:hover{border-color:var(--green);color:var(--green);}
+  .firm-btn-sub{font-size:9px;color:var(--gray);font-weight:400;letter-spacing:1px;display:block;margin-top:1px;}
+  .start-btn{background:var(--green);color:#000;border:none;padding:8px 18px;border-radius:3px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;transition:all 0.2s;}
+  .start-btn:hover{background:var(--white);transform:translateY(-1px);}
+  .tb-sp{flex:1;}
+  .tb-stat{text-align:right;}
+  .tb-lbl{font-size:10px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;}
+  .tb-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;line-height:1.1;}
+  .tb-val.g{color:var(--green);}
+  .tb-val.r{color:var(--red);}
+  .tb-val.d{color:var(--gray);}
+  .tb-div{width:1px;height:28px;background:var(--border);margin:0 6px;}
+
+  /* BODY */
+  .body{flex:1;display:flex;overflow:hidden;}
+
+  /* CENTER */
+  .center{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0;}
+  .center::-webkit-scrollbar{width:3px;}
+  .center::-webkit-scrollbar-thumb{background:var(--dark4);}
+  .date-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .date-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);}
+  .date-inp{background:var(--dark2);border:1px solid var(--border);color:var(--white);padding:5px 10px;font-size:12px;border-radius:3px;outline:none;font-family:'Barlow',sans-serif;}
+  .date-inp:focus{border-color:var(--green);}
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  .sc{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:14px 16px;}
+  .sc-lbl{font-size:10px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;}
+  .sc-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;line-height:1;}
+  .sc-val.g{color:var(--green);}
+  .sc-val.w{color:var(--white);}
+  .sc-sub{font-size:11px;color:var(--gray);margin-top:4px;}
+  .chart-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:16px;}
+  .chart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+  .chart-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:3px;text-transform:uppercase;}
+  .chart-legend{display:flex;gap:14px;}
+  .leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray);}
+  .leg-dot{width:8px;height:8px;border-radius:50%;}
+  .leg-line{width:16px;height:2px;}
+  .chart-wrap{position:relative;height:120px;}
+  .quote-card{background:var(--dark2);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:4px;padding:16px 20px;display:flex;align-items:center;gap:16px;}
+  .quote-icon{font-size:24px;opacity:0.5;flex-shrink:0;}
+  .quote-text{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;text-transform:uppercase;letter-spacing:0.5px;line-height:1.2;color:var(--white);}
+  .quote-author{font-size:11px;color:var(--gray);margin-top:4px;letter-spacing:2px;text-transform:uppercase;}
+  .table-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:16px;}
+  .card-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);margin-bottom:12px;}
+  .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;border:1px dashed rgba(255,255,255,0.08);border-radius:4px;}
+  .empty-icon{font-size:36px;opacity:0.3;margin-bottom:12px;}
+  .empty-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:1px;color:var(--gray);margin-bottom:6px;}
+  .empty-desc{font-size:12px;color:var(--gray);opacity:0.7;line-height:1.6;max-width:260px;}
+
+  /* RIGHT */
+  .right{width:288px;min-width:288px;background:var(--dark);border-left:1px solid var(--border);overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;}
+  .right::-webkit-scrollbar{width:3px;}
+  .right::-webkit-scrollbar-thumb{background:var(--dark4);}
+  .panel-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:14px;}
+  .panel-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;}
+  .panel-sub{font-size:11px;color:var(--gray);margin-bottom:14px;}
+  .sec-lbl{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gray);margin:10px 0 8px;}
+  .rule-box{background:var(--dark3);border:1px solid var(--border);border-radius:3px;padding:10px 12px;margin-bottom:8px;}
+  .rule-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--white);margin-bottom:3px;display:flex;align-items:center;gap:6px;}
+  .rule-val{font-size:11px;color:var(--gray);line-height:1.4;}
+  .rule-val strong{color:var(--red);}
+  .obj-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+  .obj-lbl{font-size:11px;color:var(--gray);}
+  .obj-val{font-size:11px;font-weight:600;color:var(--white);}
+  .prog{height:4px;background:var(--dark4);border-radius:2px;overflow:hidden;margin-bottom:10px;}
+  .prog-fill{height:100%;background:var(--green);border-radius:2px;}
+  .prog-fill.warn{background:var(--yellow);}
+  .stat-row{display:flex;justify-content:space-between;font-size:10px;color:var(--gray);margin-bottom:3px;}
+  .coach-card{background:var(--dark2);border:1px solid rgba(0,232,122,0.18);border-radius:4px;padding:14px;}
+  .coach-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .coach-av{width:30px;height:30px;background:var(--green);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;color:#000;flex-shrink:0;}
+  .coach-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--green);}
+  .coach-sub{font-size:10px;color:var(--gray);}
+  .coach-msg{font-size:12px;color:var(--gray);line-height:1.7;}
+  .coach-msg strong{color:var(--white);font-weight:500;}
+  .focus-box{background:rgba(0,232,122,0.06);border:1px solid rgba(0,232,122,0.12);border-radius:3px;padding:9px 11px;margin-top:10px;}
+  .focus-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);opacity:0.7;margin-bottom:3px;}
+  .focus-txt{font-size:11px;color:var(--green);line-height:1.5;}
+  .stage-list{display:flex;flex-direction:column;gap:10px;}
+  .stage{display:flex;gap:10px;align-items:flex-start;}
+  .stage-ic{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:9px;font-weight:900;}
+  .stage-ic.on{background:rgba(0,232,122,0.2);border:2px solid var(--green);color:var(--green);}
+  .stage-ic.off{background:var(--dark4);color:var(--gray);border:1px solid var(--border);font-size:8px;}
+  .stage-nm{font-size:12px;font-weight:500;margin-bottom:2px;}
+  .stage-nm.on{color:var(--green);}
+  .stage-nm.off{color:var(--gray);}
+  .stage-ds{font-size:10px;color:var(--gray);line-height:1.4;}
+  .stage-bar{height:2px;background:var(--dark4);border-radius:1px;margin-top:5px;overflow:hidden;}
+  .stage-bar-fill{height:100%;background:var(--green);}
+  .fund-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:14px;text-align:center;}
+  .fund-hdr{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);margin-bottom:10px;}
+  .fund-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:all 0.2s;margin-bottom:6px;}
+  .fund-btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,0.4);}
+  .fund-note{font-size:10px;color:rgba(255,255,255,0.2);letter-spacing:1px;}
+  .upgrade-card{background:linear-gradient(135deg,rgba(0,232,122,0.07),rgba(0,232,122,0.02));border:1px solid rgba(0,232,122,0.18);border-radius:4px;padding:14px;text-align:center;}
+  .upgrade-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+  .upgrade-desc{font-size:11px;color:var(--gray);line-height:1.6;margin-bottom:12px;}
+  .upgrade-btn{display:block;background:var(--green);color:#000;padding:9px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:all 0.2s;}
+  .upgrade-btn:hover{background:var(--white);}
+  .upgrade-note{font-size:10px;color:rgba(255,255,255,0.2);margin-top:6px;letter-spacing:1px;}
+  @media(max-width:900px){.right{display:none;}.stats-grid{grid-template-columns:1fr 1fr;}html,body{height:auto;overflow:auto;}.body,.center{overflow:visible;}}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <svg class="sb-logo" viewBox="0 0 120 120" fill="none" onclick="window.location.href='index.html'">
+    <rect x="8" y="52" width="7" height="30" fill="#00e87a" rx="1"/>
+    <line x1="11.5" y1="46" x2="11.5" y2="52" stroke="#00e87a" stroke-width="2"/>
+    <line x1="11.5" y1="82" x2="11.5" y2="88" stroke="#00e87a" stroke-width="2"/>
+    <rect x="20" y="40" width="7" height="36" fill="#00e87a" rx="1"/>
+    <line x1="23.5" y1="33" x2="23.5" y2="40" stroke="#00e87a" stroke-width="2"/>
+    <line x1="23.5" y1="76" x2="23.5" y2="83" stroke="#00e87a" stroke-width="2"/>
+    <rect x="32" y="28" width="7" height="40" fill="#00e87a" rx="1"/>
+    <line x1="35.5" y1="20" x2="35.5" y2="28" stroke="#00e87a" stroke-width="2"/>
+    <line x1="35.5" y1="68" x2="35.5" y2="76" stroke="#00e87a" stroke-width="2"/>
+    <rect x="44" y="18" width="7" height="44" fill="#00e87a" rx="1"/>
+    <line x1="47.5" y1="10" x2="47.5" y2="18" stroke="#00e87a" stroke-width="2"/>
+    <line x1="47.5" y1="62" x2="47.5" y2="70" stroke="#00e87a" stroke-width="2"/>
+    <line x1="18" y1="95" x2="58" y2="55" stroke="#00e87a" stroke-width="3" stroke-linecap="round"/>
+    <defs><linearGradient id="lg" x1="55" y1="15" x2="55" y2="105" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#00e87a"/></linearGradient></defs>
+    <path d="M58 18 L58 102 M58 18 L85 18 Q105 18 105 42 Q105 66 85 66 L58 66" stroke="url(#lg)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>
+  <div class="sb-nav">
+    <div class="sb-item active"><span>⌂</span><div class="tip">Dashboard</div></div>
+    <div class="sb-item"><span>▶</span><div class="tip">Start Session</div></div>
+    <div class="sb-item"><span>📓</span><div class="tip">Journal</div></div>
+    <div class="sb-item"><span>🎯</span><div class="tip">My Strategy</div></div>
+    <div class="sb-item"><span>📊</span><div class="tip">Performance</div></div>
+    <div class="sb-item"><span>💬</span><div class="tip">Coach Prime</div></div>
+  </div>
+  <div class="sb-bottom">
+    <div class="sb-item"><span>⚙</span><div class="tip">Settings</div></div>
+    <div class="sb-item"><span>?</span><div class="tip">Help</div></div>
+    <div class="sb-item danger" onclick="window.location.href='index.html'"><span>⇥</span><div class="tip">Log Out</div></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="acct-badge">
+      <div class="acct-dot"></div>
+      <div class="acct-id">PT-FREE-001</div>
+      <div class="acct-plan">FREE</div>
+    </div>
+    <a class="firm-btn" id="firm-btn" href="#" target="_blank" rel="noopener">
+      <span id="firm-icon">🏢</span>
+      <div>
+        <div id="firm-name">Select a Firm</div>
+        <span class="firm-btn-sub">Fund your account →</span>
+      </div>
+    </a>
+    <button class="start-btn" onclick="startSession()">▶ Start Session</button>
+    <div class="tb-sp"></div>
+    <div class="tb-stat">
+      <div class="tb-lbl">Account Balance</div>
+      <div class="tb-val g">$50,000.00</div>
+    </div>
+    <div class="tb-div"></div>
+    <div class="tb-stat">
+      <div class="tb-lbl">Closed Total P&L</div>
+      <div class="tb-val d">$0.00</div>
+    </div>
+    <div class="tb-div"></div>
+    <div class="tb-stat">
+      <div class="tb-lbl">Max Loss Limit</div>
+      <div class="tb-val r" id="tb-limit">$48,500</div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div class="center">
+      <div class="date-row">
+        <div class="date-lbl">Account Balance Over Time</div>
+        <input type="date" class="date-inp" id="sd">
+        <span style="color:var(--gray);font-size:12px">—</span>
+        <input type="date" class="date-inp" id="ed">
+      </div>
+      <div class="stats-grid">
+        <div class="sc"><div class="sc-lbl">Total Sessions</div><div class="sc-val w">0</div><div class="sc-sub">Lifetime</div></div>
+        <div class="sc"><div class="sc-lbl">Win Rate</div><div class="sc-val g">—</div><div class="sc-sub">Sessions profitable</div></div>
+        <div class="sc"><div class="sc-lbl">Avg Compliance</div><div class="sc-val g">—</div><div class="sc-sub">Rule adherence</div></div>
+        <div class="sc"><div class="sc-lbl">Best Day P&L</div><div class="sc-val g">$0.00</div><div class="sc-sub">Single session high</div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head">
+          <div class="chart-title">Account Balance Over Time</div>
+          <div class="chart-legend">
+            <div class="leg"><div class="leg-dot" style="background:#00e87a"></div>Account Balance</div>
+            <div class="leg"><div class="leg-line" style="background:#ff4560"></div>Maximum Loss Limit</div>
+            <div class="leg"><div class="leg-line" style="background:rgba(0,232,122,0.4)"></div>Profit Target</div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart"></canvas></div>
+      </div>
+
+      <!-- MOTIVATION QUOTE — rotates daily -->
+      <div class="quote-card">
+        <div class="quote-icon">❝</div>
+        <div>
+          <div class="quote-text" id="quote-text">Discipline is doing what needs to be done even when you don't feel like doing it.</div>
+          <div class="quote-author" id="quote-author">— Coach Prime</div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:16px;flex-wrap:wrap;">
+          <div class="card-title" style="margin-bottom:0;">Recent Sessions</div>
+          <div style="background:var(--dark3);border:1px solid var(--border);border-radius:4px;padding:12px 16px;min-width:200px;flex-shrink:0;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);">Performance Score</div>
+              <div style="font-size:10px;color:var(--gray);letter-spacing:1px;">0–100</div>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:8px;margin-bottom:8px;">
+              <div id="perf-score" style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:42px;line-height:1;color:var(--gray);">—</div>
+              <div style="padding-bottom:6px;">
+                <div id="perf-label" style="font-size:11px;color:var(--gray);letter-spacing:1px;">No sessions yet</div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:2px;">Strategy compliance</div>
+              </div>
+            </div>
+            <div style="background:var(--dark4);border-radius:2px;height:5px;overflow:hidden;margin-bottom:6px;">
+              <div id="perf-bar" style="height:100%;width:0%;border-radius:2px;background:var(--gray);transition:width 1s ease;"></div>
+            </div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.2);line-height:1.5;">Measures how closely you followed your strategy rules. Not a readiness score.</div>
+          </div>
+        </div>
+        <!-- COACH PRIME SESSION PREVIEW — shows before first real session -->
+        <div id="sess-preview" style="margin-top:4px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gray);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);">What Coach Prime looks like after your session</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;background:rgba(0,232,122,0.04);border:1px solid rgba(0,232,122,0.1);border-left:3px solid var(--green);border-radius:3px;">
+              <div style="font-size:14px;flex-shrink:0;margin-top:1px;">✓</div>
+              <div>
+                <div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:3px;">Trade #2 — You nailed it.</div>
+                <div style="font-size:12px;color:var(--gray);line-height:1.6;">You waited for the FVG to fully form, confirmed with the 15-min bias, and entered clean. That is exactly what the strategy calls for. Remember this feeling — that's the standard.</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;background:rgba(255,69,96,0.04);border:1px solid rgba(255,69,96,0.08);border-left:3px solid var(--red);border-radius:3px;">
+              <div style="font-size:14px;flex-shrink:0;margin-top:1px;">⚠</div>
+              <div>
+                <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:3px;">Trades #1 and #3 — You missed the setup criteria.</div>
+                <div style="font-size:12px;color:var(--gray);line-height:1.6;">Both entries happened before the FVG was confirmed. You anticipated instead of reacted. The setup was forming — but it wasn't there yet. Patience costs nothing. Early entries cost you points.</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;background:rgba(255,192,64,0.04);border:1px solid rgba(255,192,64,0.08);border-left:3px solid var(--yellow);border-radius:3px;">
+              <div style="font-size:14px;flex-shrink:0;margin-top:1px;">◎</div>
+              <div>
+                <div style="font-size:12px;font-weight:600;color:var(--yellow);margin-bottom:3px;">You missed a high-probability setup entirely.</div>
+                <div style="font-size:12px;color:var(--gray);line-height:1.6;">At 10:42 a clean FVG formed on the 5-min with full displacement. Your rules said trade it — you didn't. Being too cautious costs just as much as being reckless. Trust the system you built.</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;background:rgba(0,232,122,0.03);border:1px solid rgba(0,232,122,0.08);border-radius:3px;">
+              <div style="font-size:14px;flex-shrink:0;margin-top:1px;">→</div>
+              <div>
+                <div style="font-size:12px;font-weight:600;color:var(--white);margin-bottom:3px;">Focus for next session</div>
+                <div style="font-size:12px;color:var(--gray);line-height:1.6;">Wait for full FVG confirmation before entering. Write in your journal why you took each trade before you review the outcome. One sentence is enough.</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);flex-wrap:wrap;gap:8px;">
+            <div style="font-size:11px;color:rgba(255,255,255,0.25);letter-spacing:1px;">This is a preview. Your real coaching starts after session 1.</div>
+            <div style="display:flex;gap:8px;">
+              <a href="pricing.html" style="font-size:11px;color:var(--gray);letter-spacing:1px;text-decoration:none;padding:5px 10px;border:1px solid var(--border);border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--gray)'">See Pro Coaching →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="panel-card">
+        <div class="panel-title">Path to Funding</div>
+        <div class="panel-sub" id="ptf-sub">Targeting your prop firm</div>
+        <div class="sec-lbl">1 Rule</div>
+        <div class="rule-box">
+          <div class="rule-title"><span style="color:var(--green)">●</span> Maximum Loss Limit</div>
+          <div class="rule-val">Do not let your balance drop below <strong id="rule-limit">$48,500</strong></div>
+        </div>
+        <div class="sec-lbl">Objectives</div>
+        <div class="obj-row"><div class="obj-lbl">Profit Target</div><div class="obj-val" id="obj-target">$3,000</div></div>
+        <div class="prog"><div class="prog-fill" style="width:0%"></div></div>
+        <div class="obj-row"><div class="obj-lbl">Consistency Target</div><div class="obj-val" id="obj-consistency">80% rule compliance</div></div>
+        <div class="prog"><div class="prog-fill warn" style="width:0%"></div></div>
+        <div style="margin-top:10px;">
+          <div class="stat-row"><span>Highest Day</span><span>$0.00</span></div>
+          <div class="stat-row"><span>Lowest Day</span><span>$0.00</span></div>
+          <div class="stat-row"><span>Best Day</span><span style="color:var(--green)">$0.00</span></div>
+        </div>
+      </div>
+
+      <div class="coach-card">
+        <div class="coach-head">
+          <div class="coach-av">CP</div>
+          <div><div class="coach-name">Coach Prime</div><div class="coach-sub">Post-session analysis</div></div>
+        </div>
+        <p class="coach-msg"><strong>Welcome to your dashboard.</strong> Start your first session and I'll be here after every trade — what you did right, what to fix, and one thing to focus on next time.<br><br>Your job right now: <strong>follow your rules. Every single trade.</strong></p>
+        <div class="focus-box">
+          <div class="focus-lbl">Today's Focus</div>
+          <div class="focus-txt">No checklist = no trade. Run your pre-trade rules before every single entry.</div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-title">Your Progress</div>
+        <div class="panel-sub">Complete all stages to unlock readiness score</div>
+        <div class="stage-list">
+          <div class="stage">
+            <div class="stage-ic on">●</div>
+            <div>
+              <div class="stage-nm on">Stage 1 — Foundation</div>
+              <div class="stage-ds">80%+ rule compliance across 10 sessions</div>
+              <div class="stage-bar"><div class="stage-bar-fill" style="width:0%"></div></div>
+            </div>
+          </div>
+          <div class="stage"><div class="stage-ic off">🔒</div><div><div class="stage-nm off">Stage 2 — Consistency</div><div class="stage-ds">Positive expectancy over 20 sessions</div></div></div>
+          <div class="stage"><div class="stage-ic off">🔒</div><div><div class="stage-nm off">Stage 3 — Mock Eval</div><div class="stage-ds">Pass 3 mock evaluations in a row</div></div></div>
+          <div class="stage"><div class="stage-ic off">🔒</div><div><div class="stage-nm off">Stage 4 — Readiness Score</div><div class="stage-ds">Pro plan required to unlock</div></div></div>
+        </div>
+      </div>
+
+      <!-- AFFILIATE BUTTON — dynamically populated from firm selection -->
+      <div class="fund-card">
+        <div class="fund-hdr" id="fund-hdr">Ready to get funded?</div>
+        <a class="fund-btn" id="fund-btn" href="#" target="_blank" rel="noopener" style="background:var(--green);color:#000;">
+          <span id="fund-icon">🏢</span>
+          <span id="fund-name">Fund Your Account →</span>
+        </a>
+        <div class="fund-note" id="fund-note">Select your prop firm on the path page</div>
+      </div>
+
+      <div class="upgrade-card">
+        <div class="upgrade-title">Unlock Pro Features</div>
+        <p class="upgrade-desc">Mock eval mode, intra-session coaching, prop firm readiness score, and NQ full size access.</p>
+        <a href="pricing.html" class="upgrade-btn">Upgrade to Pro →</a>
+        <div class="upgrade-note">60 days free for beta members</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const FIRMS = {
+    apex:       { name:'Apex Trader Funding', short:'Apex',        icon:'🔺', url:'https://apextraderfunding.com',   color:'#ff6b35', tc:'#fff', limit:'$47,500', target:'$3,000', note:'Trailing drawdown — protect your high water mark' },
+    topstep:    { name:'TopstepTrader',        short:'TopStep',     icon:'🔵', url:'https://www.topstep.com',         color:'#2196f3', tc:'#fff', limit:'$48,000', target:'$3,000', note:'No single day > 33% of profit target' },
+    takeprofit: { name:'Take Profit Trader',   short:'Take Profit', icon:'💚', url:'https://takeprofittrader.com',   color:'#00e87a', tc:'#000', limit:'$48,500', target:'$2,000', note:'Flexible — no daily loss limit' },
+    alpha:      { name:'Alpha Trader Funding', short:'Alpha Trader',icon:'⚡', url:'https://alphatraderfunding.com', color:'#f0c040', tc:'#000', limit:'$48,000', target:'$2,500', note:'Fast payouts — hit target and get funded quickly' },
+    tradify:    { name:'Tradify',              short:'Tradify',     icon:'📈', url:'https://tradify.com',            color:'#9b59b6', tc:'#fff', limit:'$47,000', target:'$3,000', note:'No daily loss limit — manage your own risk' },
+    other:      { name:'Your Prop Firm',       short:'Prop Firm',   icon:'🏢', url:'#',                              color:'#7a8599', tc:'#fff', limit:'$48,500', target:'$3,000', note:'Set your firm rules in settings' }
+  };
+
+  function loadFirm() {
+    let sel = [];
+    try { sel = JSON.parse(localStorage.getItem('pt_selected_firms') || '[]'); } catch(e){}
+    if (!sel.length) return;
+    const f = FIRMS[sel[0]] || FIRMS.other;
+    document.getElementById('firm-icon').textContent = f.icon;
+    document.getElementById('firm-name').textContent = 'Fund with ' + f.short;
+    document.getElementById('firm-btn').href = f.url;
+    document.getElementById('ptf-sub').textContent = 'Targeting ' + f.name;
+    document.getElementById('rule-limit').textContent = f.limit;
+    document.getElementById('obj-target').textContent = f.target;
+    document.getElementById('obj-consistency').textContent = f.note;
+    document.getElementById('tb-limit').textContent = f.limit;
+    document.getElementById('fund-hdr').textContent = 'Ready to trade with ' + f.short + '?';
+    document.getElementById('fund-icon').textContent = f.icon;
+    document.getElementById('fund-name').textContent = 'Fund with ' + f.short + ' →';
+    document.getElementById('fund-btn').href = f.url;
+    document.getElementById('fund-btn').style.background = f.color;
+    document.getElementById('fund-btn').style.color = f.tc;
+    document.getElementById('fund-note').textContent = f.note;
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('sd').value = today;
+  document.getElementById('ed').value = today;
+
+  new Chart(document.getElementById('chart').getContext('2d'), {
+    type:'line',
+    data:{ labels:['Start'], datasets:[
+      { label:'Balance', data:[50000], borderColor:'#00e87a', backgroundColor:'rgba(0,232,122,0.06)', borderWidth:2.5, pointRadius:5, pointBackgroundColor:'#00e87a', pointBorderColor:'#0c0f14', pointBorderWidth:2, fill:true, tension:0.4 },
+      { label:'Max Loss', data:[48500], borderColor:'#ff4560', borderWidth:1.5, borderDash:[6,4], pointRadius:0, fill:false },
+      { label:'Target', data:[53000], borderColor:'rgba(0,232,122,0.35)', borderWidth:1.5, borderDash:[6,4], pointRadius:0, fill:false }
+    ]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{ legend:{display:false}, tooltip:{backgroundColor:'#141928',borderColor:'rgba(255,255,255,0.08)',borderWidth:1,titleColor:'#7a8599',bodyColor:'#e8ecf0',padding:10,callbacks:{label:c=>' $'+c.raw.toLocaleString()}} },
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#7a8599',font:{size:10}}},
+        y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#7a8599',font:{size:10},callback:v=>'$'+(v/1000).toFixed(0)+'k'}}
+      }
+    }
+  });
+
+  const QUOTES = [
+    { text: "Discipline is doing what needs to be done even when you don't feel like doing it.", author: "Coach Prime" },
+    { text: "The goal is not to be perfect. The goal is to be consistent.", author: "Coach Prime" },
+    { text: "Every losing trade is tuition. Stop skipping class.", author: "Coach Prime" },
+    { text: "Your rules exist for a reason. Follow them when it's hardest.", author: "Coach Prime" },
+    { text: "Amateurs focus on profits. Professionals focus on process.", author: "Trading Wisdom" },
+    { text: "The market will always be here tomorrow. Your account might not.", author: "Coach Prime" },
+    { text: "One good trade beats ten emotional ones every time.", author: "Coach Prime" },
+    { text: "If you don't have a plan, you're trading someone else's plan.", author: "Trading Wisdom" },
+    { text: "Patience is not passive. It's the hardest discipline in trading.", author: "Coach Prime" },
+    { text: "Protect your downside. The upside takes care of itself.", author: "Trading Wisdom" }
+  ];
+  const q = QUOTES[new Date().getDay() % QUOTES.length];
+  document.getElementById('quote-text').textContent = q.text;
+  document.getElementById('quote-author').textContent = '— ' + q.author;
+
+  // Performance score updater — call this when sessions are added
+  function updatePerfScore(score) {
+    const el = document.getElementById('perf-score');
+    const bar = document.getElementById('perf-bar');
+    const lbl = document.getElementById('perf-label');
+    el.textContent = score;
+    bar.style.width = score + '%';
+    if (score >= 80) {
+      el.style.color = 'var(--green)';
+      bar.style.background = 'var(--green)';
+      lbl.textContent = 'Excellent discipline';
+      lbl.style.color = 'var(--green)';
+    } else if (score >= 60) {
+      el.style.color = 'var(--yellow)';
+      bar.style.background = 'var(--yellow)';
+      lbl.textContent = 'Improving — keep going';
+      lbl.style.color = 'var(--yellow)';
+    } else {
+      el.style.color = 'var(--red)';
+      bar.style.background = 'var(--red)';
+      lbl.textContent = 'Needs work — follow your rules';
+      lbl.style.color = 'var(--red)';
+    }
+  }
+
+  function startSession(){ alert('Session sim coming Sunday — full build day! 🚀'); }
+  loadFirm();
+</script>
+</body>
+</html>
