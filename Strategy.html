@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Strategy — Primed Trader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green:#00e87a;--green-dim:rgba(0,232,122,0.12);
+    --navy:#0c0f14;--dark:#080b10;--dark2:#0f1420;--dark3:#141928;--dark4:#1a2030;
+    --border:rgba(255,255,255,0.07);--gray:#7a8599;--white:#e8ecf0;
+    --red:#ff4560;--yellow:#f0c040;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;overflow:hidden;background:var(--navy);color:var(--white);font-family:'Barlow',sans-serif;}
+  body{display:flex;}
+
+  /* SIDEBAR */
+  .sidebar{width:56px;min-width:56px;background:var(--dark);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:14px 0;z-index:20;height:100vh;position:sticky;top:0;}
+  .sb-logo{width:32px;height:32px;margin-bottom:20px;cursor:pointer;}
+  .sb-nav{display:flex;flex-direction:column;gap:2px;flex:1;width:100%;padding:0 6px;}
+  .sb-item{width:44px;height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray);font-size:17px;transition:all 0.18s;position:relative;}
+  .sb-item:hover{background:var(--dark3);color:var(--white);}
+  .sb-item.active{background:var(--green-dim);color:var(--green);}
+  .tip{position:absolute;left:52px;top:50%;transform:translateY(-50%);background:var(--dark4);border:1px solid var(--border);color:var(--white);font-size:11px;font-weight:600;padding:5px 10px;white-space:nowrap;border-radius:4px;opacity:0;pointer-events:none;transition:opacity 0.15s;letter-spacing:1px;text-transform:uppercase;z-index:100;}
+  .sb-item:hover .tip{opacity:1;}
+
+  /* MAIN */
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+
+  /* TOPBAR */
+  .topbar{height:52px;min-height:52px;background:var(--dark);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;}
+  .page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;letter-spacing:3px;text-transform:uppercase;}
+  .tb-sp{flex:1;}
+  .strat-select{background:var(--dark2);border:1px solid rgba(0,232,122,0.2);color:var(--white);padding:7px 32px 7px 14px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:1px;text-transform:uppercase;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2300e87a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;transition:all 0.2s;}
+  .strat-select option{background:var(--dark2);}
+
+  /* CONTENT */
+  .content{flex:1;overflow-y:auto;padding:20px;display:flex;gap:20px;min-width:0;}
+  .content::-webkit-scrollbar{width:3px;}
+  .content::-webkit-scrollbar-thumb{background:var(--dark4);}
+
+  /* LEFT — strategy detail */
+  .left{flex:1;display:flex;flex-direction:column;gap:16px;min-width:0;}
+
+  /* RIGHT — checklist + dos/donts */
+  .right{width:300px;min-width:300px;display:flex;flex-direction:column;gap:16px;}
+
+  /* STRATEGY HERO */
+  .strat-hero{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:24px;position:relative;overflow:hidden;}
+  .strat-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);}
+  .strat-badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-dim);border:1px solid rgba(0,232,122,0.2);padding:5px 12px;border-radius:3px;margin-bottom:14px;}
+  .strat-badge-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+  .strat-badge-txt{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);}
+  .strat-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(28px,4vw,44px);text-transform:uppercase;letter-spacing:-1px;margin-bottom:8px;}
+  .strat-desc{font-size:14px;color:var(--gray);line-height:1.7;font-weight:300;max-width:600px;}
+  .strat-desc strong{color:var(--white);font-weight:500;}
+  .strat-tags{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+  .strat-tag{background:var(--dark3);border:1px solid var(--border);padding:4px 12px;border-radius:3px;font-size:11px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:700;}
+
+  /* RULES CARD */
+  .rules-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:18px;}
+  .card-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);margin-bottom:14px;}
+  .rule-item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+  .rule-item:last-child{border-bottom:none;}
+  .rule-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:var(--green);opacity:0.4;min-width:20px;line-height:1;margin-top:2px;}
+  .rule-text{font-size:13px;color:var(--gray);line-height:1.6;}
+  .rule-text strong{color:var(--white);font-weight:500;}
+
+  /* SETUP EXAMPLE */
+  .setup-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:18px;}
+  .setup-visual{background:var(--dark3);border:1px solid var(--border);border-radius:3px;padding:20px;margin-bottom:14px;position:relative;min-height:120px;display:flex;align-items:center;justify-content:center;}
+  .setup-chart{width:100%;height:100px;position:relative;}
+  .setup-label{position:absolute;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--dark2);padding:2px 8px;border-radius:2px;}
+  .setup-desc{font-size:13px;color:var(--gray);line-height:1.7;}
+  .setup-desc strong{color:var(--white);font-weight:500;}
+
+  /* CHECKLIST */
+  .checklist-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:16px;}
+  .check-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;}
+  .check-item:last-child{border-bottom:none;}
+  .check-box{width:18px;height:18px;border-radius:3px;border:1.5px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all 0.15s;}
+  .check-box.checked{background:var(--green);border-color:var(--green);}
+  .check-box.checked::after{content:'✓';font-size:11px;font-weight:900;color:#000;}
+  .check-txt{font-size:12px;color:var(--gray);line-height:1.5;}
+  .check-txt.checked{color:rgba(255,255,255,0.3);text-decoration:line-through;}
+  .check-reset{display:block;width:100%;margin-top:12px;background:none;border:1px solid var(--border);color:var(--gray);padding:8px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+  .check-reset:hover{border-color:var(--green);color:var(--green);}
+
+  /* DOS AND DONTS */
+  .dnd-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:16px;}
+  .dnd-section{margin-bottom:14px;}
+  .dnd-section:last-child{margin-bottom:0;}
+  .dnd-title{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
+  .dnd-title.do{color:var(--green);}
+  .dnd-title.dont{color:var(--red);}
+  .dnd-item{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;}
+  .dnd-item:last-child{margin-bottom:0;}
+  .dnd-icon{font-size:11px;flex-shrink:0;margin-top:2px;}
+  .dnd-text{font-size:12px;color:var(--gray);line-height:1.5;}
+
+  /* SWITCH WARNING */
+  .switch-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:999;align-items:center;justify-content:center;}
+  .switch-box{background:var(--dark2);border:1px solid rgba(255,69,96,0.3);border-radius:4px;padding:28px 32px;max-width:440px;width:90%;}
+  .switch-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:12px;}
+  .switch-text{font-size:13px;color:var(--gray);line-height:1.8;margin-bottom:20px;}
+  .switch-text strong{color:var(--white);font-weight:500;}
+  .switch-btns{display:flex;gap:10px;}
+  .btn-switch{flex:1;background:var(--dark3);border:1px solid rgba(255,69,96,0.3);color:var(--red);padding:10px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+  .btn-switch:hover{background:rgba(255,69,96,0.1);}
+  .btn-stay{flex:2;background:var(--green);border:none;color:#000;padding:10px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+  .btn-stay:hover{background:var(--white);}
+
+  .toggle-on { background: rgba(0,232,122,0.15) !important; border-color: rgba(0,232,122,0.4) !important; }
+  .toggle-knob-on { left: 27px !important; background: var(--green) !important; }
+  @media(max-width:900px){
+    .content{flex-direction:column;}
+    .right{width:100%;min-width:unset;}
+    html,body{height:auto;overflow:auto;}
+    .content{overflow:visible;}
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <svg class="sb-logo" viewBox="0 0 120 120" fill="none" onclick="window.location.href='dashboard.html'">
+    <rect x="8" y="52" width="7" height="30" fill="#00e87a" rx="1"/>
+    <line x1="11.5" y1="46" x2="11.5" y2="52" stroke="#00e87a" stroke-width="2"/>
+    <line x1="11.5" y1="82" x2="11.5" y2="88" stroke="#00e87a" stroke-width="2"/>
+    <rect x="20" y="40" width="7" height="36" fill="#00e87a" rx="1"/>
+    <line x1="23.5" y1="33" x2="23.5" y2="40" stroke="#00e87a" stroke-width="2"/>
+    <line x1="23.5" y1="76" x2="23.5" y2="83" stroke="#00e87a" stroke-width="2"/>
+    <rect x="32" y="28" width="7" height="40" fill="#00e87a" rx="1"/>
+    <line x1="35.5" y1="20" x2="35.5" y2="28" stroke="#00e87a" stroke-width="2"/>
+    <line x1="35.5" y1="68" x2="35.5" y2="76" stroke="#00e87a" stroke-width="2"/>
+    <rect x="44" y="18" width="7" height="44" fill="#00e87a" rx="1"/>
+    <line x1="47.5" y1="10" x2="47.5" y2="18" stroke="#00e87a" stroke-width="2"/>
+    <line x1="47.5" y1="62" x2="47.5" y2="70" stroke="#00e87a" stroke-width="2"/>
+    <line x1="18" y1="95" x2="58" y2="55" stroke="#00e87a" stroke-width="3" stroke-linecap="round"/>
+    <defs><linearGradient id="lg" x1="55" y1="15" x2="55" y2="105" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#00e87a"/></linearGradient></defs>
+    <path d="M58 18 L58 102 M58 18 L85 18 Q105 18 105 42 Q105 66 85 66 L58 66" stroke="url(#lg)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>
+  <div class="sb-nav">
+    <div class="sb-item" onclick="window.location.href='dashboard.html'"><span>⌂</span><div class="tip">Dashboard</div></div>
+    <div class="sb-item" onclick="window.location.href='session.html'"><span>▶</span><div class="tip">Start Session</div></div>
+    <div class="sb-item" onclick="window.location.href='journal.html'"><span>📓</span><div class="tip">Journal</div></div>
+    <div class="sb-item active"><span>🎯</span><div class="tip">My Strategy</div></div>
+    <div class="sb-item" onclick="window.location.href='performance.html'"><span>📊</span><div class="tip">Performance</div></div>
+    <div class="sb-item" onclick="window.location.href='coachprime.html'"><span>💬</span><div class="tip">Coach Prime</div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="page-title">My Strategy</div>
+    <div class="tb-sp"></div>
+    <select class="strat-select" id="strat-select" onchange="handleSwitch(this)">
+      <option value="fvg">Fair Value Gap</option>
+      <option value="ict">ICT Kill Zone</option>
+      <option value="orb">Opening Range Breakout</option>
+      <option value="trendline">Trendline Model</option>
+      <option value="scalp">Scalp System</option>
+    </select>
+    <button onclick="window.location.href='index.html'" style="background:none;border:1px solid rgba(255,255,255,0.1);color:var(--gray);padding:6px 14px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='var(--gray)'">Log Out</button>
+  </div>
+
+  <div class="content">
+
+    <!-- LEFT -->
+    <div class="left">
+
+      <!-- HERO -->
+      <div class="strat-hero">
+        <div class="strat-badge"><div class="strat-badge-dot"></div><div class="strat-badge-txt" id="s-active-label">Active Strategy</div></div>
+        <div class="strat-name" id="s-name">Fair Value Gap</div>
+        <div class="strat-desc" id="s-desc">Loading...</div>
+        <div class="strat-tags" id="s-tags"></div>
+
+        <!-- ACTIVE STRATEGY TOGGLE -->
+        <div style="display:flex;align-items:center;gap:14px;margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);">
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--white);margin-bottom:3px;">Set as My Active Strategy</div>
+            <div style="font-size:12px;color:var(--gray);" id="toggle-sub">Your session page will be configured for this strategy</div>
+          </div>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:10px;flex-shrink:0;">
+            <div id="toggle-label" style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);">Not Active</div>
+            <div id="toggle-wrap" onclick="toggleActive()" style="width:48px;height:26px;border-radius:13px;background:var(--dark4);border:1px solid var(--border);cursor:pointer;position:relative;transition:all 0.3s;flex-shrink:0;">
+              <div id="toggle-knob" style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--gray);transition:all 0.3s;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ENTRY RULES -->
+      <div class="rules-card">
+        <div class="card-title">Entry Rules</div>
+        <div id="s-entry-rules"></div>
+      </div>
+
+      <!-- STOP + TARGET -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="rules-card">
+          <div class="card-title">Stop Loss Rules</div>
+          <div id="s-stop-rules"></div>
+        </div>
+        <div class="rules-card">
+          <div class="card-title">Target Rules</div>
+          <div id="s-target-rules"></div>
+        </div>
+      </div>
+
+      <!-- SETUP EXAMPLE -->
+      <div class="setup-card">
+        <div class="card-title">What a Valid Setup Looks Like</div>
+        <div id="s-setup-visual" style="margin-bottom:14px;"></div>
+        <div class="setup-desc" id="s-setup-desc">Loading...</div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+
+      <!-- PRE-TRADE CHECKLIST -->
+      <div class="checklist-card">
+        <div class="card-title">Pre-Trade Checklist</div>
+        <div id="s-checklist"></div>
+        <button class="check-reset" onclick="resetChecklist()">Reset Checklist</button>
+      </div>
+
+      <!-- DOS AND DONTS -->
+      <div class="dnd-card">
+        <div class="card-title">Rules of Engagement</div>
+        <div class="dnd-section">
+          <div class="dnd-title do">✓ Always Do</div>
+          <div id="s-dos"></div>
+        </div>
+        <div class="dnd-section">
+          <div class="dnd-title dont">✗ Never Do</div>
+          <div id="s-donts"></div>
+        </div>
+      </div>
+
+      <!-- COACH PRIME TIP -->
+      <div style="background:var(--dark2);border:1px solid rgba(0,232,122,0.15);border-radius:4px;padding:14px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:28px;height:28px;background:var(--green);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;color:#000;flex-shrink:0;">CP</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Coach Prime Tip</div>
+        </div>
+        <div style="font-size:12px;color:var(--gray);line-height:1.7;" id="s-cp-tip">Loading...</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  const STRATEGIES = {
+    fvg: {
+      name: 'Fair Value Gap',
+      desc: 'An <strong>ICT-based imbalance strategy</strong> that identifies gaps in price where buying and selling are unequal. Price returns to fill these gaps with high probability — your edge is entering at the right gap with the right bias.',
+      tags: ['Day Trader', 'Intermediate', '5-min / 15-min', 'NQ / MNQ'],
+      entry: [
+        { text: '<strong>Identify a Fair Value Gap</strong> — three consecutive candles where the middle candle body creates a gap between the high of candle 1 and the low of candle 3' },
+        { text: '<strong>Confirm higher timeframe bias</strong> — 15-min or 1-hour must agree with your trade direction before entry' },
+        { text: '<strong>Wait for displacement</strong> — a strong impulsive candle that creates the FVG. No displacement = no trade' },
+        { text: '<strong>Enter on the return to the gap</strong> — wait for price to retrace back into the FVG before triggering' },
+        { text: '<strong>Kill zone timing</strong> — highest probability during 8:30–11:00 AM EST New York session' }
+      ],
+      stop: [
+        { text: '<strong>Set stop below the FVG</strong> — below the low of the gap on bullish setups, above the high on bearish' },
+        { text: '<strong>Never move your stop against you</strong> — set it before entry and do not touch it' },
+        { text: '<strong>Maximum risk per trade: 10 ticks</strong> on MNQ, 2 ticks on NQ full size' }
+      ],
+      target: [
+        { text: '<strong>Minimum 1.5R</strong> — your target must be at least 1.5x your stop distance' },
+        { text: '<strong>Previous structure high/low</strong> — identify the nearest significant level in the direction of the trade' },
+        { text: '<strong>Partial at 1R, runner to 2R</strong> — take half off at your first target, let the rest run' }
+      ],
+      setup: 'Price sweeps a liquidity level (previous high or low), then creates a strong displacement candle leaving a visible gap on the chart. You wait for price to retrace back into that gap — this is your entry. The gap should be clean, recent (within the last 10 candles), and align with the 15-min trend direction. <strong>If the gap is older than 20 candles or conflicts with the higher timeframe, skip it.</strong>',
+      checklist: [
+        '15-min or 1-hour bias confirmed before entry',
+        'Fair Value Gap is clearly visible and recent',
+        'Displacement candle created the gap (not a slow grind)',
+        'Price has returned to the gap — not chasing',
+        'Kill zone window is active (8:30–11:00 EST)',
+        'Stop loss set before clicking buy/sell',
+        'Max daily loss not already reached',
+        'Not in a news window (check economic calendar)'
+      ],
+      dos: [
+        'Wait for price to come to you — never chase',
+        'Mark your FVGs on the chart before the session',
+        'Check the 15-min trend before every entry',
+        'Take partials at 1R to protect profits'
+      ],
+      donts: [
+        'Enter before displacement is confirmed',
+        'Trade against the higher timeframe bias',
+        'Move your stop loss after entry',
+        'Trade during major news releases',
+        'Take more than 3 trades per session'
+      ],
+      tip: 'The most common FVG mistake is entering too early — before displacement is confirmed. A fair value gap that forms slowly over many candles is weak. You want a sharp, aggressive displacement candle that leaves a clean gap. If you\'re not sure whether displacement happened, it didn\'t.'
+    },
+
+    ict: {
+      name: 'ICT Kill Zone',
+      desc: 'A <strong>time-based liquidity strategy</strong> that exploits predictable institutional order flow during specific session windows. Institutions move price to hunt liquidity before reversing — your edge is knowing when and where this happens.',
+      tags: ['Day Trader', 'Advanced', '5-min / 15-min', 'NQ / MNQ'],
+      entry: [
+        { text: '<strong>Identify the kill zone</strong> — London (2:00–5:00 AM EST), New York AM (8:30–11:00 AM), or New York PM (1:30–4:00 PM)' },
+        { text: '<strong>Mark the previous session high and low</strong> — these are your liquidity targets' },
+        { text: '<strong>Wait for a liquidity sweep</strong> — price breaks above the high or below the low to grab stops' },
+        { text: '<strong>Look for displacement after the sweep</strong> — a strong reversal candle confirms institutional rejection' },
+        { text: '<strong>Enter on the first pullback</strong> after displacement — into a FVG or order block in the reversal direction' }
+      ],
+      stop: [
+        { text: '<strong>Above/below the sweep candle wick</strong> — the liquidity grab defines your invalidation level' },
+        { text: '<strong>No more than 15 ticks</strong> — if the setup requires a wider stop it is not a clean setup' },
+        { text: '<strong>One and done</strong> — if stopped out during a kill zone, do not re-enter' }
+      ],
+      target: [
+        { text: '<strong>Opposite session extreme</strong> — if sweeping highs, target the session low' },
+        { text: '<strong>Minimum 2R</strong> — kill zone setups should offer at least 2x risk reward' },
+        { text: '<strong>Exit before the kill zone closes</strong> — do not hold positions into dead zones' }
+      ],
+      setup: 'During the New York AM kill zone (8:30–11:00), price runs above the previous day\'s high taking stops from breakout traders. A strong bearish displacement candle forms immediately after the sweep. You enter short on the first pullback into the FVG created by that displacement candle. Stop is above the sweep wick. Target is the Asian session low. <strong>This is a 15–30 minute trade — not a hold-all-day setup.</strong>',
+      checklist: [
+        'Kill zone window is currently active',
+        'Previous session high or low has been identified and marked',
+        'Liquidity sweep has occurred (stop hunt confirmed)',
+        'Displacement candle confirms institutional rejection',
+        'Entry is on pullback — not chasing the move',
+        'Stop placed above/below the sweep wick',
+        'Target identified before entry',
+        'Economic calendar checked for news events'
+      ],
+      dos: [
+        'Mark previous session highs and lows before each session',
+        'Wait for the sweep AND displacement before entry',
+        'Exit positions before the kill zone window closes',
+        'Study the Asian range every morning'
+      ],
+      donts: [
+        'Trade outside of kill zone windows',
+        'Enter without a confirmed liquidity sweep',
+        'Hold positions overnight',
+        'Trade the first candle of the kill zone — wait for the setup',
+        'Ignore the Asian range when planning your session'
+      ],
+      tip: 'Most traders get trapped by the liquidity sweep — they enter in the direction of the sweep and get reversed. You profit from those trapped traders. Your patience is the edge. Wait for the sweep, wait for displacement, then follow the institutional order flow.'
+    },
+
+    orb: {
+      name: 'Opening Range Breakout',
+      desc: 'The most <strong>mechanical and beginner-friendly</strong> futures strategy. Define the opening range in the first 15–30 minutes, then trade the breakout. One setup, one trade, maximum discipline.',
+      tags: ['Day Trader / Scalper', 'Beginner Friendly', '5-min', 'NQ / MNQ'],
+      entry: [
+        { text: '<strong>Define the opening range</strong> — mark the high and low of the first 15 minutes after the 9:30 AM open (or 30-min version)' },
+        { text: '<strong>Wait for a clean breakout</strong> — price must close a full candle body above the high (long) or below the low (short)' },
+        { text: '<strong>No false breakout entries</strong> — if price breaks out and immediately reverses back inside the range, skip the trade' },
+        { text: '<strong>Enter on the retest</strong> — after the breakout candle closes, wait for price to pull back and retest the breakout level' },
+        { text: '<strong>One trade per session</strong> — this is a single-setup strategy, not a scalping system' }
+      ],
+      stop: [
+        { text: '<strong>Below the opening range low</strong> for long trades, above the opening range high for shorts' },
+        { text: '<strong>Or just below/above the breakout candle</strong> for a tighter stop on clean breakouts' },
+        { text: '<strong>Maximum risk: 10 ticks</strong> — if the range is too wide the setup is not valid' }
+      ],
+      target: [
+        { text: '<strong>1x the range size projected from the breakout</strong> — if the range is 20 ticks, target is 20 ticks from breakout' },
+        { text: '<strong>Minimum 1.5R</strong> before taking the trade' },
+        { text: '<strong>Close the trade by 11:30 AM</strong> — do not hold ORB trades into the afternoon session' }
+      ],
+      setup: 'Market opens at 9:30. For the first 15 minutes you do nothing — just watch and mark the high and low. At 9:45 you have your range. Now you wait. If price breaks above the range high with a clean full-body candle close, you look to enter long on the retest. Your stop is below the range low. Target is the range size projected up. <strong>If there is no clean breakout by 10:30, there is no trade today.</strong>',
+      checklist: [
+        'Opening range marked (9:30–9:45 high and low)',
+        'No major news events between 9:30–10:30',
+        'Breakout candle has a full body close outside the range',
+        'Not a false breakout (price did not immediately return inside)',
+        'Entry is on the retest — not chasing the breakout',
+        'Stop set below/above the opening range',
+        'Target calculated before entry (minimum 1.5R)',
+        'Time check — entering before 10:30 AM'
+      ],
+      dos: [
+        'Be at your desk before 9:30 with the range levels already drawn',
+        'Wait for a full candle body close — not just a wick',
+        'Take the retest entry for better risk/reward',
+        'Accept that some days there is no valid setup'
+      ],
+      donts: [
+        'Chase the initial breakout candle',
+        'Take more than one trade per session',
+        'Hold past 11:30 AM',
+        'Enter if the range is wider than 20 ticks on MNQ',
+        'Trade ORB on high-impact news days (FOMC, CPI, NFP)'
+      ],
+      tip: 'The biggest ORB mistake is chasing. The breakout candle already moved — your entry is on the retest of the breakout level. A pullback entry gives you a tighter stop, better risk/reward, and confirmation that the breakout is real. Patience at this one moment is the entire edge.'
+    },
+
+    trendline: {
+      name: 'Trendline Model',
+      desc: 'Pure <strong>naked price action</strong> — no indicators, no noise. Trendlines define the market structure and your entries come from bounces and breaks. Simple in theory, demanding in execution.',
+      tags: ['Day Trader', 'Intermediate', '5-min / 15-min / 1-hour', 'NQ / MNQ'],
+      entry: [
+        { text: '<strong>Draw trendlines on the 1-hour first</strong> — connect at least 2 significant highs (downtrend) or 2 significant lows (uptrend)' },
+        { text: '<strong>Confirm on the 15-min</strong> — the 15-min structure must align with the 1-hour trendline direction' },
+        { text: '<strong>Bounce entry</strong> — price returns to touch the trendline and shows a rejection candle (hammer, engulfing, pin bar)' },
+        { text: '<strong>Break entry</strong> — price breaks through the trendline with a full body candle close, then retests the broken level' },
+        { text: '<strong>No anticipation</strong> — wait for the candle to close before entering. Never enter mid-candle' }
+      ],
+      stop: [
+        { text: '<strong>Bounce trades</strong> — stop below the trendline (for longs) by 5 ticks buffer' },
+        { text: '<strong>Break trades</strong> — stop above the broken trendline (for shorts) or below (for longs)' },
+        { text: '<strong>Invalidation</strong> — if price closes back through the trendline your thesis is wrong, exit immediately' }
+      ],
+      target: [
+        { text: '<strong>Next significant structure level</strong> — previous high, low, or consolidation zone' },
+        { text: '<strong>Minimum 2R</strong> — trendline trades with less than 2R are not worth the risk' },
+        { text: '<strong>Trail your stop</strong> as price moves in your favor — lock in profits at each new structure level' }
+      ],
+      setup: 'On the 1-hour chart you identify a clear uptrend — a series of higher lows connected by a clean trendline. Price pulls back to touch the trendline for the third time. On the 15-min you see a bullish engulfing candle form right on the line. You wait for the candle to close. Entry is the open of the next candle. Stop is 5 ticks below the trendline. Target is the most recent 1-hour high. <strong>The third touch of a trendline carries more weight than the first or second.</strong>',
+      checklist: [
+        '1-hour trendline drawn with minimum 2 touch points',
+        '15-min structure confirms the direction',
+        'Price is at the trendline — not chasing a move away from it',
+        'Rejection or break candle has fully closed before entry',
+        'Stop placed with 5-tick buffer beyond the trendline',
+        'Target identified at next structure level',
+        'Minimum 2R confirmed before entry',
+        'No major news in the next 30 minutes'
+      ],
+      dos: [
+        'Draw trendlines before the session — not during it',
+        'Connect significant swing highs/lows — not every minor bounce',
+        'Wait for the candle close confirmation every time',
+        'Respect the trendline break — exit when price closes through it'
+      ],
+      donts: [
+        'Enter mid-candle in anticipation',
+        'Draw trendlines through candle bodies — connect wicks',
+        'Force a trendline that only has one touch point',
+        'Hold a trade after a confirmed trendline break against you',
+        'Use indicators alongside trendlines — trust the naked chart'
+      ],
+      tip: 'A trendline is only valid if you drew it before price reached it — not after. If you\'re drawing trendlines to justify an entry you already want to take, that is not a strategy. Draw your lines in the morning, then wait for price to come to you. The market does not care about your opinion.'
+    },
+
+    scalp: {
+      name: 'Scalp System',
+      desc: 'A <strong>fast, high-frequency scalp strategy</strong> combining 1-min structure breaks and micro trendline breaks — popularized by traders like TradesByMatt. Small targets, tight stops, maximum 3 trades per session. Discipline is the entire edge.',
+      tags: ['Scalper', 'Advanced', '1-min / 3-min / 5-min', 'Trendline + Structure', 'MNQ Only (Free)'],
+      entry: [
+        { text: '<strong>Method 1 — Structure Break:</strong> Identify a 1-min structure break — a clean break of a short-term high or low with a full body candle close' },
+        { text: '<strong>Method 2 — Trendline Break:</strong> Draw a micro trendline on the 1-min or 5-min connecting at least 2 swing highs (downtrend) or 2 swing lows (uptrend). Enter on a full body candle close through the trendline followed by a retest' },
+        { text: '<strong>Confirm with the 3-min or 5-min bias</strong> — the higher timeframe must align with your scalp direction regardless of entry method' },
+        { text: '<strong>Enter on the immediate retest</strong> — within 2–3 candles of the break. If price runs without retesting, skip it' },
+        { text: '<strong>Maximum 3 trades per session</strong> — this rule is non-negotiable. Scalping more than 3 times leads to overtrading' },
+        { text: '<strong>Kill zone only</strong> — highest probability during 8:30–10:00 AM. Do not scalp dead markets' }
+      ],
+      stop: [
+        { text: '<strong>Just below/above the structure break candle</strong> — 3–5 ticks maximum' },
+        { text: '<strong>If you need more than 8 ticks for a stop, skip the trade</strong> — the setup is not clean enough' },
+        { text: '<strong>No averaging down</strong> — if you\'re wrong, you\'re wrong. One loss and move on' }
+      ],
+      target: [
+        { text: '<strong>Minimum 1.5R</strong> — even scalps need a positive risk/reward ratio' },
+        { text: '<strong>Next 1-min structure level</strong> — previous swing high or low on the 1-min chart' },
+        { text: '<strong>Take full profit at target</strong> — no runners on scalp trades. In and out clean' }
+      ],
+      setup: 'It\'s 9:15 AM. The 3-min is trending up — higher highs and higher lows. On the 1-min a small consolidation forms. Price breaks above the consolidation high with a full body candle. You wait one candle for a micro-retest of the broken level. Entry on the retest. Stop 4 ticks below the break candle. Target is the next 1-min swing high 12 ticks away. That\'s 3R. You\'re in and out in under 5 minutes. <strong>Maximum 3 of these per session. Then you walk away.</strong>',
+      checklist: [
+        '3-min trend direction confirmed before any entries',
+        'Currently in the 8:30–10:00 AM kill zone window',
+        'Entry method confirmed — structure break OR trendline break (not both at once)',
+        'Entry is on the retest — not chasing the break',
+        'Stop set at 5 ticks or less',
+        'Trade count checked — still under 3 for the session',
+        'Not in a news window',
+        'Daily loss limit not reached'
+      ],
+      dos: [
+        'Set a hard limit of 3 trades per session — stick to it',
+        'Be fully focused — no phone, no distractions during scalp windows',
+        'Take profits at your target without hesitation',
+        'Stop for the day if you hit your max loss on trade 1'
+      ],
+      donts: [
+        'Scalp outside of the 8:30–10:00 AM window',
+        'Take more than 3 trades no matter what',
+        'Move your stop to break even too early',
+        'Revenge trade after a loss — the 3-trade limit exists for this reason',
+        'Scalp on low-volume or news-driven days'
+      ],
+      tip: 'Whether you use structure breaks or trendline breaks — the retest entry is everything. The initial break candle already moved without you. Your edge is entering on the pullback with a tight stop and a clear target. The 3-trade rule still applies regardless of method. Most scalpers blow up on trade 4 and 5 — not 1, 2, and 3.'
+    }
+  };
+
+  // SVG chart illustrations per strategy
+  const VISUALS = {
+    fvg: `<svg viewBox="0 0 520 180" width="100%" xmlns="http://www.w3.org/2000/svg" style="background:#0f1420;border-radius:3px;border:1px solid rgba(255,255,255,0.07);">
+      <!-- grid lines -->
+      <line x1="0" y1="45" x2="520" y2="45" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <line x1="0" y1="90" x2="520" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <line x1="0" y1="135" x2="520" y2="135" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <!-- candles going up -->
+      <rect x="20" y="110" width="12" height="30" fill="#ff4560" rx="1"/>
+      <line x1="26" y1="105" x2="26" y2="145" stroke="#ff4560" stroke-width="1.5"/>
+      <rect x="40" y="100" width="12" height="25" fill="#ff4560" rx="1"/>
+      <line x1="46" y1="94" x2="46" y2="130" stroke="#ff4560" stroke-width="1.5"/>
+      <rect x="60" y="85" width="12" height="20" fill="#00e87a" rx="1"/>
+      <line x1="66" y1="80" x2="66" y2="110" stroke="#00e87a" stroke-width="1.5"/>
+      <!-- BIG displacement candle -->
+      <rect x="80" y="40" width="14" height="55" fill="#00e87a" rx="1"/>
+      <line x1="87" y1="32" x2="87" y2="100" stroke="#00e87a" stroke-width="1.5"/>
+      <!-- FVG zone highlight -->
+      <rect x="94" y="60" width="80" height="28" fill="rgba(0,232,122,0.08)" rx="0"/>
+      <line x1="94" y1="60" x2="174" y2="60" stroke="rgba(0,232,122,0.5)" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="94" y1="88" x2="174" y2="88" stroke="rgba(0,232,122,0.5)" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="98" y="78" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.8)" letter-spacing="1">FVG ZONE</text>
+      <!-- candles after displacement -->
+      <rect x="96" y="42" width="12" height="18" fill="#00e87a" rx="1"/>
+      <line x1="102" y1="38" x2="102" y2="64" stroke="#00e87a" stroke-width="1.5"/>
+      <rect x="116" y="50" width="12" height="22" fill="#ff4560" rx="1"/>
+      <line x1="122" y1="44" x2="122" y2="78" stroke="#ff4560" stroke-width="1.5"/>
+      <!-- price returns to FVG -->
+      <rect x="136" y="68" width="12" height="20" fill="#ff4560" rx="1"/>
+      <line x1="142" y1="60" x2="142" y2="92" stroke="#ff4560" stroke-width="1.5"/>
+      <!-- entry candle -->
+      <rect x="156" y="55" width="14" height="30" fill="#00e87a" rx="1"/>
+      <line x1="163" y1="48" x2="163" y2="88" stroke="#00e87a" stroke-width="1.5"/>
+      <!-- entry arrow -->
+      <line x1="163" y1="95" x2="163" y2="108" stroke="#00e87a" stroke-width="2" stroke-dasharray="3,2"/>
+      <polygon points="158,108 168,108 163,116" fill="#00e87a"/>
+      <text x="150" y="128" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#00e87a" letter-spacing="1">ENTRY</text>
+      <!-- price targets up -->
+      <rect x="178" y="40" width="12" height="20" fill="#00e87a" rx="1"/>
+      <rect x="198" y="28" width="12" height="18" fill="#00e87a" rx="1"/>
+      <rect x="218" y="18" width="12" height="16" fill="#00e87a" rx="1"/>
+      <!-- stop line -->
+      <line x1="136" y1="95" x2="520" y2="95" stroke="rgba(255,69,96,0.5)" stroke-width="1" stroke-dasharray="5,3"/>
+      <text x="440" y="91" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(255,69,96,0.8)">STOP</text>
+      <!-- target line -->
+      <line x1="80" y1="18" x2="520" y2="18" stroke="rgba(240,192,64,0.4)" stroke-width="1" stroke-dasharray="5,3"/>
+      <text x="440" y="14" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(240,192,64,0.8)">TARGET</text>
+      <!-- labels -->
+      <text x="72" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">① DISPLACEMENT</text>
+      <text x="175" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">② RETURN TO FVG</text>
+      <text x="320" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">③ ENTRY + TARGET</text>
+    </svg>`,
+
+    ict: `<svg viewBox="0 0 520 180" width="100%" xmlns="http://www.w3.org/2000/svg" style="background:#0f1420;border-radius:3px;border:1px solid rgba(255,255,255,0.07);">
+      <line x1="0" y1="45" x2="520" y2="45" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <line x1="0" y1="90" x2="520" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <line x1="0" y1="135" x2="520" y2="135" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <!-- prev session high line -->
+      <line x1="0" y1="38" x2="520" y2="38" stroke="rgba(255,69,96,0.4)" stroke-width="1" stroke-dasharray="6,3"/>
+      <text x="4" y="34" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(255,69,96,0.7)">PREV SESSION HIGH — LIQUIDITY</text>
+      <!-- candles building up -->
+      <rect x="20" y="70" width="11" height="30" fill="#00e87a" rx="1"/>
+      <rect x="38" y="60" width="11" height="28" fill="#00e87a" rx="1"/>
+      <rect x="56" y="52" width="11" height="26" fill="#00e87a" rx="1"/>
+      <rect x="74" y="45" width="11" height="22" fill="#00e87a" rx="1"/>
+      <!-- sweep candle -->
+      <rect x="92" y="22" width="13" height="30" fill="#ff4560" rx="1"/>
+      <line x1="98" y1="14" x2="98" y2="58" stroke="#ff4560" stroke-width="1.5"/>
+      <text x="86" y="11" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="10" fill="#ff4560" letter-spacing="1">SWEEP</text>
+      <!-- displacement down -->
+      <rect x="112" y="42" width="13" height="50" fill="#ff4560" rx="1"/>
+      <line x1="118" y1="36" x2="118" y2="98" stroke="#ff4560" stroke-width="1.5"/>
+      <text x="108" y="112" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(255,69,96,0.8)" letter-spacing="1">DISPLACE</text>
+      <!-- pullback candles -->
+      <rect x="132" y="55" width="11" height="22" fill="#00e87a" rx="1"/>
+      <rect x="150" y="62" width="11" height="20" fill="#00e87a" rx="1"/>
+      <!-- entry short candle -->
+      <rect x="168" y="58" width="13" height="38" fill="#ff4560" rx="1"/>
+      <line x1="174" y1="50" x2="174" y2="100" stroke="#ff4560" stroke-width="1.5"/>
+      <!-- entry arrow -->
+      <line x1="174" y1="46" x2="174" y2="34" stroke="#00e87a" stroke-width="2" stroke-dasharray="3,2"/>
+      <polygon points="169,34 179,34 174,26" fill="#00e87a"/>
+      <text x="162" y="20" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#00e87a" letter-spacing="1">SHORT</text>
+      <!-- price drops -->
+      <rect x="188" y="78" width="11" height="28" fill="#ff4560" rx="1"/>
+      <rect x="206" y="95" width="11" height="30" fill="#ff4560" rx="1"/>
+      <rect x="224" y="110" width="11" height="28" fill="#ff4560" rx="1"/>
+      <!-- stop line -->
+      <line x1="92" y1="14" x2="520" y2="14" stroke="rgba(255,69,96,0.4)" stroke-width="1" stroke-dasharray="5,3"/>
+      <text x="440" y="11" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(255,69,96,0.7)">STOP</text>
+      <!-- target -->
+      <line x1="0" y1="140" x2="520" y2="140" stroke="rgba(240,192,64,0.4)" stroke-width="1" stroke-dasharray="5,3"/>
+      <text x="440" y="136" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(240,192,64,0.7)">TARGET</text>
+      <text x="16" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">① BUILD TO HIGH</text>
+      <text x="175" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">② SWEEP + REJECT</text>
+      <text x="340" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">③ SHORT TO TARGET</text>
+    </svg>`,
+
+    orb: `<svg viewBox="0 0 520 180" width="100%" xmlns="http://www.w3.org/2000/svg" style="background:#0f1420;border-radius:3px;border:1px solid rgba(255,255,255,0.07);">
+      <line x1="0" y1="45" x2="520" y2="45" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <line x1="0" y1="90" x2="520" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <line x1="0" y1="135" x2="520" y2="135" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <!-- opening range zone -->
+      <rect x="20" y="65" width="100" height="55" fill="rgba(255,255,255,0.03)" rx="0"/>
+      <line x1="20" y1="65" x2="120" y2="65" stroke="rgba(0,232,122,0.5)" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <line x1="20" y1="120" x2="120" y2="120" stroke="rgba(255,69,96,0.5)" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="24" y="96" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="11" fill="rgba(255,255,255,0.3)" letter-spacing="1">OPENING RANGE</text>
+      <text x="24" y="108" font-family="'Barlow Condensed',sans-serif" font-weight="600" font-size="10" fill="rgba(255,255,255,0.2)">9:30 — 9:45</text>
+      <!-- candles inside range -->
+      <rect x="30" y="80" width="10" height="28" fill="#7a8599" rx="1"/>
+      <rect x="46" y="75" width="10" height="32" fill="#7a8599" rx="1"/>
+      <rect x="62" y="82" width="10" height="26" fill="#7a8599" rx="1"/>
+      <rect x="78" y="70" width="10" height="30" fill="#7a8599" rx="1"/>
+      <rect x="94" y="78" width="10" height="28" fill="#7a8599" rx="1"/>
+      <!-- breakout candle -->
+      <rect x="120" y="42" width="14" height="30" fill="#00e87a" rx="1"/>
+      <line x1="127" y1="36" x2="127" y2="76" stroke="#00e87a" stroke-width="1.5"/>
+      <text x="112" y="32" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="10" fill="#00e87a" letter-spacing="1">BREAKOUT</text>
+      <!-- pullback to retest -->
+      <rect x="140" y="55" width="11" height="20" fill="#ff4560" rx="1"/>
+      <rect x="157" y="60" width="11" height="16" fill="#ff4560" rx="1"/>
+      <!-- retest of range high -->
+      <line x1="120" y1="65" x2="400" y2="65" stroke="rgba(0,232,122,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
+      <!-- entry candle -->
+      <rect x="174" y="48" width="14" height="24" fill="#00e87a" rx="1"/>
+      <line x1="181" y1="42" x2="181" y2="76" stroke="#00e87a" stroke-width="1.5"/>
+      <line x1="181" y1="80" x2="181" y2="93" stroke="#00e87a" stroke-width="2" stroke-dasharray="3,2"/>
+      <polygon points="176,93 186,93 181,101" fill="#00e87a"/>
+      <text x="168" y="114" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#00e87a" letter-spacing="1">ENTRY</text>
+      <!-- continues up -->
+      <rect x="194" y="36" width="11" height="20" fill="#00e87a" rx="1"/>
+      <rect x="211" y="24" width="11" height="18" fill="#00e87a" rx="1"/>
+      <rect x="228" y="16" width="11" height="16" fill="#00e87a" rx="1"/>
+      <!-- stop -->
+      <line x1="120" y1="122" x2="520" y2="122" stroke="rgba(255,69,96,0.4)" stroke-width="1" stroke-dasharray="5,3"/>
+      <text x="440" y="118" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(255,69,96,0.7)">STOP</text>
+      <!-- target -->
+      <line x1="120" y1="14" x2="520" y2="14" stroke="rgba(240,192,64,0.4)" stroke-width="1" stroke-dasharray="5,3"/>
+      <text x="440" y="11" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(240,192,64,0.7)">TARGET</text>
+      <text x="24" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">① MARK RANGE</text>
+      <text x="178" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">② BREAKOUT + RETEST</text>
+      <text x="360" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">③ LONG TO TARGET</text>
+    </svg>`,
+
+    trendline: `<svg viewBox="0 0 520 180" width="100%" xmlns="http://www.w3.org/2000/svg" style="background:#0f1420;border-radius:3px;border:1px solid rgba(255,255,255,0.07);">
+      <line x1="0" y1="45" x2="520" y2="45" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <line x1="0" y1="90" x2="520" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <line x1="0" y1="135" x2="520" y2="135" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <!-- uptrend trendline -->
+      <line x1="20" y1="148" x2="340" y2="48" stroke="rgba(0,232,122,0.6)" stroke-width="2" stroke-linecap="round"/>
+      <!-- candles on uptrend with pullbacks -->
+      <rect x="20" y="128" width="11" height="22" fill="#00e87a" rx="1"/>
+      <line x1="25" y1="124" x2="25" y2="154" stroke="#00e87a" stroke-width="1.5"/>
+      <rect x="40" y="115" width="11" height="20" fill="#00e87a" rx="1"/>
+      <rect x="58" y="122" width="11" height="18" fill="#ff4560" rx="1"/>
+      <!-- touch 1 -->
+      <circle cx="69" cy="138" r="5" fill="none" stroke="rgba(0,232,122,0.6)" stroke-width="1.5"/>
+      <text x="55" y="158" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="9" fill="rgba(0,232,122,0.6)">TOUCH 1</text>
+      <rect x="76" y="108" width="11" height="22" fill="#00e87a" rx="1"/>
+      <rect x="94" y="96" width="11" height="20" fill="#00e87a" rx="1"/>
+      <rect x="112" y="104" width="11" height="18" fill="#ff4560" rx="1"/>
+      <!-- touch 2 -->
+      <circle cx="123" cy="118" r="5" fill="none" stroke="rgba(0,232,122,0.6)" stroke-width="1.5"/>
+      <text x="109" y="138" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="9" fill="rgba(0,232,122,0.6)">TOUCH 2</text>
+      <rect x="130" y="84" width="11" height="20" fill="#00e87a" rx="1"/>
+      <rect x="148" y="74" width="11" height="18" fill="#00e87a" rx="1"/>
+      <rect x="166" y="82" width="11" height="17" fill="#ff4560" rx="1"/>
+      <!-- touch 3 = entry -->
+      <circle cx="177" cy="96" r="6" fill="rgba(0,232,122,0.15)" stroke="#00e87a" stroke-width="2"/>
+      <text x="160" y="116" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="9" fill="#00e87a">TOUCH 3</text>
+      <!-- entry candle -->
+      <rect x="184" y="68" width="13" height="22" fill="#00e87a" rx="1"/>
+      <line x1="190" y1="62" x2="190" y2="94" stroke="#00e87a" stroke-width="1.5"/>
+      <line x1="190" y1="98" x2="190" y2="110" stroke="#00e87a" stroke-width="2" stroke-dasharray="3,2"/>
+      <polygon points="185,110 195,110 190,118" fill="#00e87a"/>
+      <text x="178" y="130" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#00e87a" letter-spacing="1">ENTRY</text>
+      <!-- price runs up -->
+      <rect x="204" y="56" width="11" height="18" fill="#00e87a" rx="1"/>
+      <rect x="221" y="44" width="11" height="18" fill="#00e87a" rx="1"/>
+      <rect x="238" y="34" width="11" height="16" fill="#00e87a" rx="1"/>
+      <!-- stop -->
+      <line x1="166" y1="104" x2="520" y2="104" stroke="rgba(255,69,96,0.4)" stroke-width="1" stroke-dasharray="5,3"/>
+      <text x="440" y="100" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(255,69,96,0.7)">STOP</text>
+      <!-- target -->
+      <line x1="0" y1="28" x2="520" y2="28" stroke="rgba(240,192,64,0.4)" stroke-width="1" stroke-dasharray="5,3"/>
+      <text x="440" y="24" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(240,192,64,0.7)">TARGET</text>
+      <text x="20" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">① DRAW TRENDLINE (2+ TOUCHES)</text>
+      <text x="260" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">② 3RD TOUCH = ENTRY</text>
+    </svg>`,
+
+    scalp: `<svg viewBox="0 0 520 180" width="100%" xmlns="http://www.w3.org/2000/svg" style="background:#0f1420;border-radius:3px;border:1px solid rgba(255,255,255,0.07);">
+      <line x1="0" y1="45" x2="520" y2="45" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <line x1="0" y1="90" x2="520" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <line x1="0" y1="135" x2="520" y2="135" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      <!-- micro downtrend trendline (pullback in uptrend) -->
+      <line x1="30" y1="52" x2="160" y2="88" stroke="rgba(255,69,96,0.5)" stroke-width="1.5" stroke-dasharray="4,3" stroke-linecap="round"/>
+      <text x="34" y="46" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="9" fill="rgba(255,69,96,0.7)" letter-spacing="1">MICRO PULLBACK TRENDLINE (1-MIN)</text>
+      <!-- 5-min uptrend context -->
+      <text x="4" y="14" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="9" fill="rgba(0,232,122,0.5)" letter-spacing="1">5-MIN BIAS: UPTREND ↑</text>
+      <!-- candles pulling back -->
+      <rect x="30" y="62" width="9" height="22" fill="#ff4560" rx="1"/>
+      <line x1="34" y1="56" x2="34" y2="88" stroke="#ff4560" stroke-width="1.5"/>
+      <rect x="46" y="68" width="9" height="20" fill="#ff4560" rx="1"/>
+      <line x1="50" y1="62" x2="50" y2="92" stroke="#ff4560" stroke-width="1.5"/>
+      <rect x="62" y="72" width="9" height="18" fill="#ff4560" rx="1"/>
+      <line x1="66" y1="66" x2="66" y2="94" stroke="#ff4560" stroke-width="1.5"/>
+      <rect x="78" y="76" width="9" height="18" fill="#ff4560" rx="1"/>
+      <rect x="94" y="78" width="9" height="16" fill="#ff4560" rx="1"/>
+      <!-- BREAK through trendline -->
+      <rect x="110" y="58" width="12" height="28" fill="#00e87a" rx="1"/>
+      <line x1="116" y1="52" x2="116" y2="90" stroke="#00e87a" stroke-width="1.5"/>
+      <text x="104" y="48" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="10" fill="#00e87a" letter-spacing="1">BREAK</text>
+      <!-- retest -->
+      <rect x="128" y="68" width="9" height="16" fill="#ff4560" rx="1"/>
+      <rect x="143" y="72" width="9" height="14" fill="#ff4560" rx="1"/>
+      <!-- entry candle -->
+      <rect x="158" y="54" width="12" height="24" fill="#00e87a" rx="1"/>
+      <line x1="164" y1="48" x2="164" y2="82" stroke="#00e87a" stroke-width="1.5"/>
+      <line x1="164" y1="86" x2="164" y2="98" stroke="#00e87a" stroke-width="2" stroke-dasharray="3,2"/>
+      <polygon points="159,98 169,98 164,106" fill="#00e87a"/>
+      <text x="152" y="118" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#00e87a" letter-spacing="1">ENTRY</text>
+      <!-- quick move up -->
+      <rect x="176" y="44" width="10" height="18" fill="#00e87a" rx="1"/>
+      <rect x="192" y="36" width="10" height="16" fill="#00e87a" rx="1"/>
+      <rect x="208" y="28" width="10" height="14" fill="#00e87a" rx="1"/>
+      <!-- tight stop -->
+      <line x1="94" y1="96" x2="400" y2="96" stroke="rgba(255,69,96,0.4)" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="310" y="92" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(255,69,96,0.7)">STOP (TIGHT)</text>
+      <!-- target -->
+      <line x1="110" y1="26" x2="400" y2="26" stroke="rgba(240,192,64,0.4)" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="310" y="22" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(240,192,64,0.7)">TARGET (QUICK)</text>
+      <text x="20" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">① MICRO TRENDLINE PULLBACK</text>
+      <text x="260" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">② BREAK + RETEST = ENTRY</text>
+    </svg>`
+  };
+
+  let currentStrat = 'fvg';
+
+  function render(key) {
+    const s = STRATEGIES[key];
+    if (!s) return;
+
+    document.getElementById('s-name').textContent = s.name;
+    document.getElementById('s-desc').innerHTML = s.desc;
+
+    // tags
+    document.getElementById('s-tags').innerHTML = s.tags.map(t =>
+      `<div class="strat-tag">${t}</div>`).join('');
+
+    // entry rules
+    document.getElementById('s-entry-rules').innerHTML = s.entry.map((r,i) =>
+      `<div class="rule-item"><div class="rule-num">${i+1}</div><div class="rule-text">${r.text}</div></div>`).join('');
+
+    // stop rules
+    document.getElementById('s-stop-rules').innerHTML = s.stop.map((r,i) =>
+      `<div class="rule-item"><div class="rule-num">${i+1}</div><div class="rule-text">${r.text}</div></div>`).join('');
+
+    // target rules
+    document.getElementById('s-target-rules').innerHTML = s.target.map((r,i) =>
+      `<div class="rule-item"><div class="rule-num">${i+1}</div><div class="rule-text">${r.text}</div></div>`).join('');
+
+    // setup
+    document.getElementById('s-setup-desc').innerHTML = s.setup;
+
+    // checklist
+    document.getElementById('s-checklist').innerHTML = s.checklist.map((c,i) =>
+      `<div class="check-item" onclick="toggleCheck(${i})">
+        <div class="check-box" id="chk-${i}"></div>
+        <div class="check-txt" id="chktxt-${i}">${c}</div>
+      </div>`).join('');
+
+    // dos
+    document.getElementById('s-dos').innerHTML = s.dos.map(d =>
+      `<div class="dnd-item"><div class="dnd-icon" style="color:var(--green);">✓</div><div class="dnd-text">${d}</div></div>`).join('');
+
+    // donts
+    document.getElementById('s-donts').innerHTML = s.donts.map(d =>
+      `<div class="dnd-item"><div class="dnd-icon" style="color:var(--red);">✗</div><div class="dnd-text">${d}</div></div>`).join('');
+
+    // coach tip
+    document.getElementById('s-cp-tip').textContent = s.tip;
+
+    // render visual
+    const visual = document.getElementById('s-setup-visual');
+    if (visual) visual.innerHTML = VISUALS[key] || '';
+  }
+
+  function toggleCheck(i) {
+    const box = document.getElementById('chk-'+i);
+    const txt = document.getElementById('chktxt-'+i);
+    box.classList.toggle('checked');
+    txt.classList.toggle('checked');
+  }
+
+  function resetChecklist() {
+    document.querySelectorAll('.check-box').forEach(b => b.classList.remove('checked'));
+    document.querySelectorAll('.check-txt').forEach(t => t.classList.remove('checked'));
+  }
+
+  function handleSwitch(sel) {
+    currentStrat = sel.value;
+    render(currentStrat);
+    resetChecklist();
+    updateToggle();
+  }
+
+  function updateToggle() {
+    try {
+      const active = localStorage.getItem('pt_strategy');
+      const wrap = document.getElementById('toggle-wrap');
+      const knob = document.getElementById('toggle-knob');
+      const lbl = document.getElementById('toggle-label');
+      const sub = document.getElementById('toggle-sub');
+      if (active === currentStrat) {
+        wrap.classList.add('toggle-on');
+        knob.classList.add('toggle-knob-on');
+        lbl.textContent = 'Active ✓';
+        lbl.style.color = 'var(--green)';
+        sub.textContent = 'Session page is configured for this strategy';
+        sub.style.color = 'var(--green)';
+      } else {
+        wrap.classList.remove('toggle-on');
+        knob.classList.remove('toggle-knob-on');
+        lbl.textContent = 'Not Active';
+        lbl.style.color = 'var(--gray)';
+        sub.textContent = 'Your session page will be configured for this strategy';
+        sub.style.color = 'var(--gray)';
+      }
+    } catch(e) {}
+  }
+
+  function toggleActive() {
+    try {
+      const active = localStorage.getItem('pt_strategy');
+      if (active === currentStrat) {
+        // turn off — revert to none
+        localStorage.removeItem('pt_strategy');
+      } else {
+        // set this as active
+        localStorage.setItem('pt_strategy', currentStrat);
+      }
+      updateToggle();
+    } catch(e) {}
+  }
+
+  // Load strategy from localStorage (set during onboarding/path)
+  try {
+    const saved = localStorage.getItem('pt_strategy');
+    if (saved && STRATEGIES[saved]) {
+      currentStrat = saved;
+      document.getElementById('strat-select').value = saved;
+    }
+  } catch(e) {}
+
+  render(currentStrat);
+  updateToggle();
+</script>
+</body>
+</html>
