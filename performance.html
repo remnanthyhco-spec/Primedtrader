@@ -18,7 +18,7 @@
   html,body{height:100%;overflow:hidden;background:var(--navy);color:var(--white);font-family:'Barlow',sans-serif;}
   body{display:flex;}
 
-  .sidebar{width:56px;min-width:56px;background:var(--dark);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:14px 0;z-index:20;}
+  .sidebar{width:56px;min-width:56px;background:var(--dark);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:14px 0;z-index:20;height:100vh;position:sticky;top:0;}
   .sb-logo{width:32px;height:32px;margin-bottom:20px;cursor:pointer;}
   .sb-nav{display:flex;flex-direction:column;gap:2px;flex:1;width:100%;padding:0 6px;}
   .sb-item{width:44px;height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray);font-size:17px;transition:all 0.18s;position:relative;}
@@ -154,11 +154,7 @@
     <div class="sb-item" onclick="window.location.href='coachprime.html'"><span>💬</span><div class="tip">Coach Prime</div></div>
   </div>
   </div>
-  <div class="sb-bottom">
-    <div class="sb-item"><span>⚙</span><div class="tip">Settings</div></div>
-    <div class="sb-item"><span>?</span><div class="tip">Help</div></div>
-    <div class="sb-item danger" onclick="window.location.href='index.html'"><span>⇥</span><div class="tip">Log Out</div></div>
-  </div>
+
 </div>
 
 <!-- MAIN -->
@@ -166,6 +162,7 @@
   <div class="topbar">
     <div class="page-title">Performance</div>
     <div class="tb-sp"></div>
+    <button onclick="window.location.href='index.html'" style="background:none;border:1px solid rgba(255,255,255,0.1);color:var(--gray);padding:6px 14px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='var(--gray)'">Log Out</button>
     <!-- STRATEGY SELECTOR -->
     <select id="strat-select" onchange="handleStratChange(this)" style="background:var(--dark2);border:1px solid var(--border);color:var(--white);padding:6px 14px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;outline:none;cursor:pointer;appearance:none;padding-right:28px;background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2210%22 height=%226%22 viewBox=%220 0 10 6%22%3E%3Cpath d=%22M1 1l4 4 4-4%22 stroke=%22%237a8599%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 10px center;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
       <option value="FVG">Fair Value Gap</option>
