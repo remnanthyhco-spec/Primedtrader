@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coach Prime — Primed Trader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green:#00e87a;--green-dim:rgba(0,232,122,0.12);
+    --navy:#0c0f14;--dark:#080b10;--dark2:#0f1420;--dark3:#141928;--dark4:#1a2030;
+    --border:rgba(255,255,255,0.07);--gray:#7a8599;--white:#e8ecf0;
+    --red:#ff4560;--yellow:#f0c040;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;overflow:hidden;background:var(--navy);color:var(--white);font-family:'Barlow',sans-serif;}
+  body{display:flex;}
+
+  /* SIDEBAR */
+  .sidebar{width:56px;min-width:56px;background:var(--dark);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:14px 0;z-index:20;}
+  .sb-logo{width:32px;height:32px;margin-bottom:20px;cursor:pointer;}
+  .sb-nav{display:flex;flex-direction:column;gap:2px;flex:1;width:100%;padding:0 6px;}
+  .sb-item{width:44px;height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray);font-size:17px;transition:all 0.18s;position:relative;}
+  .sb-item:hover{background:var(--dark3);color:var(--white);}
+  .sb-item.active{background:var(--green-dim);color:var(--green);}
+  .tip{position:absolute;left:52px;top:50%;transform:translateY(-50%);background:var(--dark4);border:1px solid var(--border);color:var(--white);font-size:11px;font-weight:600;padding:5px 10px;white-space:nowrap;border-radius:4px;opacity:0;pointer-events:none;transition:opacity 0.15s;letter-spacing:1px;text-transform:uppercase;z-index:100;}
+  .sb-item:hover .tip{opacity:1;}
+  .sb-bottom{padding:0 6px 6px;display:flex;flex-direction:column;gap:2px;}
+  .sb-item.danger:hover{background:rgba(255,69,96,0.1);color:var(--red);}
+
+  /* MAIN */
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+
+  /* TOPBAR */
+  .topbar{height:52px;min-height:52px;background:var(--dark);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;}
+  .page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;letter-spacing:3px;text-transform:uppercase;}
+  .tb-sp{flex:1;}
+  .online-badge{display:flex;align-items:center;gap:7px;background:var(--dark2);border:1px solid rgba(0,232,122,0.2);padding:5px 12px;border-radius:3px;}
+  .online-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;flex-shrink:0;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+  .online-txt{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--green);}
+
+  /* LAYOUT */
+  .body{flex:1;display:flex;overflow:hidden;}
+  .center{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
+  .center::-webkit-scrollbar{width:3px;}
+  .center::-webkit-scrollbar-thumb{background:var(--dark4);}
+  .right{width:300px;min-width:300px;background:var(--dark);border-left:1px solid var(--border);overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;}
+  .right::-webkit-scrollbar{width:3px;}
+  .right::-webkit-scrollbar-thumb{background:var(--dark4);}
+
+  /* ASK COACH PRIME */
+  .ask-card{background:var(--dark2);border:1px solid rgba(0,232,122,0.2);border-radius:4px;padding:18px;}
+  .ask-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .coach-av{width:36px;height:36px;background:var(--green);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;color:#000;flex-shrink:0;}
+  .coach-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--green);}
+  .coach-sub{font-size:11px;color:var(--gray);}
+  .ask-input-wrap{display:flex;gap:10px;}
+  .ask-input{flex:1;background:var(--dark3);border:1px solid var(--border);color:var(--white);padding:12px 16px;font-family:'Barlow',sans-serif;font-size:14px;border-radius:3px;outline:none;transition:border-color 0.2s;}
+  .ask-input:focus{border-color:var(--green);}
+  .ask-input::placeholder{color:rgba(255,255,255,0.2);}
+  .ask-btn{background:var(--green);color:#000;border:none;padding:12px 20px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+  .ask-btn:hover{background:var(--white);}
+  .ask-note{font-size:11px;color:rgba(255,255,255,0.2);margin-top:8px;letter-spacing:1px;}
+
+  /* CHAT FEED */
+  .chat-feed{display:flex;flex-direction:column;gap:10px;margin-top:4px;}
+  .chat-msg{display:flex;gap:12px;align-items:flex-start;animation:fadeUp 0.4s ease both;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .chat-av{width:28px;height:28px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;flex-shrink:0;margin-top:2px;}
+  .chat-av.cp{background:var(--green);color:#000;}
+  .chat-av.user{background:var(--dark4);color:var(--gray);border:1px solid var(--border);}
+  .chat-bubble{background:var(--dark2);border:1px solid var(--border);border-radius:3px;padding:12px 14px;flex:1;}
+  .chat-bubble.cp{border-color:rgba(0,232,122,0.15);}
+  .chat-bubble.user{background:var(--dark3);}
+  .chat-name{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;}
+  .chat-name.cp{color:var(--green);}
+  .chat-name.user{color:var(--gray);}
+  .chat-text{font-size:13px;color:var(--gray);line-height:1.7;}
+  .chat-text strong{color:var(--white);font-weight:500;}
+  .chat-time{font-size:10px;color:rgba(255,255,255,0.2);margin-top:6px;letter-spacing:1px;}
+  .typing{display:flex;gap:4px;align-items:center;padding:4px 0;}
+  .typing-dot{width:6px;height:6px;border-radius:50%;background:var(--green);opacity:0.4;animation:typingPulse 1.2s infinite;}
+  .typing-dot:nth-child(2){animation-delay:0.2s;}
+  .typing-dot:nth-child(3){animation-delay:0.4s;}
+  @keyframes typingPulse{0%,100%{opacity:0.4;transform:scale(1)}50%{opacity:1;transform:scale(1.2)}}
+
+  /* SESSION FEEDBACK CARDS */
+  .feedback-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+  .feedback-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;transition:background 0.15s;}
+  .feedback-header:hover{background:var(--dark3);}
+  .feedback-meta{display:flex;align-items:center;gap:12px;}
+  .feedback-date{font-size:12px;color:var(--gray);}
+  .feedback-strat{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;text-transform:uppercase;}
+  .feedback-score{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;}
+  .feedback-grade{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;}
+  .ga{background:rgba(0,232,122,0.15);color:var(--green);}
+  .gb{background:rgba(240,192,64,0.12);color:var(--yellow);}
+  .gc{background:rgba(255,69,96,0.1);color:var(--red);}
+  .chevron{font-size:11px;color:var(--gray);transition:transform 0.2s;}
+  .chevron.open{transform:rotate(180deg);}
+  .feedback-body{display:none;padding:0 16px 16px;border-top:1px solid var(--border);}
+  .feedback-body.open{display:block;}
+  .fb-notes{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+  .fb-note{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:3px;border-left:3px solid;}
+  .fb-note.win{background:rgba(0,232,122,0.04);border-color:var(--green);}
+  .fb-note.loss{background:rgba(255,69,96,0.04);border-color:var(--red);}
+  .fb-note.warn{background:rgba(240,192,64,0.04);border-color:var(--yellow);}
+  .fb-note.focus{background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.12);}
+  .fb-note-icon{font-size:13px;flex-shrink:0;margin-top:1px;}
+  .fb-note-title{font-size:11px;font-weight:700;margin-bottom:3px;}
+  .fb-note.win .fb-note-title{color:var(--green);}
+  .fb-note.loss .fb-note-title{color:var(--red);}
+  .fb-note.warn .fb-note-title{color:var(--yellow);}
+  .fb-note.focus .fb-note-title{color:var(--white);}
+  .fb-note-text{font-size:11px;color:var(--gray);line-height:1.6;}
+
+  /* RIGHT PANEL */
+  .panel-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:14px;}
+  .panel-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;}
+  .panel-sub{font-size:11px;color:var(--gray);margin-bottom:12px;}
+
+  /* FOCUS OF WEEK */
+  .focus-item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+  .focus-item:last-child{border-bottom:none;}
+  .focus-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--green);opacity:0.4;flex-shrink:0;line-height:1;margin-top:2px;}
+  .focus-text{font-size:12px;color:var(--gray);line-height:1.6;}
+  .focus-text strong{color:var(--white);font-weight:500;}
+
+  /* QUICK QUESTIONS */
+  .qq-btn{display:block;width:100%;background:var(--dark3);border:1px solid var(--border);color:var(--gray);padding:9px 12px;border-radius:3px;font-size:12px;text-align:left;cursor:pointer;transition:all 0.2s;margin-bottom:6px;font-family:'Barlow',sans-serif;line-height:1.4;}
+  .qq-btn:hover{border-color:var(--green);color:var(--white);background:rgba(0,232,122,0.04);}
+  .qq-btn:last-child{margin-bottom:0;}
+
+  /* LOCKED */
+  .locked-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:16px;text-align:center;position:relative;overflow:hidden;}
+  .locked-card::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,0.01) 0px,rgba(255,255,255,0.01) 1px,transparent 1px,transparent 8px);}
+  .lock-icon{font-size:24px;opacity:0.3;margin-bottom:8px;}
+  .lock-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}
+  .lock-desc{font-size:11px;color:var(--gray);line-height:1.6;margin-bottom:12px;}
+  .lock-btn{display:inline-block;background:var(--green);color:#000;padding:7px 20px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:all 0.2s;}
+  .lock-btn:hover{background:var(--white);}
+
+  @media(max-width:900px){
+    .right{display:none;}
+    html,body{height:auto;overflow:auto;}
+    .body,.center{overflow:visible;}
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <svg class="sb-logo" viewBox="0 0 120 120" fill="none" onclick="window.location.href='dashboard.html'">
+    <rect x="8" y="52" width="7" height="30" fill="#00e87a" rx="1"/>
+    <line x1="11.5" y1="46" x2="11.5" y2="52" stroke="#00e87a" stroke-width="2"/>
+    <line x1="11.5" y1="82" x2="11.5" y2="88" stroke="#00e87a" stroke-width="2"/>
+    <rect x="20" y="40" width="7" height="36" fill="#00e87a" rx="1"/>
+    <line x1="23.5" y1="33" x2="23.5" y2="40" stroke="#00e87a" stroke-width="2"/>
+    <line x1="23.5" y1="76" x2="23.5" y2="83" stroke="#00e87a" stroke-width="2"/>
+    <rect x="32" y="28" width="7" height="40" fill="#00e87a" rx="1"/>
+    <line x1="35.5" y1="20" x2="35.5" y2="28" stroke="#00e87a" stroke-width="2"/>
+    <line x1="35.5" y1="68" x2="35.5" y2="76" stroke="#00e87a" stroke-width="2"/>
+    <rect x="44" y="18" width="7" height="44" fill="#00e87a" rx="1"/>
+    <line x1="47.5" y1="10" x2="47.5" y2="18" stroke="#00e87a" stroke-width="2"/>
+    <line x1="47.5" y1="62" x2="47.5" y2="70" stroke="#00e87a" stroke-width="2"/>
+    <line x1="18" y1="95" x2="58" y2="55" stroke="#00e87a" stroke-width="3" stroke-linecap="round"/>
+    <defs><linearGradient id="lg" x1="55" y1="15" x2="55" y2="105" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#00e87a"/></linearGradient></defs>
+    <path d="M58 18 L58 102 M58 18 L85 18 Q105 18 105 42 Q105 66 85 66 L58 66" stroke="url(#lg)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>
+  <div class="sb-nav">
+    <div class="sb-item" onclick="window.location.href='dashboard.html'"><span>⌂</span><div class="tip">Dashboard</div></div>
+    <div class="sb-item" onclick="window.location.href='session.html'"><span>▶</span><div class="tip">Start Session</div></div>
+    <div class="sb-item" onclick="window.location.href='journal.html'"><span>📓</span><div class="tip">Journal</div></div>
+    <div class="sb-item" onclick="window.location.href='strategy.html'"><span>🎯</span><div class="tip">My Strategy</div></div>
+    <div class="sb-item" onclick="window.location.href='performance.html'"><span>📊</span><div class="tip">Performance</div></div>
+    <div class="sb-item active" onclick="window.location.href='coachprime.html'"><span>💬</span><div class="tip">Coach Prime</div></div>
+  </div>
+  </div>
+  <div class="sb-bottom">
+    <div class="sb-item"><span>⚙</span><div class="tip">Settings</div></div>
+    <div class="sb-item"><span>?</span><div class="tip">Help</div></div>
+    <div class="sb-item danger" onclick="window.location.href='index.html'"><span>⇥</span><div class="tip">Log Out</div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="page-title">Coach Prime</div>
+    <div class="tb-sp"></div>
+    <div class="online-badge">
+      <div class="online-dot"></div>
+      <div class="online-txt">Coach Prime Online</div>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- CENTER -->
+    <div class="center">
+
+      <!-- ASK COACH PRIME -->
+      <div class="ask-card">
+        <div class="ask-header">
+          <div class="coach-av">CP</div>
+          <div>
+            <div class="coach-name">Ask Coach Prime</div>
+            <div class="coach-sub">Trading questions, strategy help, mindset coaching — I'm here</div>
+          </div>
+        </div>
+        <div class="ask-input-wrap">
+          <input class="ask-input" id="ask-input" type="text" placeholder="Ask me anything about your trading..." onkeydown="if(event.key==='Enter') sendQuestion()"/>
+          <button class="ask-btn" onclick="sendQuestion()">Ask →</button>
+        </div>
+        <div class="ask-note">Coach Prime responds based on your session history and strategy rules. Sunday update: responses powered by AI.</div>
+      </div>
+
+      <!-- CHAT FEED -->
+      <div class="feedback-card" style="padding:16px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);margin-bottom:14px;">Conversation</div>
+        <div class="chat-feed" id="chat-feed">
+          <!-- Default welcome message -->
+          <div class="chat-msg">
+            <div class="chat-av cp">CP</div>
+            <div class="chat-bubble cp">
+              <div class="chat-name cp">Coach Prime</div>
+              <div class="chat-text">
+                <strong>Welcome.</strong> I've reviewed your sessions and I'm ready to work with you. Ask me anything — strategy questions, why a trade didn't work, how to improve your consistency, or what to focus on next.<br><br>
+                The more you talk to me, the better I can coach you. <strong>Start by asking about your last session.</strong>
+              </div>
+              <div class="chat-time">Always available</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SESSION FEEDBACK FEED -->
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);padding:4px 0;">Session Coaching Feed</div>
+
+      <div id="feedback-feed"></div>
+
+      <!-- BEST TRADE THOUGHT BUBBLE -->
+      <div style="position:relative;display:flex;align-items:flex-start;gap:14px;padding:20px;background:var(--dark2);border:1px solid var(--border);border-radius:4px;">
+
+        <!-- Coach Prime avatar -->
+        <div style="width:40px;height:40px;background:var(--green);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;color:#000;flex-shrink:0;margin-top:4px;">CP</div>
+
+        <!-- thought bubble -->
+        <div style="position:relative;background:var(--dark3);border:1px solid rgba(0,232,122,0.2);border-radius:12px;padding:16px 18px;flex:1;animation:bubblePop 0.5s 0.3s cubic-bezier(0.16,1,0.3,1) both;opacity:0;">
+          <!-- bubble tail pointing left toward avatar -->
+          <div style="position:absolute;left:-8px;top:18px;width:14px;height:14px;background:var(--dark3);border-left:1px solid rgba(0,232,122,0.2);border-bottom:1px solid rgba(0,232,122,0.2);transform:rotate(45deg);"></div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:8px;">Coach Prime · Best Trade Highlight</div>
+          <div style="font-size:14px;color:var(--white);line-height:1.7;font-weight:300;">
+            Your best trade was <strong style="color:var(--green);font-weight:600;">Trade #2 on April 24</strong> — and here is why.<br><br>
+            You waited. You confirmed. You executed. You held.<br><br>
+            <span style="color:var(--gray);">Full FVG displacement on the 5-min. 15-min bias confirmed before entry. Stop set at 18,400 before you clicked buy. Target hit at 18,437.50 without moving a single thing. That is <strong style="color:var(--white);font-weight:500;">+$462.50</strong> from doing exactly what your rules said to do.</span><br><br>
+            <strong style="color:var(--white);font-weight:500;">That trade is your standard now. Every other trade gets measured against it.</strong>
+          </div>
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <div style="font-size:11px;color:var(--gray);">Trade score: <span style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:var(--green);">92<span style="font-size:11px;font-weight:400;">/100</span></span></div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:1px;">Apr 24 · FVG · 10:42 AM</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- DAILY 1% QUOTE -->
+      <div style="border:1px solid rgba(0,232,122,0.1);border-radius:4px;padding:28px 24px;text-align:center;margin-top:4px;">
+        <div style="font-size:32px;color:var(--green);opacity:0.25;line-height:1;margin-bottom:14px;">❝</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(20px,3vw,28px);text-transform:uppercase;letter-spacing:1px;line-height:1.2;color:var(--white);margin-bottom:14px;">1% better today.<br>1% better tomorrow.<br>Unrecognizable in a year.</div>
+        <div style="width:40px;height:1px;background:rgba(0,232,122,0.3);margin:0 auto 12px;"></div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.25);letter-spacing:4px;text-transform:uppercase;">Coach Prime</div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right">
+
+      <!-- FOCUS OF THE WEEK -->
+      <div class="panel-card">
+        <div class="panel-title">Focus of the Week</div>
+        <div class="panel-sub">Coach Prime's top priorities for you right now</div>
+        <div class="focus-item">
+          <div class="focus-num">1</div>
+          <div class="focus-text"><strong>Wait for full confirmation.</strong> Your #1 compliance miss is entering before the setup is complete. No early entries this week — zero exceptions.</div>
+        </div>
+        <div class="focus-item">
+          <div class="focus-num">2</div>
+          <div class="focus-text"><strong>Complete the checklist every trade.</strong> You skipped it on 3 of your last 5 entries. The checklist is not optional — it's your edge.</div>
+        </div>
+        <div class="focus-item">
+          <div class="focus-num">3</div>
+          <div class="focus-text"><strong>Journal before you review.</strong> Write one sentence about why you took the trade before you look at the outcome. Build the habit now.</div>
+        </div>
+      </div>
+
+      <!-- QUICK QUESTIONS -->
+      <div class="panel-card">
+        <div class="panel-title">Quick Questions</div>
+        <div class="panel-sub">Tap to ask Coach Prime</div>
+        <button class="qq-btn" onclick="quickAsk('Why is my compliance score low?')">Why is my compliance score low?</button>
+        <button class="qq-btn" onclick="quickAsk('What should I focus on in my next session?')">What should I focus on next session?</button>
+        <button class="qq-btn" onclick="quickAsk('How do I stop revenge trading?')">How do I stop revenge trading?</button>
+        <button class="qq-btn" onclick="quickAsk('Am I ready to attempt a prop firm eval?')">Am I ready for a prop firm eval?</button>
+        <button class="qq-btn" onclick="quickAsk('What is my best performing strategy?')">What is my best performing strategy?</button>
+        <button class="qq-btn" onclick="quickAsk('How do I build more consistency?')">How do I build consistency?</button>
+      </div>
+
+      <!-- COACH PRIME STATS -->
+      <div class="panel-card">
+        <div class="panel-title">Your Coaching Summary</div>
+        <div class="panel-sub">Based on all sessions to date</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+            <span style="color:var(--gray);">Sessions reviewed</span>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--white);">2</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+            <span style="color:var(--gray);">Most common miss</span>
+            <span style="font-size:11px;color:var(--red);font-weight:600;text-align:right;max-width:140px;">Early entry</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+            <span style="color:var(--gray);">Biggest strength</span>
+            <span style="font-size:11px;color:var(--green);font-weight:600;text-align:right;max-width:140px;">Stop loss discipline</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+            <span style="color:var(--gray);">Avg performance score</span>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--yellow);">63</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+            <span style="color:var(--gray);">Coaching streak</span>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--green);">2 🔥</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOCKED PRO -->
+      <div class="locked-card">
+        <div class="lock-icon">⚡</div>
+        <div class="lock-title">Intra-Session Coaching</div>
+        <div class="lock-desc">Coach Prime watches your chart in real time during sessions — flagging setups, validating entries, and keeping you accountable live as you trade.</div>
+        <a href="pricing.html" class="lock-btn">Unlock Pro →</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Bubble pop animation
+  const bubbleStyle = document.createElement('style');
+  bubbleStyle.textContent = '@keyframes bubblePop{from{opacity:0;transform:scale(0.8) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}';
+  document.head.appendChild(bubbleStyle);
+
+  const SESSIONS = [
+    {
+      id:1, date:'2026-04-24', strategy:'FVG', score:74, grade:'B',
+      notes:{
+        win:{title:'Trade #2 — Perfect execution.',text:'You waited for full FVG confirmation, checked the 15-min bias, and entered clean. That is exactly what the strategy calls for. Remember this standard.'},
+        loss:{title:'Trades #1 and #3 — Entry too early.',text:'Both trades entered before the FVG was fully formed. You anticipated instead of waiting. Patience costs nothing — early entries cost you compliance points.'},
+        warn:{title:'Missed a high-probability setup at 10:42.',text:'A clean FVG formed on the 5-min with full displacement. Your rules said trade it — you didn\'t. Being too cautious costs just as much as being reckless.'},
+        focus:{title:'Focus for next session',text:'Wait for full FVG confirmation before entering. Write one sentence in your notes before reviewing each trade outcome.'}
+      }
+    },
+    {
+      id:2, date:'2026-04-23', strategy:'FVG', score:52, grade:'C',
+      notes:{
+        win:{title:'Trade #1 — You respected your stop loss.',text:'Even though the trade went against you, you did not move your stop. That is discipline. Protecting your downside is the most important rule you have.'},
+        loss:{title:'Trade #2 — You revenge traded.',text:'After losing trade #1 you entered immediately without waiting for a new setup. That is emotional trading. The market does not owe you a recovery.'},
+        warn:{title:'No higher timeframe bias check before either entry.',text:'Your pre-trade checklist requires a 15-min bias confirmation. Neither trade had it. The checklist exists for a reason.'},
+        focus:{title:'Focus for next session',text:'Complete the full pre-trade checklist before every entry. If you skip one item, do not take the trade. No exceptions.'}
+      }
+    }
+  ];
+
+  const ANSWERS = {
+    'Why is my compliance score low?': 'Your compliance score reflects how closely you follow your strategy rules on every trade. Looking at your sessions, the two biggest misses are <strong>entering before the setup is confirmed</strong> and <strong>skipping the pre-trade checklist</strong>. Fix those two habits and your score will climb above 80 within 10 sessions.',
+    'What should I focus on in my next session?': 'One thing only — <strong>run the full pre-trade checklist before every single entry.</strong> Not most entries. Every entry. If you miss one item on the checklist, you do not take the trade. That single habit will raise your compliance score more than anything else you can do right now.',
+    'How do I stop revenge trading?': '<strong>The best revenge trade is no trade at all.</strong> After a losing trade, close your platform for 5 minutes. Literally step away. The market will still be there. Your next trade needs to come from your rules — not from your emotions trying to get even with the market.',
+    'Am I ready to attempt a prop firm eval?': 'Not yet — and that\'s a good thing to know now rather than after spending $200 on an eval. <strong>You need a 80%+ compliance score across 20 consecutive sessions</strong> before attempting an eval. You\'re at 63 average across 2 sessions. Keep building. Upgrade to Pro for your full readiness score.',
+    'What is my best performing strategy?': 'Your only sessions so far are FVG — so that\'s your best and only data point right now. <strong>Your FVG average score is 63.</strong> Stay with this strategy and get it above 80 before considering anything else.',
+    'How do I build consistency?': '<strong>Consistency is a byproduct of repetition, not talent.</strong> Same setup. Same rules. Same checklist. Every session. Do not change your strategy, do not skip steps, do not make exceptions. 30 sessions of disciplined execution will build more consistency than 100 sessions of freestyle trading.'
+  };
+
+  function scoreColor(s){
+    if(s>=80)return 'var(--green)';
+    if(s>=60)return 'var(--yellow)';
+    return 'var(--red)';
+  }
+
+  function gradeClass(g){
+    if(g==='A')return 'ga';
+    if(g==='B')return 'gb';
+    return 'gc';
+  }
+
+  // Render session feedback cards
+  const feed = document.getElementById('feedback-feed');
+  SESSIONS.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'feedback-card';
+    card.innerHTML = `
+      <div class="feedback-header" onclick="toggleFeedback(${s.id})">
+        <div class="feedback-meta">
+          <div class="coach-av" style="width:28px;height:28px;font-size:11px;background:var(--green);color:#000;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;">CP</div>
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="feedback-strat">${s.strategy}</div>
+              <div class="feedback-date">${s.date}</div>
+            </div>
+            <div style="font-size:11px;color:var(--gray);margin-top:2px;">Click to see coaching notes</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="feedback-score" style="color:${scoreColor(s.score)};">${s.score}</div>
+          <div class="feedback-grade ${gradeClass(s.grade)}">${s.grade}</div>
+          <div class="chevron" id="chev-${s.id}">▾</div>
+        </div>
+      </div>
+      <div class="feedback-body" id="body-${s.id}">
+        <div class="fb-notes">
+          <div class="fb-note win"><span class="fb-note-icon">✓</span><div><div class="fb-note-title">${s.notes.win.title}</div><div class="fb-note-text">${s.notes.win.text}</div></div></div>
+          <div class="fb-note loss"><span class="fb-note-icon">⚠</span><div><div class="fb-note-title">${s.notes.loss.title}</div><div class="fb-note-text">${s.notes.loss.text}</div></div></div>
+          <div class="fb-note warn"><span class="fb-note-icon">◎</span><div><div class="fb-note-title">${s.notes.warn.title}</div><div class="fb-note-text">${s.notes.warn.text}</div></div></div>
+          <div class="fb-note focus"><span class="fb-note-icon">→</span><div><div class="fb-note-title">${s.notes.focus.title}</div><div class="fb-note-text">${s.notes.focus.text}</div></div></div>
+        </div>
+      </div>`;
+    feed.appendChild(card);
+  });
+
+  function toggleFeedback(id){
+    const body = document.getElementById('body-'+id);
+    const chev = document.getElementById('chev-'+id);
+    const isOpen = body.classList.contains('open');
+    document.querySelectorAll('.feedback-body').forEach(b=>b.classList.remove('open'));
+    document.querySelectorAll('.chevron').forEach(c=>c.classList.remove('open'));
+    if(!isOpen){ body.classList.add('open'); chev.classList.add('open'); }
+  }
+
+  function quickAsk(q){
+    document.getElementById('ask-input').value = q;
+    sendQuestion();
+  }
+
+  function sendQuestion(){
+    const input = document.getElementById('ask-input');
+    const q = input.value.trim();
+    if(!q) return;
+    input.value = '';
+
+    const feed = document.getElementById('chat-feed');
+
+    // User message
+    const userMsg = document.createElement('div');
+    userMsg.className = 'chat-msg';
+    userMsg.innerHTML = `
+      <div class="chat-av user">ME</div>
+      <div class="chat-bubble user">
+        <div class="chat-name user">You</div>
+        <div class="chat-text">${q}</div>
+        <div class="chat-time">Just now</div>
+      </div>`;
+    feed.appendChild(userMsg);
+
+    // Typing indicator
+    const typing = document.createElement('div');
+    typing.className = 'chat-msg';
+    typing.id = 'typing';
+    typing.innerHTML = `
+      <div class="chat-av cp">CP</div>
+      <div class="chat-bubble cp">
+        <div class="chat-name cp">Coach Prime</div>
+        <div class="typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
+      </div>`;
+    feed.appendChild(typing);
+    feed.scrollTop = feed.scrollHeight;
+
+    setTimeout(() => {
+      document.getElementById('typing')?.remove();
+      const answer = ANSWERS[q] || 'That\'s a great question. <strong>Come back Sunday</strong> when Coach Prime\'s AI engine goes live — I\'ll be able to give you a fully personalized answer based on your exact session data. For now, keep focusing on your pre-trade checklist and rule compliance.';
+      const cpMsg = document.createElement('div');
+      cpMsg.className = 'chat-msg';
+      cpMsg.innerHTML = `
+        <div class="chat-av cp">CP</div>
+        <div class="chat-bubble cp">
+          <div class="chat-name cp">Coach Prime</div>
+          <div class="chat-text">${answer}</div>
+          <div class="chat-time">Just now</div>
+        </div>`;
+      feed.appendChild(cpMsg);
+      feed.scrollTop = feed.scrollHeight;
+    }, 1400);
+  }
+</script>
+</body>
+</html>
