@@ -165,6 +165,9 @@
     <defs><linearGradient id="lg" x1="55" y1="15" x2="55" y2="105" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#00e87a"/></linearGradient></defs>
     <path d="M58 18 L58 102 M58 18 L85 18 Q105 18 105 42 Q105 66 85 66 L58 66" stroke="url(#lg)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
   </svg>
+  <!-- SETTINGS icon pinned below logo -->
+  <div class="sb-item" onclick="window.location.href='account.html'" style="margin-bottom:6px;"><span>⚙</span><div class="tip">My Account</div></div>
+  <div style="width:32px;height:1px;background:rgba(255,255,255,0.06);margin-bottom:6px;"></div>
   <div class="sb-nav">
     <div class="sb-item active" onclick="window.location.href='dashboard.html'"><span>⌂</span><div class="tip">Dashboard</div></div>
     <div class="sb-item" onclick="window.location.href='session.html'"><span>▶</span><div class="tip">Start Session</div></div>
@@ -193,6 +196,7 @@
         <span class="firm-btn-sub">Fund your account →</span>
       </div>
     </a>
+
     <button class="start-btn" onclick="startSession()">▶ Start Session</button>
     <div class="tb-sp"></div>
     <button onclick="window.location.href='index.html'" style="background:none;border:1px solid rgba(255,255,255,0.1);color:var(--gray);padding:6px 14px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='var(--gray)'">Log Out</button>
@@ -400,11 +404,7 @@
   function loadFirm() {
     let sel = [];
     try { sel = JSON.parse(localStorage.getItem('pt_selected_firms') || '[]'); } catch(e){}
-    if (!sel.length) return;
-    const f = FIRMS[sel[0]] || FIRMS.other;
-    document.getElementById('firm-icon').textContent = f.icon;
-    document.getElementById('firm-name').textContent = 'Fund with ' + f.short;
-    document.getElementById('firm-btn').href = f.url;
+
     document.getElementById('ptf-sub').textContent = 'Targeting ' + f.name;
     document.getElementById('rule-limit').textContent = f.limit;
     document.getElementById('obj-target').textContent = f.target;
