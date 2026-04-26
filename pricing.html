@@ -302,79 +302,71 @@
     <p class="card-note">No credit card. No trial period. Just free.</p>
   </div>
 
-  <!-- PRO -->
-  <div class="price-card featured">
-    <div class="card-tag">Most popular</div>
-    <div class="card-name">Pro</div>
-    <div class="card-price">
-      <div class="price-amount" id="pro-price">$39</div>
-      <div class="price-period" id="pro-period">/month</div>
-    </div>
-    <div class="price-annual" id="pro-annual-note">&nbsp;</div>
-    <p class="card-desc">
-      Everything you need to <strong>pass your prop firm evaluation</strong>. The readiness engine, mock evals, full contract access, and Coach Prime's deepest analysis. This is the path to funded.
-    </p>
+  <!-- PRO — FLIP CARD -->
+  <div style="perspective:1200px;">
+    <div id="flip-inner" style="position:relative;width:100%;transition:transform 0.7s cubic-bezier(0.16,1,0.3,1);transform-style:preserve-3d;">
 
-    <div class="card-divider">Everything in Free, plus</div>
-    <ul class="features-list">
-      <li>
-        <span class="check check-yes">✓</span>
-        <span class="feat-text"><strong class="feat-highlight">Prop Firm Readiness Score</strong> — 4-stage engine that tells you when you're ready</span>
-      </li>
-      <li>
-        <span class="check check-yes">✓</span>
-        <span class="feat-text"><strong class="feat-highlight">Mock Eval Mode</strong> — practice under real TopStep & Apex rules and drawdown limits</span>
-      </li>
-      <li><span class="check check-yes">✓</span><span class="feat-text"><strong>Custom strategy builder</strong> — define your own entry, stop & target rules</span></li>
-      <li><span class="check check-yes">✓</span><span class="feat-text"><strong class="feat-highlight">Prop firm recommendation engine</strong> — tells you which firm matches your style</span></li>
-      <li><span class="check check-yes" style="color:#f0c040;">◎</span><span class="feat-text"><strong style="color:#f0c040;">TradingView live charts + any contract size</strong> <span style="font-size:10px;background:rgba(240,192,64,0.15);border:1px solid rgba(240,192,64,0.3);color:#f0c040;padding:1px 7px;border-radius:3px;letter-spacing:1px;text-transform:uppercase;margin-left:4px;">Coming Soon</span><span style="display:block;font-size:12px;color:var(--gray);margin-top:3px;font-weight:300;">Real NQ, MNQ, ES, MES — full chart control unlocking for Pro first</span></span></li>
-      <li><span class="check check-yes">✓</span><span class="feat-text">Priority Coach Prime analysis</span></li>
-      <li><span class="check check-yes">✓</span><span class="feat-text"><strong class="feat-highlight">Intra Session Coaching</strong><span style="display:block;font-size:12px;color:var(--gray);margin-top:3px;font-weight:300;">Setup identification live for each session.</span></span></li>
-      <li><span class="check check-yes">✓</span><span class="feat-text"><strong class="feat-highlight">Advanced Copy-Trading Simulation</strong> — multi-style trader profiles (aggressive, conservative, momentum)<span style="display:block;font-size:12px;color:var(--gray);margin-top:3px;font-weight:300;">Compare your decisions against 3 trader archetypes side by side.</span></span></li>
-      <li><span class="check check-yes">✓</span><span class="feat-text"><strong class="feat-highlight">Advanced Probability Scoring</strong> — deeper confidence model with confluence factors<span style="display:block;font-size:12px;color:var(--gray);margin-top:3px;font-weight:300;">Scores each setup against HTF bias, session time, volume, and rule alignment.</span></span></li>
-    </ul>
-
-    <div style="position:relative;">
-      <button class="card-btn btn-pro" id="pro-cta" onclick="togglePlanDrop()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;">
-        Get Pro Access <span id="plan-arrow" style="font-size:11px;transition:transform 0.2s;">▾</span>
-      </button>
-      <!-- PLAN DROPDOWN -->
-      <div id="plan-drop" style="display:none;position:absolute;top:calc(100% + 8px);left:0;right:0;background:#0a0f0a;border:1px solid rgba(0,232,122,0.2);border-radius:4px;overflow:hidden;z-index:100;box-shadow:0 12px 40px rgba(0,0,0,0.6);">
-        <div style="padding:12px 16px;font-size:10px;color:var(--gray);letter-spacing:3px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.06);">Choose Your Plan</div>
-        <!-- Monthly -->
-        <div id="opt-monthly" onclick="selectPlan('monthly')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.15s;background:rgba(0,232,122,0.06);" onmouseover="this.style.background='rgba(0,232,122,0.08)'" onmouseout="if(selectedPlan==='monthly')this.style.background='rgba(0,232,122,0.06)';else this.style.background='transparent'">
-          <div id="radio-monthly" style="width:18px;height:18px;border-radius:50%;border:2px solid var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);"></div></div>
-          <div style="flex:1;">
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:1px;color:var(--white);">Monthly</div>
-            <div style="font-size:11px;color:var(--gray);margin-top:1px;">Billed monthly · cancel anytime</div>
+      <!-- FRONT -->
+      <div style="backface-visibility:hidden;-webkit-backface-visibility:hidden;">
+        <div class="price-card featured">
+          <div class="card-tag">Most popular</div>
+          <div class="card-name">Pro</div>
+          <div class="card-price">
+            <div class="price-amount">$39</div>
+            <div class="price-period">/month</div>
           </div>
-          <div style="text-align:right;">
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:var(--green);">$39</div>
-            <div style="font-size:10px;color:var(--gray);">/month</div>
-          </div>
-        </div>
-        <!-- Annual -->
-        <div id="opt-annual" onclick="selectPlan('annual')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='rgba(0,232,122,0.04)'" onmouseout="if(selectedPlan==='annual')this.style.background='rgba(0,232,122,0.06)';else this.style.background='transparent'">
-          <div id="radio-annual" style="width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><div style="width:8px;height:8px;border-radius:50%;background:transparent;"></div></div>
-          <div style="flex:1;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:1px;color:var(--white);">Annual</div>
-              <div style="font-size:9px;background:rgba(0,232,122,0.15);border:1px solid rgba(0,232,122,0.3);color:var(--green);padding:1px 7px;border-radius:2px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;">SAVE $144</div>
-            </div>
-            <div style="font-size:11px;color:var(--gray);margin-top:1px;">$324 billed once per year</div>
-          </div>
-          <div style="text-align:right;">
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:var(--green);">$27</div>
-            <div style="font-size:10px;color:var(--gray);">/month</div>
-          </div>
-        </div>
-        <!-- Continue button -->
-        <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.06);">
-          <button onclick="continueToPro()" style="width:100%;background:var(--green);color:#000;border:none;padding:12px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all 0.2s;" onmouseover="this.style.background='#fff'" onmouseout="this.style.background='var(--green)'">Continue to Checkout →</button>
+          <div class="price-annual">or $27/mo billed annually — save $144</div>
+          <p class="card-desc">Everything you need to <strong>pass your prop firm evaluation</strong>. Readiness engine, mock evals, intra-session coaching, and Coach Prime's deepest analysis.</p>
+          <div class="card-divider">Everything in Free, plus</div>
+          <ul class="features-list">
+            <li><span class="check check-yes">✓</span><span class="feat-text"><strong class="feat-highlight">Prop Firm Readiness Score</strong> — 4-stage engine that tells you when you're ready</span></li>
+            <li><span class="check check-yes">✓</span><span class="feat-text"><strong class="feat-highlight">Mock Eval Mode</strong> — practice under real prop firm rules and drawdown limits</span></li>
+            <li><span class="check check-yes">✓</span><span class="feat-text"><strong class="feat-highlight">Prop firm recommendation engine</strong> — tells you which firm matches your style</span></li>
+            <li><span class="check check-yes">✓</span><span class="feat-text"><strong class="feat-highlight">Intra Session Coaching</strong> — Coach Prime watches your chart live during sessions</span></li>
+            <li><span class="check check-yes">✓</span><span class="feat-text"><strong class="feat-highlight">Advanced Copy-Trading Simulation</strong> — 3 trader archetypes side by side</span></li>
+            <li><span class="check check-yes">✓</span><span class="feat-text"><strong class="feat-highlight">Advanced Probability Scoring</strong> — HTF bias, session time, volume, rule alignment</span></li>
+            <li><span class="check check-yes" style="color:#f0c040;">◎</span><span class="feat-text" style="color:#f0c040;">Live Charts <span style="font-size:10px;background:rgba(240,192,64,0.15);border:1px solid rgba(240,192,64,0.3);padding:1px 7px;border-radius:3px;letter-spacing:1px;text-transform:uppercase;margin-left:4px;">Coming Soon</span></span></li>
+          </ul>
+          <button class="card-btn btn-pro" onclick="flipCard()" style="width:100%;">Get Pro Access →</button>
+          <p class="card-note">First 50 beta users get 60 days free. No card needed during beta.</p>
         </div>
       </div>
+
+      <!-- BACK -->
+      <div style="position:absolute;top:0;left:0;right:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(180deg);">
+        <div class="price-card featured" style="min-height:100%;">
+          <button onclick="flipCard()" style="background:none;border:none;color:var(--gray);font-size:12px;letter-spacing:2px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:700;cursor:pointer;margin-bottom:20px;display:flex;align-items:center;gap:6px;padding:0;transition:color 0.2s;" onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='var(--gray)'">← Back</button>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;letter-spacing:1px;margin-bottom:4px;">Choose Your Plan</div>
+          <div style="font-size:13px;color:var(--gray);margin-bottom:24px;">Cancel anytime. No contracts.</div>
+
+          <!-- TOGGLE -->
+          <div style="display:flex;align-items:center;gap:0;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;margin-bottom:24px;">
+            <div id="tog-monthly" onclick="setPlan('monthly')" style="flex:1;padding:10px 0;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;background:var(--green);color:#000;">Monthly</div>
+            <div id="tog-annual" onclick="setPlan('annual')" style="flex:1;padding:10px 0;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;color:var(--gray);">Annual</div>
+          </div>
+
+          <!-- PRICE -->
+          <div style="text-align:center;padding:24px;background:rgba(0,232,122,0.04);border:1px solid rgba(0,232,122,0.12);border-radius:3px;margin-bottom:20px;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:56px;color:var(--green);line-height:1;" id="back-price">$39</div>
+            <div style="font-size:13px;color:var(--gray);margin-top:4px;" id="back-period">per month · billed monthly</div>
+            <div id="back-savings" style="display:none;font-size:12px;color:var(--green);margin-top:8px;font-weight:600;letter-spacing:1px;">You save $144 a year</div>
+          </div>
+
+          <!-- WHAT YOU GET -->
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gray);"><span style="color:var(--green);">✓</span> Full Pro dashboard + readiness score</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gray);"><span style="color:var(--green);">✓</span> Mock eval mode — real firm rules</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gray);"><span style="color:var(--green);">✓</span> Coach Prime intra-session coaching</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gray);"><span style="color:var(--green);">✓</span> Advanced probability + analytics</div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gray);"><span style="color:var(--green);">✓</span> Everything in Free, always</div>
+          </div>
+
+          <button onclick="continueToPro()" style="width:100%;background:var(--green);color:#000;border:none;padding:16px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;border-radius:2px;margin-bottom:12px;" onmouseover="this.style.background='#fff'" onmouseout="this.style.background='var(--green)'">Continue to Checkout →</button>
+          <div style="font-size:11px;color:rgba(255,255,255,0.2);text-align:center;line-height:1.6;">Stripe secure checkout. Beta users: first 60 days free.</div>
+        </div>
+      </div>
+
     </div>
-    <p class="card-note">Beta users get Pro free for 60 days. Cancel anytime.</p>
   </div>
 
 </div>
@@ -534,6 +526,42 @@
       note.innerHTML = '&nbsp;';
       cta.textContent = 'Start Pro Free — 60 Days Beta';
     }
+  }
+
+  // FLIP CARD
+  let selectedPlan = 'monthly';
+
+  function flipCard() {
+    const inner = document.getElementById('flip-inner');
+    inner.style.transform = inner.style.transform === 'rotateY(180deg)' ? '' : 'rotateY(180deg)';
+  }
+
+  function setPlan(plan) {
+    selectedPlan = plan;
+    const togM = document.getElementById('tog-monthly');
+    const togA = document.getElementById('tog-annual');
+    const price = document.getElementById('back-price');
+    const period = document.getElementById('back-period');
+    const savings = document.getElementById('back-savings');
+    if (plan === 'monthly') {
+      togM.style.background = 'var(--green)'; togM.style.color = '#000';
+      togA.style.background = 'transparent'; togA.style.color = 'var(--gray)';
+      price.textContent = '$39';
+      period.textContent = 'per month · billed monthly';
+      savings.style.display = 'none';
+    } else {
+      togA.style.background = 'var(--green)'; togA.style.color = '#000';
+      togM.style.background = 'transparent'; togM.style.color = 'var(--gray)';
+      price.textContent = '$27';
+      period.textContent = 'per month · billed annually ($324/yr)';
+      savings.style.display = 'block';
+    }
+  }
+
+  function continueToPro() {
+    localStorage.setItem('pt_selected_plan', selectedPlan);
+    // Sunday: stripe.redirectToCheckout()
+    alert('Stripe checkout coming Sunday!\n\nPlan: ' + (selectedPlan === 'monthly' ? '$39/mo' : '$27/mo annual') + '\n\nYou are on the list 🚀');
   }
 
   function toggleFaq(btn) {
