@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pro Dashboard — Primed Trader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{--green:#00e87a;--green-dim:rgba(0,232,122,0.12);--navy:#0c0f14;--dark:#080b10;--dark2:#0f1420;--dark3:#141928;--dark4:#1a2030;--border:rgba(255,255,255,0.07);--gray:#7a8599;--white:#e8ecf0;--red:#ff4560;--yellow:#f0c040;--gold:#d4a82a;--purple:#9b59b6;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;background:var(--navy);color:var(--white);font-family:'Barlow',sans-serif;}
+body{display:flex;}
+.sidebar{width:56px;min-width:56px;background:var(--dark);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:14px 0;z-index:20;height:100vh;}
+.sb-logo{width:32px;height:32px;margin-bottom:20px;cursor:pointer;}
+.sb-item{width:44px;height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray);font-size:17px;transition:all 0.18s;position:relative;}
+.sb-item:hover{background:var(--dark3);color:var(--white);}
+.sb-item.active{background:var(--green-dim);color:var(--green);}
+.tip{position:absolute;left:52px;top:50%;transform:translateY(-50%);background:var(--dark4);border:1px solid var(--border);color:var(--white);font-size:11px;font-weight:600;padding:5px 10px;white-space:nowrap;border-radius:4px;opacity:0;pointer-events:none;transition:opacity 0.15s;letter-spacing:1px;text-transform:uppercase;z-index:100;}
+.sb-item:hover .tip{opacity:1;}
+.sb-nav{display:flex;flex-direction:column;gap:2px;flex:1;width:100%;padding:0 6px;}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{height:56px;min-height:56px;background:var(--dark);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;}
+.pro-badge{display:flex;align-items:center;gap:8px;background:rgba(212,168,42,0.08);border:1px solid rgba(212,168,42,0.25);padding:5px 12px;border-radius:3px;}
+.pro-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px var(--gold);animation:pulse 2s infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.pro-id{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;}
+.pro-plan{background:var(--gold);color:#000;font-size:9px;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:2px;}
+.readiness-badge{display:flex;align-items:center;gap:10px;background:var(--dark2);border:1px solid rgba(0,232,122,0.15);padding:5px 14px;border-radius:3px;}
+.rb-label{font-size:10px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;}
+.rb-score{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--green);line-height:1;}
+.mock-toggle{display:flex;align-items:center;gap:8px;background:var(--dark2);border:1px solid var(--border);padding:6px 14px;border-radius:3px;cursor:pointer;transition:all 0.2s;user-select:none;}
+.mock-toggle.on{border-color:rgba(240,192,64,0.35);background:rgba(240,192,64,0.05);}
+.mock-dot{width:8px;height:8px;border-radius:50%;background:var(--gray);transition:all 0.2s;}
+.mock-toggle.on .mock-dot{background:var(--yellow);box-shadow:0 0 8px var(--yellow);}
+.mock-txt{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);transition:color 0.2s;}
+.mock-toggle.on .mock-txt{color:var(--yellow);}
+.tb-sp{flex:1;}
+.tb-stat{text-align:right;}
+.tb-lbl{font-size:10px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;}
+.tb-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;line-height:1.1;}
+.tb-val.g{color:var(--green);}
+.tb-val.r{color:var(--red);}
+.tb-val.d{color:var(--gray);}
+.tb-div{width:1px;height:28px;background:var(--border);margin:0 4px;}
+.start-btn{background:var(--green);color:#000;border:none;padding:8px 18px;border-radius:3px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;transition:all 0.2s;}
+.start-btn:hover{background:var(--white);}
+.start-btn.mock-mode{background:var(--yellow);}
+.logout-btn{background:none;border:1px solid rgba(255,255,255,0.1);color:var(--gray);padding:6px 14px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+.logout-btn:hover{border-color:var(--red);color:var(--red);}
+.mock-banner{background:rgba(240,192,64,0.05);border-bottom:1px solid rgba(240,192,64,0.12);padding:8px 20px;display:none;align-items:center;gap:16px;flex-shrink:0;}
+.mock-banner.on{display:flex;}
+.mock-banner-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--yellow);}
+.mock-stat{text-align:center;padding:0 14px;border-left:1px solid rgba(240,192,64,0.12);}
+.mock-stat-lbl{font-size:9px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
+.mock-stat-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;}
+.mock-stat-val.ok{color:var(--green);}
+.mock-stat-val.warn{color:var(--yellow);}
+.welcome-banner{background:linear-gradient(135deg,rgba(212,168,42,0.1),rgba(0,232,122,0.05));border-bottom:1px solid rgba(212,168,42,0.15);padding:10px 20px;display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.welcome-banner.hidden{display:none;}
+.body{flex:1;display:flex;overflow:hidden;}
+.center{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0;}
+.center::-webkit-scrollbar{width:3px;}
+.center::-webkit-scrollbar-thumb{background:var(--dark4);}
+.stats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
+.sc{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:13px 14px;position:relative;overflow:hidden;}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:2px 2px 0 0;}
+.sc.green::before{background:var(--green);}
+.sc.gold::before{background:var(--gold);}
+.sc.yellow::before{background:var(--yellow);}
+.sc.purple::before{background:var(--purple);}
+.sc-lbl{font-size:10px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.sc-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;line-height:1;}
+.sc-val.g{color:var(--green);}
+.sc-val.w{color:var(--white);}
+.sc-val.y{color:var(--yellow);}
+.sc-val.gold{color:var(--gold);}
+.sc-val.purple{color:var(--purple);}
+.sc-sub{font-size:10px;color:var(--gray);margin-top:3px;}
+.sc-pro{position:absolute;top:10px;right:10px;font-size:8px;background:rgba(212,168,42,0.15);border:1px solid rgba(212,168,42,0.3);color:var(--gold);padding:1px 5px;border-radius:2px;letter-spacing:1px;font-weight:700;text-transform:uppercase;}
+.sc-trend{position:absolute;bottom:12px;right:12px;font-size:11px;font-weight:600;}
+.sc-trend.up{color:var(--green);}
+
+
+.loss-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);}
+
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.chart-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:16px;}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:3px;text-transform:uppercase;}
+.card-sub{font-size:11px;color:var(--gray);}
+.chart-legend{display:flex;gap:12px;flex-wrap:wrap;}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray);}
+.leg-dot{width:7px;height:7px;border-radius:50%;}
+.leg-line{width:14px;height:2px;}
+.chart-wrap{position:relative;height:180px;}
+.session-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;}
+.session-row:last-child{border-bottom:none;}
+.session-row:hover{background:rgba(255,255,255,0.02);}
+.session-strat{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;}
+.session-date{font-size:11px;color:var(--gray);margin-top:2px;}
+.session-pnl{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;}
+.session-pnl.pos{color:var(--green);}
+.session-pnl.neg{color:var(--red);}
+.session-grade{width:26px;height:26px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;}
+.gb{background:rgba(240,192,64,0.12);color:var(--yellow);}
+.gc{background:rgba(255,69,96,0.1);color:var(--red);}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;border:1px dashed rgba(255,255,255,0.07);border-radius:3px;}
+.empty-icon{font-size:28px;opacity:0.25;margin-bottom:10px;}
+.empty-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:1px;color:var(--gray);margin-bottom:5px;}
+.empty-desc{font-size:12px;color:var(--gray);opacity:0.7;line-height:1.6;max-width:220px;}
+.right{width:292px;min-width:292px;background:var(--dark);border-left:1px solid var(--border);overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;}
+.right::-webkit-scrollbar{width:3px;}
+.right::-webkit-scrollbar-thumb{background:var(--dark4);}
+.panel-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:14px;}
+.panel-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;letter-spacing:3px;text-transform:uppercase;margin-bottom:3px;}
+.panel-sub{font-size:11px;color:var(--gray);margin-bottom:12px;}
+.gauge-wrap{position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.gauge-num{position:absolute;text-align:center;}
+.gauge-score{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:36px;color:var(--green);line-height:1;}
+.gauge-max{font-size:12px;color:var(--gray);}
+.r-stage{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.r-stage:last-child{margin-bottom:0;}
+.r-ic{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;font-weight:900;}
+.r-ic.done{background:var(--green);color:#000;}
+.r-ic.active{background:rgba(0,232,122,0.15);border:2px solid var(--green);color:var(--green);}
+.r-ic.locked{background:var(--dark4);color:var(--gray);border:1px solid var(--border);}
+.r-name{font-size:12px;flex:1;}
+.r-name.done{color:var(--gray);text-decoration:line-through;}
+.r-name.active{color:var(--green);}
+.r-name.locked{color:var(--gray);}
+.r-bar{width:56px;height:3px;background:var(--dark4);border-radius:2px;overflow:hidden;}
+.r-fill{height:100%;background:var(--green);}
+.eval-dots{display:flex;gap:8px;margin:10px 0;}
+.eval-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;}
+.eval-dot.pending{background:var(--dark4);border:1px solid var(--border);color:var(--gray);}
+.firm-item{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:3px;margin-bottom:5px;border:1px solid var(--border);}
+.firm-item.top{border-color:rgba(0,232,122,0.2);background:rgba(0,232,122,0.04);}
+.firm-item:last-child{margin-bottom:0;}
+.firm-rank{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:var(--green);opacity:0.35;min-width:16px;}
+.firm-name-txt{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;flex:1;}
+.firm-score{font-size:11px;font-weight:600;}
+.firm-score.g{color:var(--green);}
+.firm-score.y{color:var(--yellow);}
+.coach-card{background:var(--dark2);border:1px solid rgba(0,232,122,0.15);border-radius:4px;padding:14px;}
+.live-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(0,232,122,0.08);border:1px solid rgba(0,232,122,0.15);padding:2px 8px;border-radius:2px;margin-bottom:8px;}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
+.live-txt{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);}
+.coach-msg{font-size:12px;color:var(--gray);line-height:1.7;}
+.coach-msg strong{color:var(--white);font-weight:500;}
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:900px){.right{display:none;}.two-col{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <svg class="sb-logo" viewBox="0 0 120 120" fill="none" onclick="window.location.href='pro-dashboard.html'">
+    <rect x="8" y="52" width="7" height="30" fill="#00e87a" rx="1"/>
+    <line x1="11.5" y1="46" x2="11.5" y2="52" stroke="#00e87a" stroke-width="2"/>
+    <line x1="11.5" y1="82" x2="11.5" y2="88" stroke="#00e87a" stroke-width="2"/>
+    <rect x="20" y="40" width="7" height="36" fill="#00e87a" rx="1"/>
+    <line x1="23.5" y1="33" x2="23.5" y2="40" stroke="#00e87a" stroke-width="2"/>
+    <line x1="23.5" y1="76" x2="23.5" y2="83" stroke="#00e87a" stroke-width="2"/>
+    <rect x="32" y="28" width="7" height="40" fill="#00e87a" rx="1"/>
+    <line x1="35.5" y1="20" x2="35.5" y2="28" stroke="#00e87a" stroke-width="2"/>
+    <line x1="35.5" y1="68" x2="35.5" y2="76" stroke="#00e87a" stroke-width="2"/>
+    <rect x="44" y="18" width="7" height="44" fill="#00e87a" rx="1"/>
+    <line x1="47.5" y1="10" x2="47.5" y2="18" stroke="#00e87a" stroke-width="2"/>
+    <line x1="47.5" y1="62" x2="47.5" y2="70" stroke="#00e87a" stroke-width="2"/>
+    <line x1="18" y1="95" x2="58" y2="55" stroke="#00e87a" stroke-width="3" stroke-linecap="round"/>
+    <defs><linearGradient id="lg" x1="55" y1="15" x2="55" y2="105" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#00e87a"/></linearGradient></defs>
+    <path d="M58 18 L58 102 M58 18 L85 18 Q105 18 105 42 Q105 66 85 66 L58 66" stroke="url(#lg)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>
+  <div class="sb-item" style="margin-bottom:6px;" onclick="window.location.href='pro-account.html'"><span>⚙</span><div class="tip">My Account</div></div>
+  <div style="width:32px;height:1px;background:rgba(255,255,255,0.06);margin-bottom:6px;"></div>
+  <div class="sb-nav">
+    <div class="sb-item active" onclick="window.location.href='pro-dashboard.html'"><span>⌂</span><div class="tip">Dashboard</div></div>
+    <div class="sb-item" onclick="window.location.href='pro-session.html'"><span>▶</span><div class="tip">Start Session</div></div>
+    <div class="sb-item" onclick="window.location.href='pro-journal.html'"><span>📓</span><div class="tip">Journal</div></div>
+    <div class="sb-item" onclick="window.location.href='pro-strategy.html'"><span>🎯</span><div class="tip">My Strategy</div></div>
+    <div class="sb-item" onclick="window.location.href='pro-performance.html'"><span>📊</span><div class="tip">Performance</div></div>
+    <div class="sb-item" onclick="window.location.href='pro-coachprime.html'"><span>💬</span><div class="tip">Coach Prime</div></div>
+  </div>
+  </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="topbar">
+    <div class="pro-badge">
+      <div class="pro-dot"></div>
+      <div class="pro-id">PT-PRO-001</div>
+      <div class="pro-plan">PRO</div>
+    </div>
+    <div class="readiness-badge">
+      <div><div class="rb-label">Readiness</div><div style="font-size:10px;color:var(--green);letter-spacing:1px;">Path to funded</div></div>
+      <div class="rb-score">63</div>
+    </div>
+    <div class="mock-toggle" id="mock-toggle" onclick="toggleMock()">
+      <div class="mock-dot"></div>
+      <div class="mock-txt">Mock Eval</div>
+    </div>
+    <button class="start-btn" id="start-btn" onclick="window.location.href='pro-session.html'">▶ Start Session</button>
+    <div class="tb-sp"></div>
+    <div class="tb-stat"><div class="tb-lbl">Balance</div><div class="tb-val g">$50,187.50</div></div>
+    <div class="tb-div"></div>
+    <div class="tb-stat"><div class="tb-lbl">Today P&L</div><div class="tb-val g">+$312.50</div></div>
+    <div class="tb-div"></div>
+    <div class="tb-stat"><div class="tb-lbl">Max Loss</div><div class="tb-val r" id="tb-limit">$48,500</div></div>
+    <div class="tb-div"></div>
+    <button class="logout-btn" onclick="window.location.href='index.html'">Log Out</button>
+  </div>
+
+  <!-- WELCOME BANNER -->
+  <div class="welcome-banner" id="welcome-banner">
+    <div style="font-size:20px;">🏆</div>
+    <div style="flex:1;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:2px;">Welcome to Pro — You're on the path to funded.</div>
+      <div style="font-size:12px;color:var(--gray);">Your readiness engine is active. Complete sessions to build your score. Coach Prime watches every trade.</div>
+    </div>
+    <button onclick="dismissWelcome()" style="background:none;border:none;color:rgba(255,255,255,0.2);font-size:18px;cursor:pointer;padding:0 4px;transition:color 0.2s;" onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='rgba(255,255,255,0.2)'">✕</button>
+  </div>
+
+  <!-- MOCK EVAL BANNER -->
+  <div class="mock-banner" id="mock-banner">
+    <div><div class="mock-banner-title">⚡ Mock Eval Active</div><div style="font-size:11px;color:var(--gray);">Simulating TopStep $50K — real rules, real pressure</div></div>
+    <div class="mock-stat"><div class="mock-stat-lbl">Day P&L</div><div class="mock-stat-val ok">$0.00</div></div>
+    <div class="mock-stat"><div class="mock-stat-lbl">Daily Limit</div><div class="mock-stat-val warn">-$1,000</div></div>
+    <div class="mock-stat"><div class="mock-stat-lbl">Profit Target</div><div class="mock-stat-val ok">$3,000</div></div>
+    <div class="mock-stat"><div class="mock-stat-lbl">Days Left</div><div class="mock-stat-val ok">30</div></div>
+    <div class="mock-stat"><div class="mock-stat-lbl">Status</div><div class="mock-stat-val ok">ON TRACK ✓</div></div>
+  </div>
+
+  <div class="body">
+    <div class="center">
+
+      <!-- STAT CARDS -->
+      <div class="stats-grid">
+        <div class="sc green"><div class="sc-lbl">Total Sessions</div><div class="sc-val w">2</div><div class="sc-sub">Lifetime</div><div class="sc-trend up">↑ Active</div></div>
+        <div class="sc green"><div class="sc-lbl">Win Rate</div><div class="sc-val g">50%</div><div class="sc-sub">Profitable sessions</div><div class="sc-trend up">↑ Building</div></div>
+        <div class="sc yellow"><div class="sc-lbl">Avg Compliance</div><div class="sc-val y">63</div><div class="sc-sub">Rule adherence</div><div class="sc-trend up">↑ Improving</div></div>
+        <div class="sc gold"><div class="sc-pro">PRO</div><div class="sc-lbl">Readiness Score</div><div class="sc-val gold">63</div><div class="sc-sub">Path to funded</div></div>
+        <div class="sc purple"><div class="sc-pro">PRO</div><div class="sc-lbl">Mock Eval Attempts</div><div class="sc-val purple">0</div><div class="sc-sub">0 passed · 0 failed</div></div>
+        <div class="sc green"><div class="sc-lbl">Total P&L</div><div class="sc-val g">+$187.50</div><div class="sc-sub">Sim account</div></div>
+      </div>
+
+      <!-- CHARTS -->
+      <div class="two-col">
+        <div class="chart-card">
+          <div class="card-hdr">
+            <div class="card-title">Account Balance</div>
+            <div class="chart-legend">
+              <div class="leg"><div class="leg-dot" style="background:#00e87a;"></div>Balance</div>
+              <div class="leg"><div class="leg-line" style="background:#ff4560;"></div>Max Loss</div>
+              <div class="leg"><div class="leg-line" style="background:rgba(0,232,122,0.35);"></div>Target</div>
+            </div>
+          </div>
+          <div class="chart-wrap"><canvas id="balance-chart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-hdr">
+            <div class="card-title" style="color:var(--gold);">Readiness Trend</div>
+            <div class="chart-legend">
+              <div class="leg"><div class="leg-dot" style="background:#d4a82a;"></div>Score</div>
+              <div class="leg"><div class="leg-line" style="background:rgba(0,232,122,0.35);"></div>Target (80)</div>
+            </div>
+          </div>
+          <div class="chart-wrap"><canvas id="readiness-chart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- SESSIONS + MOCK EVAL -->
+      <div class="two-col">
+        <div class="chart-card">
+          <div class="card-hdr">
+            <div><div class="card-title">Recent Sessions</div><div class="card-sub">Last 5 sessions</div></div>
+            <a href="pro-journal.html" style="font-size:11px;color:var(--green);text-decoration:none;letter-spacing:1px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;">View All →</a>
+          </div>
+          <div class="session-row" onclick="window.location.href='pro-journal.html'">
+            <div style="display:flex;align-items:center;gap:10px;flex:1;">
+              <div class="session-grade gb">B</div>
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div class="session-strat">FVG</div>
+                  <div style="font-size:10px;color:var(--gray);letter-spacing:1px;">·</div>
+                  <div style="font-size:11px;color:var(--gray);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;">TOPSTEP</div>
+                </div>
+                <div class="session-date">Apr 24 · EOD Balance: <span style="color:var(--green);font-weight:600;">$50,187.50</span></div>
+              </div>
+            </div>
+            <div class="session-pnl pos">+$312.50</div>
+          </div>
+          <div class="session-row" onclick="window.location.href='pro-journal.html'">
+            <div style="display:flex;align-items:center;gap:10px;flex:1;">
+              <div class="session-grade gc">C</div>
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div class="session-strat">FVG</div>
+                  <div style="font-size:10px;color:var(--gray);letter-spacing:1px;">·</div>
+                  <div style="font-size:11px;color:var(--gray);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;">TOPSTEP</div>
+                </div>
+                <div class="session-date">Apr 23 · EOD Balance: <span style="color:var(--red);font-weight:600;">$49,875.00</span></div>
+              </div>
+            </div>
+            <div class="session-pnl neg">-$125.00</div>
+          </div>
+          <div style="text-align:center;padding:14px;font-size:12px;color:rgba(255,255,255,0.2);">Start more sessions to build your history</div>
+        </div>
+
+        <div class="chart-card">
+          <div class="card-hdr">
+            <div><div class="card-title" style="color:var(--yellow);">Mock Eval History</div><div class="card-sub">Pass 3 consecutive to earn readiness cert</div></div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;color:var(--gray);">0 / 3</div>
+          </div>
+          <div class="empty">
+            <div class="empty-icon">🏆</div>
+            <div class="empty-title">No Mock Evals Yet</div>
+            <p class="empty-desc">Toggle Mock Eval Mode in the top bar and start a session to begin your first prop firm simulation.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- COACH PRIME PRO INSIGHT -->
+      <div style="background:var(--dark2);border:1px solid rgba(0,232,122,0.15);border-radius:4px;padding:16px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+          <div style="width:32px;height:32px;background:var(--green);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;color:#000;">CP</div>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Coach Prime Pro — Insight</div>
+            <div style="display:inline-flex;align-items:center;gap:5px;margin-top:3px;"><div style="width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;"></div><div style="font-size:10px;color:var(--green);letter-spacing:1px;text-transform:uppercase;">Pro Analysis Active</div></div>
+          </div>
+        </div>
+        <div style="font-size:13px;color:var(--gray);line-height:1.8;"><strong style="color:var(--white);font-weight:500;">Readiness score: 63 — consistency phase.</strong> Your compliance average needs to reach 80+ across 10 consecutive sessions before attempting a live evaluation. Biggest miss: early entries. <strong style="color:var(--white);font-weight:500;">Next focus:</strong> run the full pre-trade checklist on every entry — no exceptions. One clean week will move your score above 70.</div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right">
+
+      <div class="panel-card" style="border-color:rgba(0,232,122,0.12);">
+        <div class="panel-title">Readiness Score</div>
+        <div class="panel-sub">Updated after every session</div>
+        <div class="gauge-wrap">
+          <svg width="148" height="90" viewBox="0 0 148 90">
+            <defs><linearGradient id="gg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#ff4560"/><stop offset="50%" stop-color="#f0c040"/><stop offset="100%" stop-color="#00e87a"/></linearGradient></defs>
+            <path d="M 13 80 A 58 58 0 0 1 135 80" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8" stroke-linecap="round"/>
+            <path d="M 13 80 A 58 58 0 0 1 135 80" fill="none" stroke="url(#gg)" stroke-width="8" stroke-linecap="round" stroke-dasharray="183" stroke-dashoffset="68"/>
+            <text x="8" y="88" font-family="'Barlow Condensed',sans-serif" font-size="9" fill="rgba(255,69,96,0.5)" font-weight="700">0</text>
+            <text x="69" y="16" font-family="'Barlow Condensed',sans-serif" font-size="9" fill="rgba(240,192,64,0.5)" font-weight="700" text-anchor="middle">50</text>
+            <text x="132" y="88" font-family="'Barlow Condensed',sans-serif" font-size="9" fill="rgba(0,232,122,0.5)" font-weight="700">100</text>
+          </svg>
+          <div class="gauge-num"><div class="gauge-score">63</div><div class="gauge-max">/100</div></div>
+        </div>
+        <div>
+          <div class="r-stage"><div class="r-ic done">✓</div><div class="r-name done">Foundation</div><div class="r-bar"><div class="r-fill" style="width:100%"></div></div></div>
+          <div class="r-stage"><div class="r-ic active">●</div><div class="r-name active">Consistency</div><div class="r-bar"><div class="r-fill" style="width:30%"></div></div></div>
+          <div class="r-stage"><div class="r-ic locked">🔒</div><div class="r-name locked">Mock Eval</div><div class="r-bar"><div class="r-fill" style="width:0%"></div></div></div>
+          <div class="r-stage"><div class="r-ic locked">🔒</div><div class="r-name locked">Ready to Fund</div><div class="r-bar"><div class="r-fill" style="width:0%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-title">Consistency Streak</div>
+        <div class="panel-sub">Consecutive compliant sessions</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:40px;color:var(--green);line-height:1;">2</div>
+          <div style="font-size:22px;">🔥</div>
+          <div style="font-size:12px;color:var(--gray);line-height:1.5;"><strong style="color:var(--white);font-weight:500;">2 sessions in a row.</strong><br>10 consecutive unlocks Mock Eval stage.</div>
+        </div>
+      </div>
+
+      <div class="coach-card">
+        <div class="live-pill"><div class="live-dot"></div><div class="live-txt">Live During Sessions</div></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+          <div style="width:28px;height:28px;background:var(--green);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;color:#000;flex-shrink:0;">CP</div>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Coach Prime Pro</div><div style="font-size:10px;color:var(--gray);">Intra-session + post-session</div></div>
+        </div>
+        <div class="coach-msg"><strong>Pro coaching is active.</strong> During sessions I flag setups in real time, validate entries against your rules, and keep you accountable as you trade.</div>
+      </div>
+
+      <div class="panel-card" style="border-color:rgba(240,192,64,0.12);">
+        <div class="panel-title" style="color:var(--yellow);">Mock Eval Tracker</div>
+        <div class="panel-sub">Pass 3 in a row for readiness cert</div>
+        <div class="eval-dots">
+          <div class="eval-dot pending">1</div>
+          <div class="eval-dot pending">2</div>
+          <div class="eval-dot pending">3</div>
+        </div>
+        <div style="font-size:11px;color:var(--gray);line-height:1.5;">Toggle Mock Eval in the top bar then start a session to begin attempt #1.</div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-title">Firm Recommendation</div>
+        <div class="panel-sub">Based on your session data</div>
+        <div class="firm-item top"><div class="firm-rank">1</div><div class="firm-name-txt">TopStep</div><div class="firm-score g">Best fit ✓</div></div>
+        <div class="firm-item"><div class="firm-rank" style="opacity:0.2;">2</div><div class="firm-name-txt" style="color:var(--gray);">Apex</div><div class="firm-score y">Good fit</div></div>
+        <div class="firm-item"><div class="firm-rank" style="opacity:0.2;">3</div><div class="firm-name-txt" style="color:var(--gray);">Take Profit</div><div class="firm-score y">Possible</div></div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:10px;line-height:1.5;">Improves as you log more sessions.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  let mockOn = false;
+  function toggleMock() {
+    mockOn = !mockOn;
+    document.getElementById('mock-toggle').classList.toggle('on', mockOn);
+    document.getElementById('mock-banner').classList.toggle('on', mockOn);
+    const btn = document.getElementById('start-btn');
+    btn.classList.toggle('mock-mode', mockOn);
+    btn.textContent = mockOn ? '⚡ Start Mock Eval' : '▶ Start Session';
+  }
+  function dismissWelcome() {
+    document.getElementById('welcome-banner').classList.add('hidden');
+    try { localStorage.setItem('pt_pro_welcomed','1'); } catch(e) {}
+  }
+  try { if (localStorage.getItem('pt_pro_welcomed')) document.getElementById('welcome-banner').classList.add('hidden'); } catch(e) {}
+
+  const LIMITS={apex:'$47,500',topstep:'$48,000',takeprofit:'$48,500',alpha:'$48,000',tradify:'$47,000',other:'$48,500'};
+  const DAILY={apex:1000,topstep:1000,takeprofit:1500,alpha:1200,tradify:1000,other:1500};
+  try {
+    const sel=JSON.parse(localStorage.getItem('pt_selected_firms')||'[]');
+    if (sel.length&&LIMITS[sel[0]]) {
+      document.getElementById('tb-limit').textContent=LIMITS[sel[0]];
+    }
+  } catch(e) {}
+
+  const co=document.getElementById('balance-chart').getContext('2d');
+  new Chart(co,{type:'line',data:{labels:['Start','Apr 23','Apr 24'],datasets:[{label:'Balance',data:[50000,49875,50187.50],borderColor:'#00e87a',backgroundColor:'rgba(0,232,122,0.06)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#00e87a',pointBorderColor:'#0c0f14',pointBorderWidth:2,fill:true,tension:0.4},{label:'Max Loss',data:[48500,48500,48500],borderColor:'#ff4560',borderWidth:1.5,borderDash:[5,3],pointRadius:0,fill:false},{label:'Target',data:[53000,53000,53000],borderColor:'rgba(0,232,122,0.3)',borderWidth:1.5,borderDash:[5,3],pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:'#141928',borderColor:'rgba(255,255,255,0.08)',borderWidth:1,titleColor:'#7a8599',bodyColor:'#e8ecf0',callbacks:{label:c=>' '+c.dataset.label+': $'+c.raw?.toLocaleString()}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#7a8599',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#7a8599',font:{size:10},callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}});
+
+  const ro=document.getElementById('readiness-chart').getContext('2d');
+  new Chart(ro,{type:'line',data:{labels:['Start','Apr 23','Apr 24'],datasets:[{label:'Readiness',data:[null,52,63],borderColor:'#d4a82a',backgroundColor:'rgba(212,168,42,0.06)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#d4a82a',pointBorderColor:'#0c0f14',pointBorderWidth:2,fill:true,tension:0.4},{label:'Target',data:[80,80,80],borderColor:'rgba(0,232,122,0.3)',borderWidth:1.5,borderDash:[5,3],pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#141928',borderColor:'rgba(255,255,255,0.08)',borderWidth:1,titleColor:'#7a8599',bodyColor:'#e8ecf0',callbacks:{label:c=>' '+c.dataset.label+': '+(c.raw??'—')+'/100'}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#7a8599',font:{size:10}}},y:{min:0,max:100,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#7a8599',font:{size:10},callback:v=>v+'/100'}}}}});
+</script>
+</body>
+</html>
