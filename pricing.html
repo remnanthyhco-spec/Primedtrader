@@ -340,29 +340,56 @@
           <div style="font-size:13px;color:var(--gray);margin-bottom:24px;">Cancel anytime. No contracts.</div>
 
           <!-- TOGGLE -->
-          <div style="display:flex;align-items:center;gap:0;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;margin-bottom:24px;">
-            <div id="tog-monthly" onclick="setPlan('monthly')" style="flex:1;padding:10px 0;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;background:var(--green);color:#000;">Monthly</div>
-            <div id="tog-annual" onclick="setPlan('annual')" style="flex:1;padding:10px 0;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;color:var(--gray);">Annual</div>
+          <div style="display:flex;align-items:center;gap:0;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;margin-bottom:20px;">
+            <div id="tog-monthly" onclick="setPlan('monthly')" style="flex:1;padding:10px 0;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;background:var(--green);color:#000;">Monthly — $39</div>
+            <div id="tog-annual" onclick="setPlan('annual')" style="flex:1;padding:10px 0;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;color:var(--gray);">Annual — $27</div>
           </div>
 
-          <!-- PRICE -->
-          <div style="text-align:center;padding:24px;background:rgba(0,232,122,0.04);border:1px solid rgba(0,232,122,0.12);border-radius:3px;margin-bottom:20px;">
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:56px;color:var(--green);line-height:1;" id="back-price">$39</div>
-            <div style="font-size:13px;color:var(--gray);margin-top:4px;" id="back-period">per month · billed monthly</div>
-            <div id="back-savings" style="display:none;font-size:12px;color:var(--green);margin-top:8px;font-weight:600;letter-spacing:1px;">You save $144 a year</div>
+          <!-- PRICE SUMMARY -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:rgba(0,232,122,0.04);border:1px solid rgba(0,232,122,0.12);border-radius:3px;margin-bottom:20px;">
+            <div style="font-size:13px;color:var(--gray);">PrimedTrader Pro · <span id="back-period">Monthly</span></div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:var(--green);" id="back-price">$39<span style="font-size:12px;font-weight:400;color:var(--gray);">/mo</span></div>
           </div>
 
-          <!-- WHAT YOU GET -->
-          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px;">
-            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gray);"><span style="color:var(--green);">✓</span> Full Pro dashboard + readiness score</div>
-            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gray);"><span style="color:var(--green);">✓</span> Mock eval mode — real firm rules</div>
-            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gray);"><span style="color:var(--green);">✓</span> Coach Prime intra-session coaching</div>
-            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gray);"><span style="color:var(--green);">✓</span> Advanced probability + analytics</div>
-            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gray);"><span style="color:var(--green);">✓</span> Everything in Free, always</div>
+          <!-- CARD FORM -->
+          <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+
+            <div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);margin-bottom:6px;">Name on Card</div>
+              <input id="card-name" type="text" placeholder="John Smith" style="width:100%;background:var(--dark);border:1px solid rgba(255,255,255,0.1);color:var(--white);padding:12px 14px;font-family:'Barlow',sans-serif;font-size:14px;outline:none;border-radius:2px;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" placeholder="Name on card"/>
+            </div>
+
+            <div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);margin-bottom:6px;">Card Number</div>
+              <div style="position:relative;">
+                <input id="card-number" type="text" maxlength="19" placeholder="1234 5678 9012 3456" oninput="formatCard(this)" style="width:100%;background:var(--dark);border:1px solid rgba(255,255,255,0.1);color:var(--white);padding:12px 44px 12px 14px;font-family:'Barlow Condensed',sans-serif;font-size:15px;letter-spacing:2px;outline:none;border-radius:2px;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"/>
+                <span id="card-brand" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:18px;">💳</span>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);margin-bottom:6px;">Expiry</div>
+                <input id="card-expiry" type="text" maxlength="5" placeholder="MM/YY" oninput="formatExpiry(this)" style="width:100%;background:var(--dark);border:1px solid rgba(255,255,255,0.1);color:var(--white);padding:12px 14px;font-family:'Barlow Condensed',sans-serif;font-size:15px;letter-spacing:2px;outline:none;border-radius:2px;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"/>
+              </div>
+              <div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);margin-bottom:6px;">CVV</div>
+                <input id="card-cvv" type="text" maxlength="4" placeholder="•••" style="width:100%;background:var(--dark);border:1px solid rgba(255,255,255,0.1);color:var(--white);padding:12px 14px;font-family:'Barlow Condensed',sans-serif;font-size:15px;letter-spacing:4px;outline:none;border-radius:2px;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"/>
+              </div>
+            </div>
+
           </div>
 
-          <button onclick="continueToPro()" style="width:100%;background:var(--green);color:#000;border:none;padding:16px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;border-radius:2px;margin-bottom:12px;" onmouseover="this.style.background='#fff'" onmouseout="this.style.background='var(--green)'">Continue to Checkout →</button>
-          <div style="font-size:11px;color:rgba(255,255,255,0.2);text-align:center;line-height:1.6;">Stripe secure checkout. Beta users: first 60 days free.</div>
+          <!-- PAY BUTTON -->
+          <button onclick="processPayment()" id="pay-btn" style="width:100%;background:var(--green);color:#000;border:none;padding:16px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;border-radius:2px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;" onmouseover="this.style.background='#fff'" onmouseout="this.style.background='var(--green)'">
+            🔒 Pay & Activate Pro
+          </button>
+
+          <div style="font-size:11px;color:rgba(255,255,255,0.2);text-align:center;line-height:1.7;letter-spacing:0.5px;">
+            🔒 Secured by Stripe · Cancel anytime from My Account<br>
+            Beta users: first 60 days free — card charged after trial ends
+          </div>
+
         </div>
       </div>
 
@@ -542,27 +569,70 @@
     const togA = document.getElementById('tog-annual');
     const price = document.getElementById('back-price');
     const period = document.getElementById('back-period');
-    const savings = document.getElementById('back-savings');
     if (plan === 'monthly') {
       togM.style.background = 'var(--green)'; togM.style.color = '#000';
       togA.style.background = 'transparent'; togA.style.color = 'var(--gray)';
-      price.textContent = '$39';
-      period.textContent = 'per month · billed monthly';
-      savings.style.display = 'none';
+      price.innerHTML = '$39<span style="font-size:12px;font-weight:400;color:var(--gray);">/mo</span>';
+      period.textContent = 'Monthly';
     } else {
       togA.style.background = 'var(--green)'; togA.style.color = '#000';
       togM.style.background = 'transparent'; togM.style.color = 'var(--gray)';
-      price.textContent = '$27';
-      period.textContent = 'per month · billed annually ($324/yr)';
-      savings.style.display = 'block';
+      price.innerHTML = '$27<span style="font-size:12px;font-weight:400;color:var(--gray);">/mo</span>';
+      period.textContent = 'Annual ($324/yr — save $144)';
     }
   }
 
-  function continueToPro() {
-    localStorage.setItem('pt_selected_plan', selectedPlan);
-    // Sunday: stripe.redirectToCheckout()
-    alert('Stripe checkout coming Sunday!\n\nPlan: ' + (selectedPlan === 'monthly' ? '$39/mo' : '$27/mo annual') + '\n\nYou are on the list 🚀');
+  function formatCard(input) {
+    let val = input.value.replace(/\D/g,'').slice(0,16);
+    input.value = val.replace(/(.{4})/g,'$1 ').trim();
+    const brand = document.getElementById('card-brand');
+    if (val.startsWith('4')) brand.textContent = '💳';
+    else if (val.startsWith('5')) brand.textContent = '💳';
+    else if (val.startsWith('3')) brand.textContent = '💳';
+    else brand.textContent = '💳';
   }
+
+  function formatExpiry(input) {
+    let val = input.value.replace(/\D/g,'').slice(0,4);
+    if (val.length >= 2) val = val.slice(0,2) + '/' + val.slice(2);
+    input.value = val;
+  }
+
+  function processPayment() {
+    const name = document.getElementById('card-name').value.trim();
+    const num = document.getElementById('card-number').value.replace(/\s/g,'');
+    const exp = document.getElementById('card-expiry').value;
+    const cvv = document.getElementById('card-cvv').value;
+
+    // Basic validation
+    if (!name) { highlight('card-name'); return; }
+    if (num.length < 16) { highlight('card-number'); return; }
+    if (exp.length < 5) { highlight('card-expiry'); return; }
+    if (cvv.length < 3) { highlight('card-cvv'); return; }
+
+    // Show processing state
+    const btn = document.getElementById('pay-btn');
+    btn.textContent = 'Processing...';
+    btn.style.background = 'rgba(0,232,122,0.5)';
+    btn.style.cursor = 'not-allowed';
+
+    // Sunday: Stripe.createPaymentMethod() + server-side charge
+    // For now simulate a 2s processing delay then redirect
+    setTimeout(() => {
+      localStorage.setItem('pt_plan', 'pro');
+      localStorage.setItem('pt_selected_plan', selectedPlan);
+      window.location.href = 'pro-dashboard.html';
+    }, 2000);
+  }
+
+  function highlight(id) {
+    const el = document.getElementById(id);
+    el.style.borderColor = 'var(--red)';
+    el.focus();
+    setTimeout(() => el.style.borderColor = 'rgba(255,255,255,0.1)', 2000);
+  }
+
+  function continueToPro() {}
 
   function toggleFaq(btn) {
     const item = btn.parentElement;
