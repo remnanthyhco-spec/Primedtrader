@@ -298,7 +298,7 @@
       <li><span class="check check-no">✗</span><span class="feat-text" style="opacity:0.4;">Mock eval mode</span></li>
     </ul>
 
-    <a href="onboarding.html" class="card-btn btn-free">Start Free — No Card Needed</a>
+    <a href="dashboard.html" class="card-btn btn-free">Start Free — No Card Needed</a>
     <p class="card-note">No credit card. No trial period. Just free.</p>
   </div>
 
@@ -334,7 +334,46 @@
       <li><span class="check check-yes">✓</span><span class="feat-text"><strong class="feat-highlight">Advanced Probability Scoring</strong> — deeper confidence model with confluence factors<span style="display:block;font-size:12px;color:var(--gray);margin-top:3px;font-weight:300;">Scores each setup against HTF bias, session time, volume, and rule alignment.</span></span></li>
     </ul>
 
-    <a href="onboarding.html" class="card-btn btn-pro" id="pro-cta">Start Pro Free — 60 Days Beta</a>
+    <div style="position:relative;">
+      <button class="card-btn btn-pro" id="pro-cta" onclick="togglePlanDrop()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;">
+        Get Pro Access <span id="plan-arrow" style="font-size:11px;transition:transform 0.2s;">▾</span>
+      </button>
+      <!-- PLAN DROPDOWN -->
+      <div id="plan-drop" style="display:none;position:absolute;top:calc(100% + 8px);left:0;right:0;background:#0a0f0a;border:1px solid rgba(0,232,122,0.2);border-radius:4px;overflow:hidden;z-index:100;box-shadow:0 12px 40px rgba(0,0,0,0.6);">
+        <div style="padding:12px 16px;font-size:10px;color:var(--gray);letter-spacing:3px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.06);">Choose Your Plan</div>
+        <!-- Monthly -->
+        <div id="opt-monthly" onclick="selectPlan('monthly')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.15s;background:rgba(0,232,122,0.06);" onmouseover="this.style.background='rgba(0,232,122,0.08)'" onmouseout="if(selectedPlan==='monthly')this.style.background='rgba(0,232,122,0.06)';else this.style.background='transparent'">
+          <div id="radio-monthly" style="width:18px;height:18px;border-radius:50%;border:2px solid var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><div style="width:8px;height:8px;border-radius:50%;background:var(--green);"></div></div>
+          <div style="flex:1;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:1px;color:var(--white);">Monthly</div>
+            <div style="font-size:11px;color:var(--gray);margin-top:1px;">Billed monthly · cancel anytime</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:var(--green);">$39</div>
+            <div style="font-size:10px;color:var(--gray);">/month</div>
+          </div>
+        </div>
+        <!-- Annual -->
+        <div id="opt-annual" onclick="selectPlan('annual')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='rgba(0,232,122,0.04)'" onmouseout="if(selectedPlan==='annual')this.style.background='rgba(0,232,122,0.06)';else this.style.background='transparent'">
+          <div id="radio-annual" style="width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><div style="width:8px;height:8px;border-radius:50%;background:transparent;"></div></div>
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;letter-spacing:1px;color:var(--white);">Annual</div>
+              <div style="font-size:9px;background:rgba(0,232,122,0.15);border:1px solid rgba(0,232,122,0.3);color:var(--green);padding:1px 7px;border-radius:2px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;">SAVE $144</div>
+            </div>
+            <div style="font-size:11px;color:var(--gray);margin-top:1px;">$324 billed once per year</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:var(--green);">$27</div>
+            <div style="font-size:10px;color:var(--gray);">/month</div>
+          </div>
+        </div>
+        <!-- Continue button -->
+        <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.06);">
+          <button onclick="continueToPro()" style="width:100%;background:var(--green);color:#000;border:none;padding:12px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all 0.2s;" onmouseover="this.style.background='#fff'" onmouseout="this.style.background='var(--green)'">Continue to Checkout →</button>
+        </div>
+      </div>
+    </div>
     <p class="card-note">Beta users get Pro free for 60 days. Cancel anytime.</p>
   </div>
 
