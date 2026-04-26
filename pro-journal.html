@@ -223,8 +223,41 @@ tbody td{padding:10px 16px;font-size:13px;vertical-align:middle;}
       <div class="sc"><div class="sc-lbl">Best Session</div><div class="sc-val g" id="s-best">$0.00</div><div class="sc-sub">Single session high</div></div>
     </div>
 
-    <!-- MONTHLY SUMMARY -->
-    <div id="monthly-wrap"></div>
+    <!-- MONTHLY SUMMARY + SESSION LOG SIDE BY SIDE -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;">
+      <div id="monthly-wrap"></div>
+
+      <!-- SESSION LOG -->
+      <div class="journal-card">
+        <div class="journal-header">
+          <div class="journal-title">Session Log</div>
+          <div style="font-size:12px;color:var(--gray);" id="session-count">0 sessions</div>
+        </div>
+        <div id="table-wrap">
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;" id="empty-state">
+            <div style="font-size:32px;opacity:0.3;margin-bottom:10px;">📓</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:1px;color:var(--gray);margin-bottom:6px;">No Sessions Yet</div>
+            <p style="font-size:12px;color:var(--gray);opacity:0.7;line-height:1.7;max-width:240px;margin-bottom:16px;">Complete sessions to build your journal history.</p>
+            <button onclick="window.location.href='pro-session.html'" style="background:var(--green);color:#000;padding:8px 20px;border:none;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;">Start Session →</button>
+          </div>
+          <table id="journal-table" style="display:none;">
+            <thead>
+              <tr>
+                <th style="width:20px;"></th>
+                <th style="width:20px;"></th>
+                <th>Date</th>
+                <th>Strategy</th>
+                <th>P&L</th>
+                <th>Score</th>
+                <th>Grade</th>
+                <th>Streak</th>
+              </tr>
+            </thead>
+            <tbody id="journal-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
     <!-- COMPARE PANEL -->
     <div class="compare-panel" id="compare-panel">
@@ -240,39 +273,7 @@ tbody td{padding:10px 16px;font-size:13px;vertical-align:middle;}
       </div>
     </div>
 
-    <!-- JOURNAL TABLE -->
-    <div class="journal-card">
-      <div class="journal-header">
-        <div class="journal-title">Session Log</div>
-        <div style="font-size:12px;color:var(--gray);" id="session-count">0 sessions</div>
-      </div>
-      <div id="table-wrap">
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 24px;text-align:center;" id="empty-state">
-          <div style="font-size:40px;opacity:0.3;margin-bottom:16px;">📓</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;text-transform:uppercase;letter-spacing:1px;color:var(--gray);margin-bottom:8px;">Your Journal is Empty</div>
-          <p style="font-size:13px;color:var(--gray);opacity:0.7;line-height:1.7;max-width:320px;margin-bottom:20px;">Complete sessions to build your journal. Pro gives you full trade-by-trade breakdowns with timestamps and PDF export.</p>
-          <button onclick="window.location.href='pro-session.html'" style="background:var(--green);color:#000;padding:10px 28px;border:none;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;">Start First Session →</button>
-        </div>
-        <table id="journal-table" style="display:none;">
-          <thead>
-            <tr>
-              <th style="width:24px;"></th>
-              <th style="width:24px;"></th>
-              <th>Date</th>
-              <th>Strategy</th>
-              <th>Trades</th>
-              <th>P&L</th>
-              <th>Compliance</th>
-              <th>Score</th>
-              <th>Grade</th>
-              <th>Streak</th>
-              <th>Coach Prime</th>
-            </tr>
-          </thead>
-          <tbody id="journal-body"></tbody>
-        </table>
-      </div>
-    </div>
+
 
   </div>
 </div>
@@ -399,15 +400,12 @@ function renderTable() {
     tr.innerHTML = `
       <td><span class="expand-icon" id="icon-${s.id}">▾</span></td>
       <td>${compareMode ? `<div class="chk-sel ${isSelected?'on':''}" id="csel-${s.id}" onclick="event.stopPropagation();toggleCompareSelect(${s.id})"></div>` : ''}</td>
-      <td style="color:var(--gray);font-size:12px;">${s.date}</td>
-      <td><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;">${s.strategy}</span></td>
-      <td style="color:var(--gray);">${s.trades}</td>
-      <td class="${s.pnl>=0?'pos':'neg'}">${pnlStr}</td>
-      <td style="color:var(--gray);">${s.compliance}%</td>
-      <td><div class="score-wrap"><span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;color:${sc};">${s.score}</span><div class="score-bar-bg"><div class="score-bar-fill" style="width:${s.score}%;background:${sc};"></div></div></div></td>
+      <td style="color:var(--gray);font-size:11px;">${s.date}</td>
+      <td><span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;">${s.strategy}</span></td>
+      <td class="${s.pnl>=0?'pos':'neg'}" style="font-size:12px;">${pnlStr}</td>
+      <td><div class="score-wrap"><span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;color:${sc};">${s.score}</span></div></td>
       <td><span class="grade ${gradeClass(s.grade)}">${s.grade}</span></td>
-      <td style="color:${s.streak>0?'var(--green)':'var(--gray)'};">${s.streak > 0 ? s.streak+'🔥' : '—'}</td>
-      <td style="font-size:11px;color:var(--gray);">Click to expand ↓</td>`;
+      <td style="color:${s.streak>0?'var(--green)':'var(--gray)'};">${s.streak > 0 ? s.streak+'🔥' : '—'}</td>`;
     tr.onclick = () => toggleDetail(s.id);
     tbody.appendChild(tr);
 
@@ -415,7 +413,7 @@ function renderTable() {
     const dr = document.createElement('tr');
     dr.className = 'detail-row';
     dr.id = 'detail-'+s.id;
-    dr.innerHTML = `<td colspan="11" class="detail-cell">
+    dr.innerHTML = `<td colspan="8" class="detail-cell">
       <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:8px;padding-top:4px;display:flex;align-items:center;gap:8px;"><span style="color:var(--white);opacity:0.5;">✏</span> Your Thoughts & Takeaways</div>
       <textarea class="thoughts-area" placeholder="What did you learn? What would you do differently? How did you feel?" onchange="saveNote(${s.id},this.value)">${loadNote(s.id)}</textarea>
       <div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:4px;letter-spacing:1px;">Auto-saves as you type</div>
