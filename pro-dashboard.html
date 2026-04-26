@@ -44,6 +44,9 @@ body{display:flex;}
 .tb-val.r{color:var(--red);}
 .tb-val.d{color:var(--gray);}
 .tb-div{width:1px;height:28px;background:var(--border);margin:0 4px;}
+.firm-btn{display:flex;align-items:center;gap:8px;background:var(--dark2);border:1px solid rgba(255,255,255,0.12);padding:6px 14px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--white);text-decoration:none;transition:all 0.2s;}
+.firm-btn:hover{border-color:var(--green);color:var(--green);}
+.firm-btn-sub{font-size:9px;color:var(--gray);font-weight:400;letter-spacing:1px;display:block;margin-top:1px;}
 .start-btn{background:var(--green);color:#000;border:none;padding:8px 18px;border-radius:3px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;transition:all 0.2s;}
 .start-btn:hover{background:var(--white);}
 .start-btn.mock-mode{background:var(--yellow);}
@@ -204,6 +207,13 @@ body{display:flex;}
       <div class="mock-dot"></div>
       <div class="mock-txt">Mock Eval</div>
     </div>
+    <a class="firm-btn" id="firm-btn" href="#" target="_blank" rel="noopener">
+      <span id="firm-icon">🏢</span>
+      <div>
+        <div id="firm-name">Select a Firm</div>
+        <span class="firm-btn-sub">Fund your account →</span>
+      </div>
+    </a>
     <button class="start-btn" id="start-btn" onclick="window.location.href='pro-session.html'">▶ Start Session</button>
     <div class="tb-sp"></div>
     <div class="tb-stat"><div class="tb-lbl">Balance</div><div class="tb-val g">$50,187.50</div></div>
@@ -407,6 +417,31 @@ body{display:flex;}
 </div>
 
 <script>
+  const FIRMS = {
+    apex:       { name:'Apex Trader Funding', short:'Apex',        icon:'🔺', url:'https://apextraderfunding.com',   limit:'$47,500', target:'$3,000' },
+    topstep:    { name:'TopstepTrader',        short:'TopStep',     icon:'🔵', url:'https://www.topstep.com',         limit:'$48,000', target:'$3,000' },
+    takeprofit: { name:'Take Profit Trader',   short:'Take Profit', icon:'💚', url:'https://takeprofittrader.com',   limit:'$48,500', target:'$2,000' },
+    alpha:      { name:'Alpha Trader Funding', short:'Alpha Trader',icon:'⚡', url:'https://alphatraderfunding.com', limit:'$48,000', target:'$2,500' },
+    tradify:    { name:'Tradify',              short:'Tradify',     icon:'📈', url:'https://tradify.com',            limit:'$47,000', target:'$3,000' },
+    other:      { name:'Your Prop Firm',       short:'Prop Firm',   icon:'🏢', url:'#',                              limit:'$48,500', target:'$3,000' }
+  };
+
+  function applyFirm() {
+    let sel = [];
+    try { sel = JSON.parse(localStorage.getItem('pt_selected_firms') || '[]'); } catch(e) {}
+    const key = sel[0] || 'topstep';
+    const f = FIRMS[key] || FIRMS.topstep;
+    document.getElementById('firm-icon').textContent = f.icon;
+    document.getElementById('firm-name').textContent = 'Fund with ' + f.short;
+    document.getElementById('firm-btn').href = f.url;
+    if (document.getElementById('tb-limit')) document.getElementById('tb-limit').textContent = f.limit;
+  }
+  applyFirm();
+
+  // Re-apply if localStorage changes (My Account page switch)
+  window.addEventListener('storage', applyFirm);
+  window.addEventListener('focus', applyFirm);
+
   let mockOn = false;
   function toggleMock() {
     mockOn = !mockOn;
