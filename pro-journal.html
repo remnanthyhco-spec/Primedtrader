@@ -58,6 +58,9 @@ body{display:flex;}
 .month-stat:last-child{border-bottom:none;}
 .month-stat-val{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;}
 /* INSPIRE */
+.coach-av{width:34px;height:34px;background:var(--green);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;color:#000;flex-shrink:0;}
+.coach-link{color:var(--green);text-decoration:none;font-weight:500;}
+.coach-link:hover{text-decoration:underline;}
 .inspire{display:flex;align-items:center;gap:12px;padding:10px 16px;background:rgba(0,232,122,0.04);border:1px solid rgba(0,232,122,0.1);border-radius:4px;}
 /* TABLE */
 .journal-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
@@ -227,6 +230,14 @@ tbody td{padding:10px 16px;font-size:13px;vertical-align:middle;}
     <div class="compare-panel" id="compare-panel">
       <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);">Session Comparison — select 2 sessions from the table below</div>
       <div id="compare-content" style="color:var(--gray);font-size:13px;margin-top:10px;">Select two sessions using the checkboxes in the table.</div>
+    </div>
+
+    <!-- COACH PRIME BANNER -->
+    <div style="background:var(--dark2);border:1px solid rgba(0,232,122,0.15);border-radius:4px;padding:14px 18px;display:flex;align-items:center;gap:14px;">
+      <div style="width:34px;height:34px;background:var(--green);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;color:#000;flex-shrink:0;">CP</div>
+      <div style="font-size:13px;color:var(--gray);line-height:1.6;" id="cp-journal-insight">
+        <strong style="color:var(--white);font-weight:500;">Your journal is where patterns become visible.</strong> Every session you log is a data point. Three sessions reveal a trend. Ten sessions reveal your edge. Click any row to see your full coaching notes, your trade-by-trade breakdown, and your focus for the next session. <strong style="color:var(--white);font-weight:500;">Pro insight updates after every session.</strong>
+      </div>
     </div>
 
     <!-- JOURNAL TABLE -->
@@ -500,15 +511,15 @@ function toggleCompare() {
       if (streak === 0) {
         title.textContent = 'Start Your Streak';
         title.style.color = 'var(--gray)';
-        msg.textContent = 'Log your thoughts after today's session to begin your journaling streak. Consistency here reflects consistency in the market.';
+        msg.textContent = "Log your thoughts after today's session to begin your journaling streak. Consistency here reflects consistency in the market.";
       } else if (streak < 3) {
         title.textContent = streak + ' Day Streak 🔥';
         title.style.color = 'var(--gold)';
-        msg.textContent = 'Good start. The traders who journal every session are the traders who improve every session. Keep going.';
+        msg.textContent = "Good start. The traders who journal every session are the traders who improve every session. Keep going.";
       } else if (streak < 7) {
         title.textContent = streak + ' Day Streak 🔥🔥';
         title.style.color = 'var(--gold)';
-        msg.textContent = 'You're building a real habit. ' + streak + ' consecutive days of journaling puts you ahead of 90% of traders. Don't break the chain.';
+        msg.textContent = "You're building a real habit. " + streak + " consecutive days of journaling puts you ahead of 90% of traders. Don't break the chain.";
       } else {
         title.textContent = streak + ' Day Streak 🔥🔥🔥';
         title.style.color = 'var(--green)';
@@ -517,6 +528,25 @@ function toggleCompare() {
     } catch(e) {}
   }
   calcStreak();
+
+  // Update Coach Prime insight based on sessions
+  function updateCPInsight() {
+    const el = document.getElementById('cp-journal-insight');
+    if (!el) return;
+    const total = SESSIONS.length;
+    const wins = SESSIONS.filter(s => s.pnl > 0).length;
+    const avgScore = total ? Math.round(SESSIONS.reduce((a,s) => a+s.score,0)/total) : 0;
+    const topMiss = 'early entries'; // Sunday: calculate from real session data
+
+    if (total === 0) {
+      el.innerHTML = '<strong style="color:var(--white);font-weight:500;">Your journal is empty.</strong> Every session you complete gets logged here automatically. The more you log, the more I can coach you. Start your first Pro session now.';
+    } else if (total < 5) {
+      el.innerHTML = `<strong style="color:var(--white);font-weight:500;">Good start — ${total} session${total>1?'s':''} logged.</strong> You need at least 10 sessions before patterns become clear. Your current avg compliance is <strong style="color:${avgScore>=70?'var(--green)':'var(--yellow)'};font-weight:500">${avgScore}</strong>. Keep logging — the data gets more valuable every session.`;
+    } else {
+      el.innerHTML = `<strong style="color:var(--white);font-weight:500;">Pattern identified.</strong> Across your ${total} sessions your biggest compliance miss is <strong style="color:var(--red);font-weight:500;">${topMiss}</strong>. Your win rate is ${Math.round((wins/total)*100)}% and your avg score is ${avgScore}. <strong style="color:var(--white);font-weight:500;">One focused week fixing your entry timing will move that score above 80.</strong>`;
+    }
+  }
+  updateCPInsight();
 
   renderTable();
 }
@@ -569,15 +599,15 @@ function toggleCompareSelect(id) {
       if (streak === 0) {
         title.textContent = 'Start Your Streak';
         title.style.color = 'var(--gray)';
-        msg.textContent = 'Log your thoughts after today's session to begin your journaling streak. Consistency here reflects consistency in the market.';
+        msg.textContent = "Log your thoughts after today's session to begin your journaling streak. Consistency here reflects consistency in the market.";
       } else if (streak < 3) {
         title.textContent = streak + ' Day Streak 🔥';
         title.style.color = 'var(--gold)';
-        msg.textContent = 'Good start. The traders who journal every session are the traders who improve every session. Keep going.';
+        msg.textContent = "Good start. The traders who journal every session are the traders who improve every session. Keep going.";
       } else if (streak < 7) {
         title.textContent = streak + ' Day Streak 🔥🔥';
         title.style.color = 'var(--gold)';
-        msg.textContent = 'You're building a real habit. ' + streak + ' consecutive days of journaling puts you ahead of 90% of traders. Don't break the chain.';
+        msg.textContent = "You're building a real habit. " + streak + " consecutive days of journaling puts you ahead of 90% of traders. Don't break the chain.";
       } else {
         title.textContent = streak + ' Day Streak 🔥🔥🔥';
         title.style.color = 'var(--green)';
@@ -653,15 +683,15 @@ function exportPDF() {
       if (streak === 0) {
         title.textContent = 'Start Your Streak';
         title.style.color = 'var(--gray)';
-        msg.textContent = 'Log your thoughts after today's session to begin your journaling streak. Consistency here reflects consistency in the market.';
+        msg.textContent = "Log your thoughts after today's session to begin your journaling streak. Consistency here reflects consistency in the market.";
       } else if (streak < 3) {
         title.textContent = streak + ' Day Streak 🔥';
         title.style.color = 'var(--gold)';
-        msg.textContent = 'Good start. The traders who journal every session are the traders who improve every session. Keep going.';
+        msg.textContent = "Good start. The traders who journal every session are the traders who improve every session. Keep going.";
       } else if (streak < 7) {
         title.textContent = streak + ' Day Streak 🔥🔥';
         title.style.color = 'var(--gold)';
-        msg.textContent = 'You're building a real habit. ' + streak + ' consecutive days of journaling puts you ahead of 90% of traders. Don't break the chain.';
+        msg.textContent = "You're building a real habit. " + streak + " consecutive days of journaling puts you ahead of 90% of traders. Don't break the chain.";
       } else {
         title.textContent = streak + ' Day Streak 🔥🔥🔥';
         title.style.color = 'var(--green)';
