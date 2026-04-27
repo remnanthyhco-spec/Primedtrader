@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Strategy — Primed Trader Pro</title>
+<title>Coach Prime Pro — Primed Trader</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -26,6 +26,8 @@
   .sb-item.active{background:var(--green-dim);color:var(--green);}
   .tip{position:absolute;left:52px;top:50%;transform:translateY(-50%);background:var(--dark4);border:1px solid var(--border);color:var(--white);font-size:11px;font-weight:600;padding:5px 10px;white-space:nowrap;border-radius:4px;opacity:0;pointer-events:none;transition:opacity 0.15s;letter-spacing:1px;text-transform:uppercase;z-index:100;}
   .sb-item:hover .tip{opacity:1;}
+  .sb-bottom{padding:0 6px 6px;display:flex;flex-direction:column;gap:2px;}
+  .sb-item.danger:hover{background:rgba(255,69,96,0.1);color:var(--red);}
 
   /* MAIN */
   .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
@@ -34,93 +36,116 @@
   .topbar{height:52px;min-height:52px;background:var(--dark);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;}
   .page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;letter-spacing:3px;text-transform:uppercase;}
   .tb-sp{flex:1;}
-  .strat-select{background:var(--dark2);border:1px solid rgba(0,232,122,0.2);color:var(--white);padding:7px 32px 7px 14px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:1px;text-transform:uppercase;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2300e87a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;transition:all 0.2s;}
-  .strat-select option{background:var(--dark2);}
-
-  /* CONTENT */
-  .content{flex:1;overflow-y:auto;padding:20px;display:flex;gap:20px;min-width:0;}
-  .content::-webkit-scrollbar{width:3px;}
-  .content::-webkit-scrollbar-thumb{background:var(--dark4);}
-
-  /* LEFT — strategy detail */
-  .left{flex:1;display:flex;flex-direction:column;gap:16px;min-width:0;}
-
-  /* RIGHT — checklist + dos/donts */
-  .right{width:300px;min-width:300px;display:flex;flex-direction:column;gap:16px;}
-
-  /* STRATEGY HERO */
-  .strat-hero{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:24px;position:relative;overflow:hidden;}
-  .strat-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);}
-  .strat-badge{display:inline-flex;align-items:center;gap:8px;background:var(--green-dim);border:1px solid rgba(0,232,122,0.2);padding:5px 12px;border-radius:3px;margin-bottom:14px;}
-  .strat-badge-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+  .online-badge{display:flex;align-items:center;gap:7px;background:var(--dark2);border:1px solid rgba(0,232,122,0.2);padding:5px 12px;border-radius:3px;}
+  .online-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;flex-shrink:0;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-  .strat-badge-txt{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);}
-  .strat-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(28px,4vw,44px);text-transform:uppercase;letter-spacing:-1px;margin-bottom:8px;}
-  .strat-desc{font-size:14px;color:var(--gray);line-height:1.7;font-weight:300;max-width:600px;}
-  .strat-desc strong{color:var(--white);font-weight:500;}
-  .strat-tags{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
-  .strat-tag{background:var(--dark3);border:1px solid var(--border);padding:4px 12px;border-radius:3px;font-size:11px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;font-family:'Barlow Condensed',sans-serif;font-weight:700;}
+  .online-txt{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--green);}
 
-  /* RULES CARD */
-  .rules-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:18px;}
-  .card-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);margin-bottom:14px;}
-  .rule-item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
-  .rule-item:last-child{border-bottom:none;}
-  .rule-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:var(--green);opacity:0.4;min-width:20px;line-height:1;margin-top:2px;}
-  .rule-text{font-size:13px;color:var(--gray);line-height:1.6;}
-  .rule-text strong{color:var(--white);font-weight:500;}
+  /* LAYOUT */
+  .body{flex:1;display:flex;overflow:hidden;}
+  .center{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
+  .center::-webkit-scrollbar{width:3px;}
+  .center::-webkit-scrollbar-thumb{background:var(--dark4);}
+  .right{width:300px;min-width:300px;background:var(--dark);border-left:1px solid var(--border);overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;}
+  .right::-webkit-scrollbar{width:3px;}
+  .right::-webkit-scrollbar-thumb{background:var(--dark4);}
 
-  /* SETUP EXAMPLE */
-  .setup-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:18px;}
-  .setup-visual{background:var(--dark3);border:1px solid var(--border);border-radius:3px;padding:20px;margin-bottom:14px;position:relative;min-height:120px;display:flex;align-items:center;justify-content:center;}
-  .setup-chart{width:100%;height:100px;position:relative;}
-  .setup-label{position:absolute;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--dark2);padding:2px 8px;border-radius:2px;}
-  .setup-desc{font-size:13px;color:var(--gray);line-height:1.7;}
-  .setup-desc strong{color:var(--white);font-weight:500;}
+  /* ASK COACH PRIME */
+  .ask-card{background:var(--dark2);border:1px solid rgba(0,232,122,0.2);border-radius:4px;padding:18px;}
+  .ask-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .coach-av{width:36px;height:36px;background:var(--green);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;color:#000;flex-shrink:0;}
+  .coach-name{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--green);}
+  .coach-sub{font-size:11px;color:var(--gray);}
+  .ask-input-wrap{display:flex;gap:10px;}
+  .ask-input{flex:1;background:var(--dark3);border:1px solid var(--border);color:var(--white);padding:12px 16px;font-family:'Barlow',sans-serif;font-size:14px;border-radius:3px;outline:none;transition:border-color 0.2s;}
+  .ask-input:focus{border-color:var(--green);}
+  .ask-input::placeholder{color:rgba(255,255,255,0.2);}
+  .ask-btn{background:var(--green);color:#000;border:none;padding:12px 20px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+  .ask-btn:hover{background:var(--white);}
+  .ask-note{font-size:11px;color:rgba(255,255,255,0.2);margin-top:8px;letter-spacing:1px;}
 
-  /* CHECKLIST */
-  .checklist-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:16px;}
-  .check-item{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;}
-  .check-item:last-child{border-bottom:none;}
-  .check-box{width:18px;height:18px;border-radius:3px;border:1.5px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all 0.15s;}
-  .check-box.checked{background:var(--green);border-color:var(--green);}
-  .check-box.checked::after{content:'✓';font-size:11px;font-weight:900;color:#000;}
-  .check-txt{font-size:12px;color:var(--gray);line-height:1.5;}
-  .check-txt.checked{color:rgba(255,255,255,0.3);text-decoration:line-through;}
-  .check-reset{display:block;width:100%;margin-top:12px;background:none;border:1px solid var(--border);color:var(--gray);padding:8px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
-  .check-reset:hover{border-color:var(--green);color:var(--green);}
+  /* CHAT FEED */
+  .chat-feed{display:flex;flex-direction:column;gap:10px;margin-top:4px;}
+  .chat-msg{display:flex;gap:12px;align-items:flex-start;animation:fadeUp 0.4s ease both;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .chat-av{width:28px;height:28px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;flex-shrink:0;margin-top:2px;}
+  .chat-av.cp{background:var(--green);color:#000;}
+  .chat-av.user{background:var(--dark4);color:var(--gray);border:1px solid var(--border);}
+  .chat-bubble{background:var(--dark2);border:1px solid var(--border);border-radius:3px;padding:12px 14px;flex:1;}
+  .chat-bubble.cp{border-color:rgba(0,232,122,0.15);}
+  .chat-bubble.user{background:var(--dark3);}
+  .chat-name{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;}
+  .chat-name.cp{color:var(--green);}
+  .chat-name.user{color:var(--gray);}
+  .chat-text{font-size:13px;color:var(--gray);line-height:1.7;}
+  .chat-text strong{color:var(--white);font-weight:500;}
+  .chat-time{font-size:10px;color:rgba(255,255,255,0.2);margin-top:6px;letter-spacing:1px;}
+  .typing{display:flex;gap:4px;align-items:center;padding:4px 0;}
+  .typing-dot{width:6px;height:6px;border-radius:50%;background:var(--green);opacity:0.4;animation:typingPulse 1.2s infinite;}
+  .typing-dot:nth-child(2){animation-delay:0.2s;}
+  .typing-dot:nth-child(3){animation-delay:0.4s;}
+  @keyframes typingPulse{0%,100%{opacity:0.4;transform:scale(1)}50%{opacity:1;transform:scale(1.2)}}
 
-  /* DOS AND DONTS */
-  .dnd-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:16px;}
-  .dnd-section{margin-bottom:14px;}
-  .dnd-section:last-child{margin-bottom:0;}
-  .dnd-title{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px;}
-  .dnd-title.do{color:var(--green);}
-  .dnd-title.dont{color:var(--red);}
-  .dnd-item{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;}
-  .dnd-item:last-child{margin-bottom:0;}
-  .dnd-icon{font-size:11px;flex-shrink:0;margin-top:2px;}
-  .dnd-text{font-size:12px;color:var(--gray);line-height:1.5;}
+  /* SESSION FEEDBACK CARDS */
+  .feedback-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;overflow:hidden;}
+  .feedback-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;transition:background 0.15s;}
+  .feedback-header:hover{background:var(--dark3);}
+  .feedback-meta{display:flex;align-items:center;gap:12px;}
+  .feedback-date{font-size:12px;color:var(--gray);}
+  .feedback-strat{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;text-transform:uppercase;}
+  .feedback-score{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;}
+  .feedback-grade{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;}
+  .ga{background:rgba(0,232,122,0.15);color:var(--green);}
+  .gb{background:rgba(240,192,64,0.12);color:var(--yellow);}
+  .gc{background:rgba(255,69,96,0.1);color:var(--red);}
+  .chevron{font-size:11px;color:var(--gray);transition:transform 0.2s;}
+  .chevron.open{transform:rotate(180deg);}
+  .feedback-body{display:none;padding:0 16px 16px;border-top:1px solid var(--border);}
+  .feedback-body.open{display:block;}
+  .fb-notes{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+  .fb-note{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:3px;border-left:3px solid;}
+  .fb-note.win{background:rgba(0,232,122,0.04);border-color:var(--green);}
+  .fb-note.loss{background:rgba(255,69,96,0.04);border-color:var(--red);}
+  .fb-note.warn{background:rgba(240,192,64,0.04);border-color:var(--yellow);}
+  .fb-note.focus{background:rgba(255,255,255,0.02);border-color:rgba(255,255,255,0.12);}
+  .fb-note-icon{font-size:13px;flex-shrink:0;margin-top:1px;}
+  .fb-note-title{font-size:11px;font-weight:700;margin-bottom:3px;}
+  .fb-note.win .fb-note-title{color:var(--green);}
+  .fb-note.loss .fb-note-title{color:var(--red);}
+  .fb-note.warn .fb-note-title{color:var(--yellow);}
+  .fb-note.focus .fb-note-title{color:var(--white);}
+  .fb-note-text{font-size:11px;color:var(--gray);line-height:1.6;}
 
-  /* SWITCH WARNING */
-  .switch-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:999;align-items:center;justify-content:center;}
-  .switch-box{background:var(--dark2);border:1px solid rgba(255,69,96,0.3);border-radius:4px;padding:28px 32px;max-width:440px;width:90%;}
-  .switch-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:12px;}
-  .switch-text{font-size:13px;color:var(--gray);line-height:1.8;margin-bottom:20px;}
-  .switch-text strong{color:var(--white);font-weight:500;}
-  .switch-btns{display:flex;gap:10px;}
-  .btn-switch{flex:1;background:var(--dark3);border:1px solid rgba(255,69,96,0.3);color:var(--red);padding:10px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
-  .btn-switch:hover{background:rgba(255,69,96,0.1);}
-  .btn-stay{flex:2;background:var(--green);border:none;color:#000;padding:10px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
-  .btn-stay:hover{background:var(--white);}
+  /* RIGHT PANEL */
+  .panel-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:14px;}
+  .panel-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;}
+  .panel-sub{font-size:11px;color:var(--gray);margin-bottom:12px;}
 
-  .toggle-on { background: rgba(0,232,122,0.15) !important; border-color: rgba(0,232,122,0.4) !important; }
-  .toggle-knob-on { left: 27px !important; background: var(--green) !important; }
+  /* FOCUS OF WEEK */
+  .focus-item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+  .focus-item:last-child{border-bottom:none;}
+  .focus-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--green);opacity:0.4;flex-shrink:0;line-height:1;margin-top:2px;}
+  .focus-text{font-size:12px;color:var(--gray);line-height:1.6;}
+  .focus-text strong{color:var(--white);font-weight:500;}
+
+  /* QUICK QUESTIONS */
+  .qq-btn{display:block;width:100%;background:var(--dark3);border:1px solid var(--border);color:var(--gray);padding:9px 12px;border-radius:3px;font-size:12px;text-align:left;cursor:pointer;transition:all 0.2s;margin-bottom:6px;font-family:'Barlow',sans-serif;line-height:1.4;}
+  .qq-btn:hover{border-color:var(--green);color:var(--white);background:rgba(0,232,122,0.04);}
+  .qq-btn:last-child{margin-bottom:0;}
+
+  /* LOCKED */
+  .locked-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:16px;text-align:center;position:relative;overflow:hidden;}
+  .locked-card::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,0.01) 0px,rgba(255,255,255,0.01) 1px,transparent 1px,transparent 8px);}
+  .lock-icon{font-size:24px;opacity:0.3;margin-bottom:8px;}
+  .lock-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}
+  .lock-desc{font-size:11px;color:var(--gray);line-height:1.6;margin-bottom:12px;}
+  .lock-btn{display:inline-block;background:var(--green);color:#000;padding:7px 20px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:all 0.2s;}
+  .lock-btn:hover{background:var(--white);}
+
   @media(max-width:900px){
-    .content{flex-direction:column;}
-    .right{width:100%;min-width:unset;}
+    .right{display:none;}
     html,body{height:auto;overflow:auto;}
-    .content{overflow:visible;}
+    .body,.center{overflow:visible;}
   }
 </style>
 </head>
@@ -152,830 +177,419 @@
     <div class="sb-item" onclick="window.location.href='pro-dashboard.html'"><span>⌂</span><div class="tip">Dashboard</div></div>
     <div class="sb-item" onclick="window.location.href='pro-session.html'"><span>▶</span><div class="tip">Start Session</div></div>
     <div class="sb-item" onclick="window.location.href='pro-journal.html'"><span>📓</span><div class="tip">Journal</div></div>
-    <div class="sb-item active" onclick="window.location.href='pro-strategy.html'"><span>🎯</span><div class="tip">My Strategy</div></div>
+    <div class="sb-item" onclick="window.location.href='pro-strategy.html'"><span>🎯</span><div class="tip">My Strategy</div></div>
     <div class="sb-item" onclick="window.location.href='pro-performance.html'"><span>📊</span><div class="tip">Performance</div></div>
-    <div class="sb-item" onclick="window.location.href='pro-coachprime.html'"><span>💬</span><div class="tip">Coach Prime</div></div>
+    <div class="sb-item active" onclick="window.location.href='pro-coachprime.html'"><span>💬</span><div class="tip">Coach Prime</div></div>
   </div>
   </div>
   </div>
   </div>
+  </div>
+
 </div>
 
 <!-- MAIN -->
 <div class="main">
   <div class="topbar">
-    <div class="page-title">My Strategy</div>
+    <div class="page-title">Coach Prime</div>
     <div style="background:var(--gold);color:#000;font-size:9px;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:2px;">PRO</div>
     <div class="tb-sp"></div>
-    <select class="strat-select" id="strat-select" onchange="handleSwitch(this)">
-      <option value="fvg">Fair Value Gap</option>
-      <option value="ict">ICT Kill Zone</option>
-      <option value="orb">Opening Range Breakout</option>
-      <option value="trendline">Trendline Model</option>
-      <option value="scalp">Scalp System</option>
-    </select>
+
+    <!-- READINESS SCORE -->
+    <div style="display:flex;align-items:center;gap:8px;background:var(--dark2);border:1px solid rgba(0,232,122,0.15);padding:5px 14px;border-radius:3px;">
+      <div><div style="font-size:10px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;">Readiness</div><div style="font-size:10px;color:var(--green);letter-spacing:1px;">Path to funded</div></div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--green);line-height:1;">63</div>
+    </div>
+
+    <!-- CONSISTENCY STREAK -->
+    <div style="display:flex;align-items:center;gap:8px;background:var(--dark2);border:1px solid rgba(212,168,42,0.15);padding:5px 14px;border-radius:3px;">
+      <div><div style="font-size:10px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;">Streak</div><div style="font-size:10px;color:var(--gold);letter-spacing:1px;">Compliant sessions</div></div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--gold);line-height:1;">2 🔥</div>
+    </div>
+
+    <div class="online-badge">
+      <div class="online-dot"></div>
+      <div class="online-txt">Coach Prime Online</div>
+    </div>
     <button onclick="window.location.href='index.html'" style="background:none;border:1px solid rgba(255,255,255,0.1);color:var(--gray);padding:6px 14px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='var(--gray)'">Log Out</button>
   </div>
 
-  <div class="content">
+  <div class="body">
 
-    <!-- LEFT -->
-    <div class="left">
+    <!-- CENTER -->
+    <div class="center">
 
-      <!-- HERO -->
-      <div class="strat-hero">
-        <div class="strat-badge"><div class="strat-badge-dot"></div><div class="strat-badge-txt" id="s-active-label">Active Strategy</div></div>
-        <div class="strat-name" id="s-name">Fair Value Gap</div>
-        <div class="strat-desc" id="s-desc">Loading...</div>
-        <div class="strat-tags" id="s-tags"></div>
-
-        <!-- ACTIVE STRATEGY TOGGLE -->
-        <div style="display:flex;align-items:center;gap:14px;margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06);">
+      <!-- ASK COACH PRIME -->
+      <div class="ask-card">
+        <div class="ask-header">
+          <div class="coach-av">CP</div>
           <div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--white);margin-bottom:3px;">Set as My Active Strategy</div>
-            <div style="font-size:12px;color:var(--gray);" id="toggle-sub">Your session page will be configured for this strategy</div>
+            <div class="coach-name">Ask Coach Prime</div>
+            <div class="coach-sub">Trading questions, strategy help, mindset coaching — I'm here</div>
           </div>
-          <div style="margin-left:auto;display:flex;align-items:center;gap:10px;flex-shrink:0;">
-            <div id="toggle-label" style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);">Not Active</div>
-            <div id="toggle-wrap" onclick="toggleActive()" style="width:48px;height:26px;border-radius:13px;background:var(--dark4);border:1px solid var(--border);cursor:pointer;position:relative;transition:all 0.3s;flex-shrink:0;">
-              <div id="toggle-knob" style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--gray);transition:all 0.3s;"></div>
+        </div>
+        <div class="ask-input-wrap">
+          <input class="ask-input" id="ask-input" type="text" placeholder="Ask me anything about your trading..." onkeydown="if(event.key==='Enter') sendQuestion()"/>
+          <button class="ask-btn" onclick="sendQuestion()">Ask →</button>
+        </div>
+        <div class="ask-note">Coach Prime responds based on your session history and strategy rules. Sunday update: responses powered by AI.</div>
+      </div>
+
+      <!-- CHAT FEED -->
+      <div class="feedback-card" style="padding:16px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);margin-bottom:14px;">Conversation</div>
+        <div class="chat-feed" id="chat-feed">
+          <!-- Default welcome message -->
+          <div class="chat-msg">
+            <div class="chat-av cp">CP</div>
+            <div class="chat-bubble cp">
+              <div class="chat-name cp">Coach Prime</div>
+              <div class="chat-text">
+                <strong>Welcome.</strong> I've reviewed your sessions and I'm ready to work with you. Ask me anything — strategy questions, why a trade didn't work, how to improve your consistency, or what to focus on next.<br><br>
+                The more you talk to me, the better I can coach you. <strong>Start by asking about your last session.</strong>
+              </div>
+              <div class="chat-time">Always available</div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ENTRY RULES -->
-      <div class="rules-card">
-        <div class="card-title">Entry Rules</div>
-        <div id="s-entry-rules"></div>
-      </div>
+      <!-- SESSION FEEDBACK FEED -->
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);padding:4px 0;">Session Coaching Feed</div>
 
-      <!-- STOP + TARGET -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-        <div class="rules-card">
-          <div class="card-title">Stop Loss Rules</div>
-          <div id="s-stop-rules"></div>
-        </div>
-        <div class="rules-card">
-          <div class="card-title">Target Rules</div>
-          <div id="s-target-rules"></div>
-        </div>
-      </div>
+      <div id="feedback-feed"></div>
 
-      <!-- SETUP EXAMPLE -->
-      <div class="setup-card">
-        <div class="card-title">What a Valid Setup Looks Like</div>
-        <div id="s-setup-visual" style="margin-bottom:14px;"></div>
-        <div class="setup-desc" id="s-setup-desc">Loading...</div>
-      </div>
+      <!-- BEST TRADE THOUGHT BUBBLE -->
+      <div style="position:relative;display:flex;align-items:flex-start;gap:14px;padding:20px;background:var(--dark2);border:1px solid var(--border);border-radius:4px;">
 
-      <!-- PRO: PERSONAL STRATEGY NOTES -->
-      <div style="background:var(--dark2);border:1px solid rgba(212,168,42,0.15);border-radius:4px;padding:18px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);">✏ My Personal Strategy Notes</div>
-          <div style="background:rgba(212,168,42,0.15);border:1px solid rgba(212,168,42,0.3);color:var(--gold);font-size:9px;font-weight:900;letter-spacing:2px;padding:1px 6px;border-radius:2px;">PRO</div>
-        </div>
-        <textarea id="strategy-notes" placeholder="Add your own notes, reminders, or modifications to this strategy. What works for you? What have you learned? These are private to your account." style="width:100%;background:var(--dark3);border:1px solid var(--border);border-radius:3px;padding:12px 14px;color:var(--white);font-family:'Barlow',sans-serif;font-size:13px;line-height:1.7;resize:vertical;min-height:100px;outline:none;transition:border-color 0.2s;font-weight:300;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'" onchange="saveStrategyNotes(this.value)"></textarea>
-        <div style="font-size:10px;color:rgba(255,255,255,0.2);margin-top:6px;letter-spacing:1px;">Auto-saves · Sunday: syncs to your account across all devices</div>
-      </div>
+        <!-- Coach Prime avatar -->
+        <div style="width:40px;height:40px;background:var(--green);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;color:#000;flex-shrink:0;margin-top:4px;">CP</div>
 
-    <!-- ASK COACH PRIME -->
-      <div style="background:var(--dark2);border:1px solid rgba(0,232,122,0.15);border-radius:4px;padding:18px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-          <div style="width:30px;height:30px;background:var(--green);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;color:#000;flex-shrink:0;">CP</div>
-          <div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Ask Coach Prime</div>
-            <div style="font-size:11px;color:var(--gray);margin-top:1px;">Strategy-specific questions answered</div>
+        <!-- thought bubble -->
+        <div style="position:relative;background:var(--dark3);border:1px solid rgba(0,232,122,0.2);border-radius:12px;padding:16px 18px;flex:1;animation:bubblePop 0.5s 0.3s cubic-bezier(0.16,1,0.3,1) both;opacity:0;">
+          <!-- bubble tail pointing left toward avatar -->
+          <div style="position:absolute;left:-8px;top:18px;width:14px;height:14px;background:var(--dark3);border-left:1px solid rgba(0,232,122,0.2);border-bottom:1px solid rgba(0,232,122,0.2);transform:rotate(45deg);"></div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:8px;">Coach Prime · Best Trade Highlight</div>
+          <div style="font-size:14px;color:var(--white);line-height:1.7;font-weight:300;">
+            Your best trade was <strong style="color:var(--green);font-weight:600;">Trade #2 on April 24</strong> — and here is why.<br><br>
+            You waited. You confirmed. You executed. You held.<br><br>
+            <span style="color:var(--gray);">Full FVG displacement on the 5-min. 15-min bias confirmed before entry. Stop set at 18,400 before you clicked buy. Target hit at 18,437.50 without moving a single thing. That is <strong style="color:var(--white);font-weight:500;">+$462.50</strong> from doing exactly what your rules said to do.</span><br><br>
+            <strong style="color:var(--white);font-weight:500;">That trade is your standard now. Every other trade gets measured against it.</strong>
+          </div>
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <div style="font-size:11px;color:var(--gray);">Trade score: <span style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:var(--green);">92<span style="font-size:11px;font-weight:400;">/100</span></span></div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:1px;">Apr 24 · FVG · 10:42 AM</div>
           </div>
         </div>
 
-        <!-- QUICK QUESTIONS -->
-        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;" id="cp-quick-qs"></div>
+      </div>
 
-        <!-- CUSTOM INPUT -->
-        <div style="display:flex;gap:8px;margin-bottom:10px;">
-          <input id="cp-strat-input" type="text" placeholder="Ask anything about this strategy..."
-            style="flex:1;background:var(--dark3);border:1px solid var(--border);color:var(--white);padding:10px 14px;font-family:'Barlow',sans-serif;font-size:13px;border-radius:3px;outline:none;transition:border-color 0.2s;"
-            onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'"
-            onkeydown="if(event.key==='Enter')askCP()"/>
-          <button onclick="askCP()" style="background:var(--green);color:#000;border:none;padding:10px 18px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:all 0.2s;" onmouseover="this.style.background='var(--white)'" onmouseout="this.style.background='var(--green)'">Ask →</button>
+      <!-- PATTERN ANALYSIS -->
+      <div style="background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <div style="width:30px;height:30px;background:var(--green);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;color:#000;flex-shrink:0;">CP</div>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Pattern Analysis <span style="background:var(--gold);color:#000;font-size:8px;font-weight:900;letter-spacing:2px;padding:1px 5px;border-radius:2px;margin-left:4px;">PRO</span></div>
+            <div style="font-size:11px;color:var(--gray);margin-top:1px;">Your 3 most common patterns across all sessions</div>
+          </div>
         </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;background:rgba(255,69,96,0.04);border:1px solid rgba(255,69,96,0.1);border-left:3px solid var(--red);border-radius:3px;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--red);opacity:0.4;line-height:1;flex-shrink:0;">1</div>
+            <div><div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:3px;">Early entry — setup incomplete</div><div style="font-size:11px;color:var(--gray);line-height:1.5;">Occurs in 2 of your last 3 sessions. You are entering before displacement is confirmed. This single habit is responsible for most of your compliance misses.</div></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;background:rgba(240,192,64,0.04);border:1px solid rgba(240,192,64,0.1);border-left:3px solid var(--yellow);border-radius:3px;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--yellow);opacity:0.4;line-height:1;flex-shrink:0;">2</div>
+            <div><div style="font-size:12px;font-weight:600;color:var(--yellow);margin-bottom:3px;">Checklist skipped</div><div style="font-size:11px;color:var(--gray);line-height:1.5;">Pre-trade checklist incomplete on 3 of 5 recent entries. The checklist is not slowing you down — it is protecting you from emotional decisions.</div></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 12px;background:rgba(0,232,122,0.04);border:1px solid rgba(0,232,122,0.1);border-left:3px solid var(--green);border-radius:3px;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--green);opacity:0.4;line-height:1;flex-shrink:0;">3</div>
+            <div><div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:3px;">Stop loss discipline — your strength</div><div style="font-size:11px;color:var(--gray);line-height:1.5;">You have not moved a stop loss against you in any session. This is your biggest edge right now. Protect it at all costs.</div></div>
+          </div>
+        </div>
+      </div>
 
-        <!-- ANSWER AREA -->
-        <div id="cp-strat-answer" style="display:none;background:var(--dark3);border:1px solid rgba(0,232,122,0.12);border-radius:3px;padding:12px 14px;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:6px;">Coach Prime</div>
-          <div style="font-size:13px;color:var(--gray);line-height:1.7;" id="cp-strat-answer-text"></div>
+      <!-- WEEKLY REPORT CARD -->
+      <div style="background:var(--dark2);border:1px solid rgba(212,168,42,0.15);border-radius:4px;padding:18px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);">Weekly Report Card <span style="background:var(--gold);color:#000;font-size:8px;font-weight:900;letter-spacing:2px;padding:1px 5px;border-radius:2px;margin-left:4px;">PRO</span></div>
+            <div style="font-size:11px;color:var(--gray);margin-top:2px;">Week of Apr 21 — Apr 27</div>
+          </div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;color:var(--yellow);">B-</div>
         </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+          <div style="background:var(--dark3);border:1px solid var(--border);border-radius:3px;padding:10px 12px;">
+            <div style="font-size:10px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Sessions</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:var(--white);">2</div>
+          </div>
+          <div style="background:var(--dark3);border:1px solid var(--border);border-radius:3px;padding:10px 12px;">
+            <div style="font-size:10px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Avg Score</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:var(--yellow);">63</div>
+          </div>
+          <div style="background:var(--dark3);border:1px solid var(--border);border-radius:3px;padding:10px 12px;">
+            <div style="font-size:10px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Week P&L</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:var(--green);">+$187.50</div>
+          </div>
+          <div style="background:var(--dark3);border:1px solid var(--border);border-radius:3px;padding:10px 12px;">
+            <div style="font-size:10px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Win Rate</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:var(--white);">50%</div>
+          </div>
+        </div>
+        <div style="background:rgba(0,232,122,0.04);border:1px solid rgba(0,232,122,0.1);border-radius:3px;padding:12px 14px;">
+          <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:6px;">Coach Prime — Weekly Verdict</div>
+          <div style="font-size:12px;color:var(--gray);line-height:1.7;"><strong style="color:var(--white);font-weight:500;">Solid start but you're leaving points on the table.</strong> Two sessions, one profitable. Your compliance is the differentiator — the winning session had a 78% compliance score, the losing session had 55%. That 23-point gap in discipline directly produced a $437.50 swing in P&L. <strong style="color:var(--white);font-weight:500;">Next week target: 75%+ compliance on every session.</strong></div>
+        </div>
+      </div>
+
+      <!-- DAILY 1% QUOTE -->
+      <div style="border:1px solid rgba(0,232,122,0.1);border-radius:4px;padding:28px 24px;text-align:center;margin-top:4px;">
+        <div style="font-size:32px;color:var(--green);opacity:0.25;line-height:1;margin-bottom:14px;">❝</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(20px,3vw,28px);text-transform:uppercase;letter-spacing:1px;line-height:1.2;color:var(--white);margin-bottom:14px;">1% better today.<br>1% better tomorrow.<br>Unrecognizable in a year.</div>
+        <div style="width:40px;height:1px;background:rgba(0,232,122,0.3);margin:0 auto 12px;"></div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.25);letter-spacing:4px;text-transform:uppercase;">Coach Prime</div>
       </div>
 
     </div>
 
-    <!-- RIGHT -->
+    <!-- RIGHT PANEL -->
     <div class="right">
 
-      <!-- PRE-TRADE CHECKLIST -->
-      <div class="checklist-card">
-        <div class="card-title">Pre-Trade Checklist</div>
-        <div id="s-checklist"></div>
-        <button class="check-reset" onclick="resetChecklist()">Reset Checklist</button>
-      </div>
-
-      <!-- DOS AND DONTS -->
-      <div class="dnd-card">
-        <div class="card-title">Rules of Engagement</div>
-        <div class="dnd-section">
-          <div class="dnd-title do">✓ Always Do</div>
-          <div id="s-dos"></div>
+      <!-- FOCUS OF THE WEEK -->
+      <div class="panel-card">
+        <div class="panel-title">Focus of the Week</div>
+        <div class="panel-sub">Coach Prime's top priorities for you right now</div>
+        <div class="focus-item">
+          <div class="focus-num">1</div>
+          <div class="focus-text"><strong>Wait for full confirmation.</strong> Your #1 compliance miss is entering before the setup is complete. No early entries this week — zero exceptions.</div>
         </div>
-        <div class="dnd-section">
-          <div class="dnd-title dont">✗ Never Do</div>
-          <div id="s-donts"></div>
+        <div class="focus-item">
+          <div class="focus-num">2</div>
+          <div class="focus-text"><strong>Complete the checklist every trade.</strong> You skipped it on 3 of your last 5 entries. The checklist is not optional — it's your edge.</div>
+        </div>
+        <div class="focus-item">
+          <div class="focus-num">3</div>
+          <div class="focus-text"><strong>Journal before you review.</strong> Write one sentence about why you took the trade before you look at the outcome. Build the habit now.</div>
         </div>
       </div>
 
-      <!-- COACH PRIME PRO TIP -->
-      <div style="background:var(--dark2);border:1px solid rgba(0,232,122,0.15);border-radius:4px;padding:14px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <div style="width:28px;height:28px;background:var(--green);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;color:#000;flex-shrink:0;">CP</div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Coach Prime Pro</div>
+      <!-- QUICK QUESTIONS -->
+      <div class="panel-card">
+        <div class="panel-title">Quick Questions</div>
+        <div class="panel-sub">Tap to ask Coach Prime</div>
+        <button class="qq-btn" onclick="quickAsk('Why is my compliance score low?')">Why is my compliance score low?</button>
+        <button class="qq-btn" onclick="quickAsk('What should I focus on in my next session?')">What should I focus on next session?</button>
+        <button class="qq-btn" onclick="quickAsk('How do I stop revenge trading?')">How do I stop revenge trading?</button>
+        <button class="qq-btn" onclick="quickAsk('Am I ready to attempt a prop firm eval?')">Am I ready for a prop firm eval?</button>
+        <button class="qq-btn" onclick="quickAsk('What is my best performing strategy?')">What is my best performing strategy?</button>
+        <button class="qq-btn" onclick="quickAsk('How do I build more consistency?')">How do I build consistency?</button>
+      </div>
+
+      <!-- COACH PRIME STATS -->
+      <div class="panel-card">
+        <div class="panel-title">Your Coaching Summary</div>
+        <div class="panel-sub">Based on all sessions to date</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+            <span style="color:var(--gray);">Sessions reviewed</span>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--white);">2</span>
           </div>
-          <div style="display:inline-flex;align-items:center;gap:4px;background:rgba(0,232,122,0.08);border:1px solid rgba(0,232,122,0.15);padding:2px 7px;border-radius:2px;">
-            <div style="width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;"></div>
-            <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Pro Active</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+            <span style="color:var(--gray);">Most common miss</span>
+            <span style="font-size:11px;color:var(--red);font-weight:600;text-align:right;max-width:140px;">Early entry</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+            <span style="color:var(--gray);">Biggest strength</span>
+            <span style="font-size:11px;color:var(--green);font-weight:600;text-align:right;max-width:140px;">Stop loss discipline</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+            <span style="color:var(--gray);">Avg score</span>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--yellow);">63</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+            <span style="color:var(--gray);">Readiness score</span>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--gold);">63 <span style="font-size:10px;color:var(--gray);">/ 100</span></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+            <span style="color:var(--gray);">Weekly grade</span>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;color:var(--yellow);">B-</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;">
+            <span style="color:var(--gray);">Coaching streak</span>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--green);">2 🔥</span>
           </div>
         </div>
-        <div style="font-size:12px;color:var(--gray);line-height:1.7;" id="s-cp-tip">Loading...</div>
-        <!-- Compliance score for this strategy -->
-        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;">
-          <div style="font-size:11px;color:var(--gray);">Your avg compliance on this strategy</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:var(--yellow);">63<span style="font-size:11px;color:var(--gray);font-weight:400;">/100</span></div>
+      </div>
+
+      <!-- INTRA-SESSION COACHING — UNLOCKED PRO -->
+      <div style="background:var(--dark2);border:1px solid rgba(0,232,122,0.2);border-radius:4px;padding:14px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(0,232,122,0.08);border:1px solid rgba(0,232,122,0.2);padding:3px 8px;border-radius:2px;">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;"></div>
+            <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Live During Sessions</div>
+          </div>
+          <div style="background:var(--gold);color:#000;font-size:8px;font-weight:900;letter-spacing:2px;padding:1px 6px;border-radius:2px;">PRO</div>
         </div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">⚡ Intra-Session Coaching</div>
+        <div style="font-size:12px;color:var(--gray);line-height:1.7;margin-bottom:12px;">During your next session Coach Prime watches your chart in real time — flagging setups, validating entries against your rules, and keeping you accountable as you trade. Every trade gets immediate feedback.</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray);"><span style="color:var(--green);">✓</span> Setup identification before you miss it</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray);"><span style="color:var(--green);">✓</span> Entry validation against your checklist</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray);"><span style="color:var(--green);">✓</span> Exit coaching — hold or take profit guidance</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--gray);"><span style="color:var(--green);">✓</span> Immediate post-trade feedback on every entry</div>
+        </div>
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:rgba(255,255,255,0.25);">Full AI-powered coaching activates Sunday when the Anthropic API connects.</div>
       </div>
 
     </div>
   </div>
 </div>
 
-
-
 <script>
-  const STRATEGIES = {
-    fvg: {
-      name: 'Fair Value Gap',
-      desc: 'An <strong>ICT-based imbalance strategy</strong> that identifies gaps in price where buying and selling are unequal. Price returns to fill these gaps with high probability — your edge is entering at the right gap with the right bias.',
-      tags: ['Day Trader', 'Intermediate', '5-min / 15-min', 'NQ / MNQ'],
-      entry: [
-        { text: '<strong>Identify a Fair Value Gap</strong> — three consecutive candles where the middle candle body creates a gap between the high of candle 1 and the low of candle 3' },
-        { text: '<strong>Confirm higher timeframe bias</strong> — 15-min or 1-hour must agree with your trade direction before entry' },
-        { text: '<strong>Wait for displacement</strong> — a strong impulsive candle that creates the FVG. No displacement = no trade' },
-        { text: '<strong>Enter on the return to the gap</strong> — wait for price to retrace back into the FVG before triggering' },
-        { text: '<strong>Kill zone timing</strong> — highest probability during 8:30–11:00 AM EST New York session' }
-      ],
-      stop: [
-        { text: '<strong>Set stop below the FVG</strong> — below the low of the gap on bullish setups, above the high on bearish' },
-        { text: '<strong>Never move your stop against you</strong> — set it before entry and do not touch it' },
-        { text: '<strong>Maximum risk per trade: 10 ticks</strong> on MNQ, 2 ticks on NQ full size' }
-      ],
-      target: [
-        { text: '<strong>Minimum 1.5R</strong> — your target must be at least 1.5x your stop distance' },
-        { text: '<strong>Previous structure high/low</strong> — identify the nearest significant level in the direction of the trade' },
-        { text: '<strong>Partial at 1R, runner to 2R</strong> — take half off at your first target, let the rest run' }
-      ],
-      setup: 'Price sweeps a liquidity level (previous high or low), then creates a strong displacement candle leaving a visible gap on the chart. You wait for price to retrace back into that gap — this is your entry. The gap should be clean, recent (within the last 10 candles), and align with the 15-min trend direction. <strong>If the gap is older than 20 candles or conflicts with the higher timeframe, skip it.</strong>',
-      checklist: [
-        '15-min or 1-hour bias confirmed before entry',
-        'Fair Value Gap is clearly visible and recent',
-        'Displacement candle created the gap (not a slow grind)',
-        'Price has returned to the gap — not chasing',
-        'Kill zone window is active (8:30–11:00 EST)',
-        'Stop loss set before clicking buy/sell',
-        'Max daily loss not already reached',
-        'Not in a news window (check economic calendar)'
-      ],
-      dos: [
-        'Wait for price to come to you — never chase',
-        'Mark your FVGs on the chart before the session',
-        'Check the 15-min trend before every entry',
-        'Take partials at 1R to protect profits'
-      ],
-      donts: [
-        'Enter before displacement is confirmed',
-        'Trade against the higher timeframe bias',
-        'Move your stop loss after entry',
-        'Trade during major news releases',
-        'Take more than 3 trades per session'
-      ],
-      tip: 'The most common FVG mistake is entering too early — before displacement is confirmed. A fair value gap that forms slowly over many candles is weak. You want a sharp, aggressive displacement candle that leaves a clean gap. If you\'re not sure whether displacement happened, it didn\'t.'
-    },
+  // Bubble pop animation
+  const bubbleStyle = document.createElement('style');
+  bubbleStyle.textContent = '@keyframes bubblePop{from{opacity:0;transform:scale(0.8) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}';
+  document.head.appendChild(bubbleStyle);
 
-    ict: {
-      name: 'ICT Kill Zone',
-      desc: 'A <strong>time-based liquidity strategy</strong> that exploits predictable institutional order flow during specific session windows. Institutions move price to hunt liquidity before reversing — your edge is knowing when and where this happens.',
-      tags: ['Day Trader', 'Advanced', '5-min / 15-min', 'NQ / MNQ'],
-      entry: [
-        { text: '<strong>Identify the kill zone</strong> — London (2:00–5:00 AM EST), New York AM (8:30–11:00 AM), or New York PM (1:30–4:00 PM)' },
-        { text: '<strong>Mark the previous session high and low</strong> — these are your liquidity targets' },
-        { text: '<strong>Wait for a liquidity sweep</strong> — price breaks above the high or below the low to grab stops' },
-        { text: '<strong>Look for displacement after the sweep</strong> — a strong reversal candle confirms institutional rejection' },
-        { text: '<strong>Enter on the first pullback</strong> after displacement — into a FVG or order block in the reversal direction' }
-      ],
-      stop: [
-        { text: '<strong>Above/below the sweep candle wick</strong> — the liquidity grab defines your invalidation level' },
-        { text: '<strong>No more than 15 ticks</strong> — if the setup requires a wider stop it is not a clean setup' },
-        { text: '<strong>One and done</strong> — if stopped out during a kill zone, do not re-enter' }
-      ],
-      target: [
-        { text: '<strong>Opposite session extreme</strong> — if sweeping highs, target the session low' },
-        { text: '<strong>Minimum 2R</strong> — kill zone setups should offer at least 2x risk reward' },
-        { text: '<strong>Exit before the kill zone closes</strong> — do not hold positions into dead zones' }
-      ],
-      setup: 'During the New York AM kill zone (8:30–11:00), price runs above the previous day\'s high taking stops from breakout traders. A strong bearish displacement candle forms immediately after the sweep. You enter short on the first pullback into the FVG created by that displacement candle. Stop is above the sweep wick. Target is the Asian session low. <strong>This is a 15–30 minute trade — not a hold-all-day setup.</strong>',
-      checklist: [
-        'Kill zone window is currently active',
-        'Previous session high or low has been identified and marked',
-        'Liquidity sweep has occurred (stop hunt confirmed)',
-        'Displacement candle confirms institutional rejection',
-        'Entry is on pullback — not chasing the move',
-        'Stop placed above/below the sweep wick',
-        'Target identified before entry',
-        'Economic calendar checked for news events'
-      ],
-      dos: [
-        'Mark previous session highs and lows before each session',
-        'Wait for the sweep AND displacement before entry',
-        'Exit positions before the kill zone window closes',
-        'Study the Asian range every morning'
-      ],
-      donts: [
-        'Trade outside of kill zone windows',
-        'Enter without a confirmed liquidity sweep',
-        'Hold positions overnight',
-        'Trade the first candle of the kill zone — wait for the setup',
-        'Ignore the Asian range when planning your session'
-      ],
-      tip: 'Most traders get trapped by the liquidity sweep — they enter in the direction of the sweep and get reversed. You profit from those trapped traders. Your patience is the edge. Wait for the sweep, wait for displacement, then follow the institutional order flow.'
+  const SESSIONS = [
+    {
+      id:1, date:'2026-04-24', strategy:'FVG', score:74, grade:'B',
+      notes:{
+        win:{title:'Trade #2 — Perfect execution.',text:'You waited for full FVG confirmation, checked the 15-min bias, and entered clean. That is exactly what the strategy calls for. Remember this standard.'},
+        loss:{title:'Trades #1 and #3 — Entry too early.',text:'Both trades entered before the FVG was fully formed. You anticipated instead of waiting. Patience costs nothing — early entries cost you compliance points.'},
+        warn:{title:'Missed a high-probability setup at 10:42.',text:'A clean FVG formed on the 5-min with full displacement. Your rules said trade it — you didn\'t. Being too cautious costs just as much as being reckless.'},
+        focus:{title:'Focus for next session',text:'Wait for full FVG confirmation before entering. Write one sentence in your notes before reviewing each trade outcome.'}
+      }
     },
-
-    orb: {
-      name: 'Opening Range Breakout',
-      desc: 'The most <strong>mechanical and beginner-friendly</strong> futures strategy. Define the opening range in the first 15–30 minutes, then trade the breakout. One setup, one trade, maximum discipline.',
-      tags: ['Day Trader / Scalper', 'Beginner Friendly', '5-min', 'NQ / MNQ'],
-      entry: [
-        { text: '<strong>Define the opening range</strong> — mark the high and low of the first 15 minutes after the 9:30 AM open (or 30-min version)' },
-        { text: '<strong>Wait for a clean breakout</strong> — price must close a full candle body above the high (long) or below the low (short)' },
-        { text: '<strong>No false breakout entries</strong> — if price breaks out and immediately reverses back inside the range, skip the trade' },
-        { text: '<strong>Enter on the retest</strong> — after the breakout candle closes, wait for price to pull back and retest the breakout level' },
-        { text: '<strong>One trade per session</strong> — this is a single-setup strategy, not a scalping system' }
-      ],
-      stop: [
-        { text: '<strong>Below the opening range low</strong> for long trades, above the opening range high for shorts' },
-        { text: '<strong>Or just below/above the breakout candle</strong> for a tighter stop on clean breakouts' },
-        { text: '<strong>Maximum risk: 10 ticks</strong> — if the range is too wide the setup is not valid' }
-      ],
-      target: [
-        { text: '<strong>1x the range size projected from the breakout</strong> — if the range is 20 ticks, target is 20 ticks from breakout' },
-        { text: '<strong>Minimum 1.5R</strong> before taking the trade' },
-        { text: '<strong>Close the trade by 11:30 AM</strong> — do not hold ORB trades into the afternoon session' }
-      ],
-      setup: 'Market opens at 9:30. For the first 15 minutes you do nothing — just watch and mark the high and low. At 9:45 you have your range. Now you wait. If price breaks above the range high with a clean full-body candle close, you look to enter long on the retest. Your stop is below the range low. Target is the range size projected up. <strong>If there is no clean breakout by 10:30, there is no trade today.</strong>',
-      checklist: [
-        'Opening range marked (9:30–9:45 high and low)',
-        'No major news events between 9:30–10:30',
-        'Breakout candle has a full body close outside the range',
-        'Not a false breakout (price did not immediately return inside)',
-        'Entry is on the retest — not chasing the breakout',
-        'Stop set below/above the opening range',
-        'Target calculated before entry (minimum 1.5R)',
-        'Time check — entering before 10:30 AM'
-      ],
-      dos: [
-        'Be at your desk before 9:30 with the range levels already drawn',
-        'Wait for a full candle body close — not just a wick',
-        'Take the retest entry for better risk/reward',
-        'Accept that some days there is no valid setup'
-      ],
-      donts: [
-        'Chase the initial breakout candle',
-        'Take more than one trade per session',
-        'Hold past 11:30 AM',
-        'Enter if the range is wider than 20 ticks on MNQ',
-        'Trade ORB on high-impact news days (FOMC, CPI, NFP)'
-      ],
-      tip: 'The biggest ORB mistake is chasing. The breakout candle already moved — your entry is on the retest of the breakout level. A pullback entry gives you a tighter stop, better risk/reward, and confirmation that the breakout is real. Patience at this one moment is the entire edge.'
-    },
-
-    trendline: {
-      name: 'Trendline Model',
-      desc: 'Pure <strong>naked price action</strong> — no indicators, no noise. Trendlines define the market structure and your entries come from bounces and breaks. Simple in theory, demanding in execution.',
-      tags: ['Day Trader', 'Intermediate', '5-min / 15-min / 1-hour', 'NQ / MNQ'],
-      entry: [
-        { text: '<strong>Draw trendlines on the 1-hour first</strong> — connect at least 2 significant highs (downtrend) or 2 significant lows (uptrend)' },
-        { text: '<strong>Confirm on the 15-min</strong> — the 15-min structure must align with the 1-hour trendline direction' },
-        { text: '<strong>Bounce entry</strong> — price returns to touch the trendline and shows a rejection candle (hammer, engulfing, pin bar)' },
-        { text: '<strong>Break entry</strong> — price breaks through the trendline with a full body candle close, then retests the broken level' },
-        { text: '<strong>No anticipation</strong> — wait for the candle to close before entering. Never enter mid-candle' }
-      ],
-      stop: [
-        { text: '<strong>Bounce trades</strong> — stop below the trendline (for longs) by 5 ticks buffer' },
-        { text: '<strong>Break trades</strong> — stop above the broken trendline (for shorts) or below (for longs)' },
-        { text: '<strong>Invalidation</strong> — if price closes back through the trendline your thesis is wrong, exit immediately' }
-      ],
-      target: [
-        { text: '<strong>Next significant structure level</strong> — previous high, low, or consolidation zone' },
-        { text: '<strong>Minimum 2R</strong> — trendline trades with less than 2R are not worth the risk' },
-        { text: '<strong>Trail your stop</strong> as price moves in your favor — lock in profits at each new structure level' }
-      ],
-      setup: 'On the 1-hour chart you identify a clear uptrend — a series of higher lows connected by a clean trendline. Price pulls back to touch the trendline for the third time. On the 15-min you see a bullish engulfing candle form right on the line. You wait for the candle to close. Entry is the open of the next candle. Stop is 5 ticks below the trendline. Target is the most recent 1-hour high. <strong>The third touch of a trendline carries more weight than the first or second.</strong>',
-      checklist: [
-        '1-hour trendline drawn with minimum 2 touch points',
-        '15-min structure confirms the direction',
-        'Price is at the trendline — not chasing a move away from it',
-        'Rejection or break candle has fully closed before entry',
-        'Stop placed with 5-tick buffer beyond the trendline',
-        'Target identified at next structure level',
-        'Minimum 2R confirmed before entry',
-        'No major news in the next 30 minutes'
-      ],
-      dos: [
-        'Draw trendlines before the session — not during it',
-        'Connect significant swing highs/lows — not every minor bounce',
-        'Wait for the candle close confirmation every time',
-        'Respect the trendline break — exit when price closes through it'
-      ],
-      donts: [
-        'Enter mid-candle in anticipation',
-        'Draw trendlines through candle bodies — connect wicks',
-        'Force a trendline that only has one touch point',
-        'Hold a trade after a confirmed trendline break against you',
-        'Use indicators alongside trendlines — trust the naked chart'
-      ],
-      tip: 'A trendline is only valid if you drew it before price reached it — not after. If you\'re drawing trendlines to justify an entry you already want to take, that is not a strategy. Draw your lines in the morning, then wait for price to come to you. The market does not care about your opinion.'
-    },
-
-    scalp: {
-      name: 'Scalp System',
-      desc: 'A <strong>fast, high-frequency scalp strategy</strong> combining 1-min structure breaks and micro trendline breaks — popularized by traders like TradesByMatt. Small targets, tight stops, maximum 3 trades per session. Discipline is the entire edge.',
-      tags: ['Scalper', 'Advanced', '1-min / 3-min / 5-min', 'Trendline + Structure', 'MNQ Only (Free)'],
-      entry: [
-        { text: '<strong>Method 1 — Structure Break:</strong> Identify a 1-min structure break — a clean break of a short-term high or low with a full body candle close' },
-        { text: '<strong>Method 2 — Trendline Break:</strong> Draw a micro trendline on the 1-min or 5-min connecting at least 2 swing highs (downtrend) or 2 swing lows (uptrend). Enter on a full body candle close through the trendline followed by a retest' },
-        { text: '<strong>Confirm with the 3-min or 5-min bias</strong> — the higher timeframe must align with your scalp direction regardless of entry method' },
-        { text: '<strong>Enter on the immediate retest</strong> — within 2–3 candles of the break. If price runs without retesting, skip it' },
-        { text: '<strong>Maximum 3 trades per session</strong> — this rule is non-negotiable. Scalping more than 3 times leads to overtrading' },
-        { text: '<strong>Kill zone only</strong> — highest probability during the NY morning session. Do not scalp dead markets' }
-      ],
-      stop: [
-        { text: '<strong>Just below/above the structure break candle</strong> — 3–5 ticks maximum' },
-        { text: '<strong>If you need more than 8 ticks for a stop, skip the trade</strong> — the setup is not clean enough' },
-        { text: '<strong>No averaging down</strong> — if you\'re wrong, you\'re wrong. One loss and move on' }
-      ],
-      target: [
-        { text: '<strong>Minimum 1.5R</strong> — even scalps need a positive risk/reward ratio' },
-        { text: '<strong>Next 1-min structure level</strong> — previous swing high or low on the 1-min chart' },
-        { text: '<strong>Take full profit at target</strong> — no runners on scalp trades. In and out clean' }
-      ],
-      setup: 'It\'s 9:15 AM. The 3-min is trending up — higher highs and higher lows. On the 1-min a small consolidation forms. Price breaks above the consolidation high with a full body candle. You wait one candle for a micro-retest of the broken level. Entry on the retest. Stop 4 ticks below the break candle. Target is the next 1-min swing high 12 ticks away. That\'s 3R. You\'re in and out in under 5 minutes. <strong>Maximum 3 of these per session. Then you walk away.</strong>',
-      checklist: [
-        '3-min trend direction confirmed before any entries',
-        'Currently in the the NY morning session kill zone window',
-        'Entry method confirmed — structure break OR trendline break (not both at once)',
-        'Entry is on the retest — not chasing the break',
-        'Stop set at 5 ticks or less',
-        'Trade count checked — still under 3 for the session',
-        'Not in a news window',
-        'Daily loss limit not reached'
-      ],
-      dos: [
-        'Set a hard limit of 3 trades per session — stick to it',
-        'Be fully focused — no phone, no distractions during scalp windows',
-        'Take profits at your target without hesitation',
-        'Stop for the day if you hit your max loss on trade 1'
-      ],
-      donts: [
-        'Scalp during low-volume dead zones or choppy consolidation',
-        'Take more than 3 trades no matter what',
-        'Move your stop to break even too early',
-        'Revenge trade after a loss — the 3-trade limit exists for this reason',
-        'Scalp on low-volume or news-driven days'
-      ],
-      tip: 'Whether you use structure breaks or trendline breaks — the retest entry is everything. The initial break candle already moved without you. Your edge is entering on the pullback with a tight stop and a clear target. The 3-trade rule still applies regardless of method. Most scalpers blow up on trade 4 and 5 — not 1, 2, and 3.'
+    {
+      id:2, date:'2026-04-23', strategy:'FVG', score:52, grade:'C',
+      notes:{
+        win:{title:'Trade #1 — You respected your stop loss.',text:'Even though the trade went against you, you did not move your stop. That is discipline. Protecting your downside is the most important rule you have.'},
+        loss:{title:'Trade #2 — You revenge traded.',text:'After losing trade #1 you entered immediately without waiting for a new setup. That is emotional trading. The market does not owe you a recovery.'},
+        warn:{title:'No higher timeframe bias check before either entry.',text:'Your pre-trade checklist requires a 15-min bias confirmation. Neither trade had it. The checklist exists for a reason.'},
+        focus:{title:'Focus for next session',text:'Complete the full pre-trade checklist before every entry. If you skip one item, do not take the trade. No exceptions.'}
+      }
     }
+  ];
+
+  const ANSWERS = {
+    'Why is my compliance score low?': 'Your compliance score reflects how closely you follow your strategy rules on every trade. Looking at your sessions, the two biggest misses are <strong>entering before the setup is confirmed</strong> and <strong>skipping the pre-trade checklist</strong>. Fix those two habits and your score will climb above 80 within 10 sessions.',
+    'What should I focus on in my next session?': 'One thing only — <strong>run the full pre-trade checklist before every single entry.</strong> Not most entries. Every entry. If you miss one item on the checklist, you do not take the trade. That single habit will raise your compliance score more than anything else you can do right now.',
+    'How do I stop revenge trading?': '<strong>The best revenge trade is no trade at all.</strong> After a losing trade, close your platform for 5 minutes. Literally step away. The market will still be there. Your next trade needs to come from your rules — not from your emotions trying to get even with the market.',
+    'Am I ready to attempt a prop firm eval?': 'Not yet — and that\'s a good thing to know now rather than after spending $200 on an eval. <strong>You need a 80%+ compliance score across 20 consecutive sessions</strong> before attempting an eval. You\'re at 63 average across 2 sessions. Keep building. Upgrade to Pro for your full readiness score.',
+    'What is my best performing strategy?': 'Your only sessions so far are FVG — so that\'s your best and only data point right now. <strong>Your FVG average score is 63.</strong> Stay with this strategy and get it above 80 before considering anything else.',
+    'How do I build consistency?': '<strong>Consistency is a byproduct of repetition, not talent.</strong> Same setup. Same rules. Same checklist. Every session. Do not change your strategy, do not skip steps, do not make exceptions. 30 sessions of disciplined execution will build more consistency than 100 sessions of freestyle trading.'
   };
 
-  // SVG chart illustrations per strategy
-  const VISUALS = {
-    fvg: `<svg viewBox="0 0 520 180" width="100%" xmlns="http://www.w3.org/2000/svg" style="background:#0f1420;border-radius:3px;border:1px solid rgba(255,255,255,0.07);">
-      <!-- grid lines -->
-      <line x1="0" y1="45" x2="520" y2="45" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-      <line x1="0" y1="90" x2="520" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-      <line x1="0" y1="135" x2="520" y2="135" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-      <!-- candles going up -->
-      <rect x="20" y="110" width="12" height="30" fill="#ff4560" rx="1"/>
-      <line x1="26" y1="105" x2="26" y2="145" stroke="#ff4560" stroke-width="1.5"/>
-      <rect x="40" y="100" width="12" height="25" fill="#ff4560" rx="1"/>
-      <line x1="46" y1="94" x2="46" y2="130" stroke="#ff4560" stroke-width="1.5"/>
-      <rect x="60" y="85" width="12" height="20" fill="#00e87a" rx="1"/>
-      <line x1="66" y1="80" x2="66" y2="110" stroke="#00e87a" stroke-width="1.5"/>
-      <!-- BIG displacement candle -->
-      <rect x="80" y="40" width="14" height="55" fill="#00e87a" rx="1"/>
-      <line x1="87" y1="32" x2="87" y2="100" stroke="#00e87a" stroke-width="1.5"/>
-      <!-- FVG zone highlight -->
-      <rect x="94" y="60" width="80" height="28" fill="rgba(0,232,122,0.08)" rx="0"/>
-      <line x1="94" y1="60" x2="174" y2="60" stroke="rgba(0,232,122,0.5)" stroke-width="1" stroke-dasharray="4,3"/>
-      <line x1="94" y1="88" x2="174" y2="88" stroke="rgba(0,232,122,0.5)" stroke-width="1" stroke-dasharray="4,3"/>
-      <text x="98" y="78" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.8)" letter-spacing="1">FVG ZONE</text>
-      <!-- candles after displacement -->
-      <rect x="96" y="42" width="12" height="18" fill="#00e87a" rx="1"/>
-      <line x1="102" y1="38" x2="102" y2="64" stroke="#00e87a" stroke-width="1.5"/>
-      <rect x="116" y="50" width="12" height="22" fill="#ff4560" rx="1"/>
-      <line x1="122" y1="44" x2="122" y2="78" stroke="#ff4560" stroke-width="1.5"/>
-      <!-- price returns to FVG -->
-      <rect x="136" y="68" width="12" height="20" fill="#ff4560" rx="1"/>
-      <line x1="142" y1="60" x2="142" y2="92" stroke="#ff4560" stroke-width="1.5"/>
-      <!-- entry candle -->
-      <rect x="156" y="55" width="14" height="30" fill="#00e87a" rx="1"/>
-      <line x1="163" y1="48" x2="163" y2="88" stroke="#00e87a" stroke-width="1.5"/>
-      <!-- entry arrow -->
-      <line x1="163" y1="95" x2="163" y2="108" stroke="#00e87a" stroke-width="2" stroke-dasharray="3,2"/>
-      <polygon points="158,108 168,108 163,116" fill="#00e87a"/>
-      <text x="150" y="128" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#00e87a" letter-spacing="1">ENTRY</text>
-      <!-- price targets up -->
-      <rect x="178" y="40" width="12" height="20" fill="#00e87a" rx="1"/>
-      <rect x="198" y="28" width="12" height="18" fill="#00e87a" rx="1"/>
-      <rect x="218" y="18" width="12" height="16" fill="#00e87a" rx="1"/>
-      <!-- stop line -->
-      <line x1="136" y1="95" x2="520" y2="95" stroke="rgba(255,69,96,0.5)" stroke-width="1" stroke-dasharray="5,3"/>
-      <text x="440" y="91" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(255,69,96,0.8)">STOP</text>
-      <!-- target line -->
-      <line x1="80" y1="18" x2="520" y2="18" stroke="rgba(240,192,64,0.4)" stroke-width="1" stroke-dasharray="5,3"/>
-      <text x="440" y="14" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(240,192,64,0.8)">TARGET</text>
-      <!-- labels -->
-      <text x="72" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">① DISPLACEMENT</text>
-      <text x="175" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">② RETURN TO FVG</text>
-      <text x="320" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">③ ENTRY + TARGET</text>
-    </svg>`,
-
-    ict: `<svg viewBox="0 0 520 180" width="100%" xmlns="http://www.w3.org/2000/svg" style="background:#0f1420;border-radius:3px;border:1px solid rgba(255,255,255,0.07);">
-      <line x1="0" y1="45" x2="520" y2="45" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-      <line x1="0" y1="90" x2="520" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-      <line x1="0" y1="135" x2="520" y2="135" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-      <!-- prev session high line -->
-      <line x1="0" y1="38" x2="520" y2="38" stroke="rgba(255,69,96,0.4)" stroke-width="1" stroke-dasharray="6,3"/>
-      <text x="4" y="34" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(255,69,96,0.7)">PREV SESSION HIGH — LIQUIDITY</text>
-      <!-- candles building up -->
-      <rect x="20" y="70" width="11" height="30" fill="#00e87a" rx="1"/>
-      <rect x="38" y="60" width="11" height="28" fill="#00e87a" rx="1"/>
-      <rect x="56" y="52" width="11" height="26" fill="#00e87a" rx="1"/>
-      <rect x="74" y="45" width="11" height="22" fill="#00e87a" rx="1"/>
-      <!-- sweep candle -->
-      <rect x="92" y="22" width="13" height="30" fill="#ff4560" rx="1"/>
-      <line x1="98" y1="14" x2="98" y2="58" stroke="#ff4560" stroke-width="1.5"/>
-      <text x="86" y="11" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="10" fill="#ff4560" letter-spacing="1">SWEEP</text>
-      <!-- displacement down -->
-      <rect x="112" y="42" width="13" height="50" fill="#ff4560" rx="1"/>
-      <line x1="118" y1="36" x2="118" y2="98" stroke="#ff4560" stroke-width="1.5"/>
-      <text x="108" y="112" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(255,69,96,0.8)" letter-spacing="1">DISPLACE</text>
-      <!-- pullback candles -->
-      <rect x="132" y="55" width="11" height="22" fill="#00e87a" rx="1"/>
-      <rect x="150" y="62" width="11" height="20" fill="#00e87a" rx="1"/>
-      <!-- entry short candle -->
-      <rect x="168" y="58" width="13" height="38" fill="#ff4560" rx="1"/>
-      <line x1="174" y1="50" x2="174" y2="100" stroke="#ff4560" stroke-width="1.5"/>
-      <!-- entry arrow -->
-      <line x1="174" y1="46" x2="174" y2="34" stroke="#00e87a" stroke-width="2" stroke-dasharray="3,2"/>
-      <polygon points="169,34 179,34 174,26" fill="#00e87a"/>
-      <text x="162" y="20" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#00e87a" letter-spacing="1">SHORT</text>
-      <!-- price drops -->
-      <rect x="188" y="78" width="11" height="28" fill="#ff4560" rx="1"/>
-      <rect x="206" y="95" width="11" height="30" fill="#ff4560" rx="1"/>
-      <rect x="224" y="110" width="11" height="28" fill="#ff4560" rx="1"/>
-      <!-- stop line -->
-      <line x1="92" y1="14" x2="520" y2="14" stroke="rgba(255,69,96,0.4)" stroke-width="1" stroke-dasharray="5,3"/>
-      <text x="440" y="11" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(255,69,96,0.7)">STOP</text>
-      <!-- target -->
-      <line x1="0" y1="140" x2="520" y2="140" stroke="rgba(240,192,64,0.4)" stroke-width="1" stroke-dasharray="5,3"/>
-      <text x="440" y="136" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(240,192,64,0.7)">TARGET</text>
-      <text x="16" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">① BUILD TO HIGH</text>
-      <text x="175" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">② SWEEP + REJECT</text>
-      <text x="340" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">③ SHORT TO TARGET</text>
-    </svg>`,
-
-    orb: `<svg viewBox="0 0 520 180" width="100%" xmlns="http://www.w3.org/2000/svg" style="background:#0f1420;border-radius:3px;border:1px solid rgba(255,255,255,0.07);">
-      <line x1="0" y1="45" x2="520" y2="45" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-      <line x1="0" y1="90" x2="520" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-      <line x1="0" y1="135" x2="520" y2="135" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-      <!-- opening range zone -->
-      <rect x="20" y="65" width="100" height="55" fill="rgba(255,255,255,0.03)" rx="0"/>
-      <line x1="20" y1="65" x2="120" y2="65" stroke="rgba(0,232,122,0.5)" stroke-width="1.5" stroke-dasharray="5,3"/>
-      <line x1="20" y1="120" x2="120" y2="120" stroke="rgba(255,69,96,0.5)" stroke-width="1.5" stroke-dasharray="5,3"/>
-      <text x="24" y="96" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="11" fill="rgba(255,255,255,0.3)" letter-spacing="1">OPENING RANGE</text>
-      <text x="24" y="108" font-family="'Barlow Condensed',sans-serif" font-weight="600" font-size="10" fill="rgba(255,255,255,0.2)">9:30 — 9:45</text>
-      <!-- candles inside range -->
-      <rect x="30" y="80" width="10" height="28" fill="#7a8599" rx="1"/>
-      <rect x="46" y="75" width="10" height="32" fill="#7a8599" rx="1"/>
-      <rect x="62" y="82" width="10" height="26" fill="#7a8599" rx="1"/>
-      <rect x="78" y="70" width="10" height="30" fill="#7a8599" rx="1"/>
-      <rect x="94" y="78" width="10" height="28" fill="#7a8599" rx="1"/>
-      <!-- breakout candle -->
-      <rect x="120" y="42" width="14" height="30" fill="#00e87a" rx="1"/>
-      <line x1="127" y1="36" x2="127" y2="76" stroke="#00e87a" stroke-width="1.5"/>
-      <text x="112" y="32" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="10" fill="#00e87a" letter-spacing="1">BREAKOUT</text>
-      <!-- pullback to retest -->
-      <rect x="140" y="55" width="11" height="20" fill="#ff4560" rx="1"/>
-      <rect x="157" y="60" width="11" height="16" fill="#ff4560" rx="1"/>
-      <!-- retest of range high -->
-      <line x1="120" y1="65" x2="400" y2="65" stroke="rgba(0,232,122,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
-      <!-- entry candle -->
-      <rect x="174" y="48" width="14" height="24" fill="#00e87a" rx="1"/>
-      <line x1="181" y1="42" x2="181" y2="76" stroke="#00e87a" stroke-width="1.5"/>
-      <line x1="181" y1="80" x2="181" y2="93" stroke="#00e87a" stroke-width="2" stroke-dasharray="3,2"/>
-      <polygon points="176,93 186,93 181,101" fill="#00e87a"/>
-      <text x="168" y="114" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#00e87a" letter-spacing="1">ENTRY</text>
-      <!-- continues up -->
-      <rect x="194" y="36" width="11" height="20" fill="#00e87a" rx="1"/>
-      <rect x="211" y="24" width="11" height="18" fill="#00e87a" rx="1"/>
-      <rect x="228" y="16" width="11" height="16" fill="#00e87a" rx="1"/>
-      <!-- stop -->
-      <line x1="120" y1="122" x2="520" y2="122" stroke="rgba(255,69,96,0.4)" stroke-width="1" stroke-dasharray="5,3"/>
-      <text x="440" y="118" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(255,69,96,0.7)">STOP</text>
-      <!-- target -->
-      <line x1="120" y1="14" x2="520" y2="14" stroke="rgba(240,192,64,0.4)" stroke-width="1" stroke-dasharray="5,3"/>
-      <text x="440" y="11" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(240,192,64,0.7)">TARGET</text>
-      <text x="24" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">① MARK RANGE</text>
-      <text x="178" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">② BREAKOUT + RETEST</text>
-      <text x="360" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">③ LONG TO TARGET</text>
-    </svg>`,
-
-    trendline: `<svg viewBox="0 0 520 180" width="100%" xmlns="http://www.w3.org/2000/svg" style="background:#0f1420;border-radius:3px;border:1px solid rgba(255,255,255,0.07);">
-      <line x1="0" y1="45" x2="520" y2="45" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-      <line x1="0" y1="90" x2="520" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-      <line x1="0" y1="135" x2="520" y2="135" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-      <!-- uptrend trendline -->
-      <line x1="20" y1="148" x2="340" y2="48" stroke="rgba(0,232,122,0.6)" stroke-width="2" stroke-linecap="round"/>
-      <!-- candles on uptrend with pullbacks -->
-      <rect x="20" y="128" width="11" height="22" fill="#00e87a" rx="1"/>
-      <line x1="25" y1="124" x2="25" y2="154" stroke="#00e87a" stroke-width="1.5"/>
-      <rect x="40" y="115" width="11" height="20" fill="#00e87a" rx="1"/>
-      <rect x="58" y="122" width="11" height="18" fill="#ff4560" rx="1"/>
-      <!-- touch 1 -->
-      <circle cx="69" cy="138" r="5" fill="none" stroke="rgba(0,232,122,0.6)" stroke-width="1.5"/>
-      <text x="55" y="158" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="9" fill="rgba(0,232,122,0.6)">TOUCH 1</text>
-      <rect x="76" y="108" width="11" height="22" fill="#00e87a" rx="1"/>
-      <rect x="94" y="96" width="11" height="20" fill="#00e87a" rx="1"/>
-      <rect x="112" y="104" width="11" height="18" fill="#ff4560" rx="1"/>
-      <!-- touch 2 -->
-      <circle cx="123" cy="118" r="5" fill="none" stroke="rgba(0,232,122,0.6)" stroke-width="1.5"/>
-      <text x="109" y="138" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="9" fill="rgba(0,232,122,0.6)">TOUCH 2</text>
-      <rect x="130" y="84" width="11" height="20" fill="#00e87a" rx="1"/>
-      <rect x="148" y="74" width="11" height="18" fill="#00e87a" rx="1"/>
-      <rect x="166" y="82" width="11" height="17" fill="#ff4560" rx="1"/>
-      <!-- touch 3 = entry -->
-      <circle cx="177" cy="96" r="6" fill="rgba(0,232,122,0.15)" stroke="#00e87a" stroke-width="2"/>
-      <text x="160" y="116" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="9" fill="#00e87a">TOUCH 3</text>
-      <!-- entry candle -->
-      <rect x="184" y="68" width="13" height="22" fill="#00e87a" rx="1"/>
-      <line x1="190" y1="62" x2="190" y2="94" stroke="#00e87a" stroke-width="1.5"/>
-      <line x1="190" y1="98" x2="190" y2="110" stroke="#00e87a" stroke-width="2" stroke-dasharray="3,2"/>
-      <polygon points="185,110 195,110 190,118" fill="#00e87a"/>
-      <text x="178" y="130" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#00e87a" letter-spacing="1">ENTRY</text>
-      <!-- price runs up -->
-      <rect x="204" y="56" width="11" height="18" fill="#00e87a" rx="1"/>
-      <rect x="221" y="44" width="11" height="18" fill="#00e87a" rx="1"/>
-      <rect x="238" y="34" width="11" height="16" fill="#00e87a" rx="1"/>
-      <!-- stop -->
-      <line x1="166" y1="104" x2="520" y2="104" stroke="rgba(255,69,96,0.4)" stroke-width="1" stroke-dasharray="5,3"/>
-      <text x="440" y="100" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(255,69,96,0.7)">STOP</text>
-      <!-- target -->
-      <line x1="0" y1="28" x2="520" y2="28" stroke="rgba(240,192,64,0.4)" stroke-width="1" stroke-dasharray="5,3"/>
-      <text x="440" y="24" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(240,192,64,0.7)">TARGET</text>
-      <text x="20" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">① DRAW TRENDLINE (2+ TOUCHES)</text>
-      <text x="260" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">② 3RD TOUCH = ENTRY</text>
-    </svg>`,
-
-    scalp: `<svg viewBox="0 0 520 180" width="100%" xmlns="http://www.w3.org/2000/svg" style="background:#0f1420;border-radius:3px;border:1px solid rgba(255,255,255,0.07);">
-      <line x1="0" y1="45" x2="520" y2="45" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-      <line x1="0" y1="90" x2="520" y2="90" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-      <line x1="0" y1="135" x2="520" y2="135" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
-      <!-- micro downtrend trendline (pullback in uptrend) -->
-      <line x1="30" y1="52" x2="160" y2="88" stroke="rgba(255,69,96,0.5)" stroke-width="1.5" stroke-dasharray="4,3" stroke-linecap="round"/>
-      <text x="34" y="46" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="9" fill="rgba(255,69,96,0.7)" letter-spacing="1">MICRO PULLBACK TRENDLINE (1-MIN)</text>
-      <!-- 5-min uptrend context -->
-      <text x="4" y="14" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="9" fill="rgba(0,232,122,0.5)" letter-spacing="1">5-MIN BIAS: UPTREND ↑</text>
-      <!-- candles pulling back -->
-      <rect x="30" y="62" width="9" height="22" fill="#ff4560" rx="1"/>
-      <line x1="34" y1="56" x2="34" y2="88" stroke="#ff4560" stroke-width="1.5"/>
-      <rect x="46" y="68" width="9" height="20" fill="#ff4560" rx="1"/>
-      <line x1="50" y1="62" x2="50" y2="92" stroke="#ff4560" stroke-width="1.5"/>
-      <rect x="62" y="72" width="9" height="18" fill="#ff4560" rx="1"/>
-      <line x1="66" y1="66" x2="66" y2="94" stroke="#ff4560" stroke-width="1.5"/>
-      <rect x="78" y="76" width="9" height="18" fill="#ff4560" rx="1"/>
-      <rect x="94" y="78" width="9" height="16" fill="#ff4560" rx="1"/>
-      <!-- BREAK through trendline -->
-      <rect x="110" y="58" width="12" height="28" fill="#00e87a" rx="1"/>
-      <line x1="116" y1="52" x2="116" y2="90" stroke="#00e87a" stroke-width="1.5"/>
-      <text x="104" y="48" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="10" fill="#00e87a" letter-spacing="1">BREAK</text>
-      <!-- retest -->
-      <rect x="128" y="68" width="9" height="16" fill="#ff4560" rx="1"/>
-      <rect x="143" y="72" width="9" height="14" fill="#ff4560" rx="1"/>
-      <!-- entry candle -->
-      <rect x="158" y="54" width="12" height="24" fill="#00e87a" rx="1"/>
-      <line x1="164" y1="48" x2="164" y2="82" stroke="#00e87a" stroke-width="1.5"/>
-      <line x1="164" y1="86" x2="164" y2="98" stroke="#00e87a" stroke-width="2" stroke-dasharray="3,2"/>
-      <polygon points="159,98 169,98 164,106" fill="#00e87a"/>
-      <text x="152" y="118" font-family="'Barlow Condensed',sans-serif" font-weight="900" font-size="11" fill="#00e87a" letter-spacing="1">ENTRY</text>
-      <!-- quick move up -->
-      <rect x="176" y="44" width="10" height="18" fill="#00e87a" rx="1"/>
-      <rect x="192" y="36" width="10" height="16" fill="#00e87a" rx="1"/>
-      <rect x="208" y="28" width="10" height="14" fill="#00e87a" rx="1"/>
-      <!-- tight stop -->
-      <line x1="94" y1="96" x2="400" y2="96" stroke="rgba(255,69,96,0.4)" stroke-width="1" stroke-dasharray="4,3"/>
-      <text x="310" y="92" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(255,69,96,0.7)">STOP (TIGHT)</text>
-      <!-- target -->
-      <line x1="110" y1="26" x2="400" y2="26" stroke="rgba(240,192,64,0.4)" stroke-width="1" stroke-dasharray="4,3"/>
-      <text x="310" y="22" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(240,192,64,0.7)">TARGET (QUICK)</text>
-      <text x="20" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">① MICRO TRENDLINE PULLBACK</text>
-      <text x="260" y="175" font-family="'Barlow Condensed',sans-serif" font-weight="700" font-size="10" fill="rgba(0,232,122,0.6)" letter-spacing="1">② BREAK + RETEST = ENTRY</text>
-    </svg>`
-  };
-
-  let currentStrat = 'fvg';
-
-  function render(key) {
-    const s = STRATEGIES[key];
-    if (!s) return;
-
-    document.getElementById('s-name').textContent = s.name;
-    document.getElementById('s-desc').innerHTML = s.desc;
-
-    // tags
-    document.getElementById('s-tags').innerHTML = s.tags.map(t =>
-      `<div class="strat-tag">${t}</div>`).join('');
-
-    // entry rules
-    document.getElementById('s-entry-rules').innerHTML = s.entry.map((r,i) =>
-      `<div class="rule-item"><div class="rule-num">${i+1}</div><div class="rule-text">${r.text}</div></div>`).join('');
-
-    // stop rules
-    document.getElementById('s-stop-rules').innerHTML = s.stop.map((r,i) =>
-      `<div class="rule-item"><div class="rule-num">${i+1}</div><div class="rule-text">${r.text}</div></div>`).join('');
-
-    // target rules
-    document.getElementById('s-target-rules').innerHTML = s.target.map((r,i) =>
-      `<div class="rule-item"><div class="rule-num">${i+1}</div><div class="rule-text">${r.text}</div></div>`).join('');
-
-    // setup
-    document.getElementById('s-setup-desc').innerHTML = s.setup;
-
-    // checklist
-    document.getElementById('s-checklist').innerHTML = s.checklist.map((c,i) =>
-      `<div class="check-item" onclick="toggleCheck(${i})">
-        <div class="check-box" id="chk-${i}"></div>
-        <div class="check-txt" id="chktxt-${i}">${c}</div>
-      </div>`).join('');
-
-    // dos
-    document.getElementById('s-dos').innerHTML = s.dos.map(d =>
-      `<div class="dnd-item"><div class="dnd-icon" style="color:var(--green);">✓</div><div class="dnd-text">${d}</div></div>`).join('');
-
-    // donts
-    document.getElementById('s-donts').innerHTML = s.donts.map(d =>
-      `<div class="dnd-item"><div class="dnd-icon" style="color:var(--red);">✗</div><div class="dnd-text">${d}</div></div>`).join('');
-
-    // coach tip
-    document.getElementById('s-cp-tip').textContent = s.tip;
-
-    // render visual
-    const visual = document.getElementById('s-setup-visual');
-    renderQuickQs(key);
-    document.getElementById('cp-strat-answer').style.display = 'none';
-    if (visual) visual.innerHTML = VISUALS[key] || '';
+  function scoreColor(s){
+    if(s>=80)return 'var(--green)';
+    if(s>=60)return 'var(--yellow)';
+    return 'var(--red)';
   }
 
-  // Strategy-specific Q&A data
-  const STRATEGY_QA = {"fvg": [{"q": "How do I know if the FVG is valid?", "a": "Three things must be true: a strong displacement candle created the gap, the gap is recent (within the last 20 candles), and it aligns with your 15-min bias. If any one of those is missing — the gap is weak. Weak gaps get filled but they also get blown through."}, {"q": "What if price enters the FVG but keeps going?", "a": "That means the gap was not a strong institutional imbalance — it was retail noise. Your stop takes you out cleanly. The lesson: displacement quality matters more than gap size. Next time look for a sharper, more aggressive displacement candle."}, {"q": "When should I NOT trade the FVG?", "a": "During major news (CPI, FOMC, NFP). When the 15-min trend is unclear or choppy. When the gap is older than 20 candles. When you have already taken 3 trades today. Those are your four hard stops."}, {"q": "How do I find the best FVG entries?", "a": "Mark your FVGs before the session — never during. The best entries come when price sweeps a liquidity level first, then creates the displacement. That liquidity sweep tells you where the institutions were hunting stops before reversing."}], "ict": [{"q": "How do I identify a real liquidity sweep vs a breakout?", "a": "A sweep is fast and immediately reversed — price spikes above the high and comes back within 1-3 candles with a strong displacement candle. A breakout shows continuation — price breaks and holds above the level. If there is no reversal candle within 3 candles of the break, it is a breakout, not a sweep."}, {"q": "What makes a kill zone entry invalid?", "a": "No liquidity sweep. Entering before displacement is confirmed. Trading outside the kill zone window. Being in a news window. And the most common one — entering in the direction of the sweep instead of against it. You trade the reversal, not the sweep itself."}, {"q": "How do I know which kill zone to focus on?", "a": "New York AM (8:30–11:00) gives you the highest volume and most reliable setups. London (2:00–5:00 AM) is excellent but requires early morning discipline. NY PM (1:30–4:00) works but setups are lower quality. Start with NY AM and master it before adding other windows."}, {"q": "Should I use the ICT strategy on NQ specifically?", "a": "Yes — NQ is one of the best instruments for ICT because it respects liquidity levels and session structure cleanly. The Asian range sets up the London sweep. The London sweep sets up the NY reversal. Study the daily structure every morning before the open."}], "orb": [{"q": "What if the opening range is too wide?", "a": "If the range is wider than 20 ticks on MNQ — skip the day. A wide range means high volatility at the open, which produces false breakouts and wide stops. The ORB strategy works best on normal to slightly trending days. Wide range days are news days in disguise."}, {"q": "How do I handle a false breakout?", "a": "You do not handle it — your stop does. If price breaks out, you enter on the retest, and then price comes back inside the range — your stop is below the range low. Take the loss cleanly. False breakouts are part of the strategy. The rules protect you from catastrophic losses, not from normal losses."}, {"q": "Can I take both a long and short ORB trade in the same session?", "a": "No. One trade per session. If price breaks to the upside and you enter long, that is your trade for the day. If it fails and stops you out, the session is over. Attempting to trade the opposite direction after a stopped-out ORB trade is revenge trading dressed up as strategy."}, {"q": "What time should I stop waiting for a breakout?", "a": "If there is no clean breakout by 10:30 AM — there is no trade today. The ORB momentum fades fast. Late breakouts (after 10:30) have much lower follow-through because institutional participation drops off. No trade is a valid trade."}], "trendline": [{"q": "How do I draw valid trendlines?", "a": "Connect at least two significant swing highs (for downtrend lines) or two significant swing lows (for uptrend lines) on the 1-hour chart. Use the wicks — not the candle bodies. The line must not cut through any candles between the two points. If it does, it is not a valid trendline."}, {"q": "What makes the third touch special?", "a": "By the third touch, more traders have seen the trendline and are placing orders at that level. That concentration of orders creates the reaction you trade. First touch = interesting. Second touch = confirmed. Third touch = high probability entry. The more touches, the more significant the line."}, {"q": "When should I exit a trendline trade early?", "a": "When price closes back through the trendline on the opposite side of your trade — that is your invalidation. Exit immediately, no waiting. A confirmed trendline break against you means your thesis is wrong. Taking a small loss on a confirmed break is always better than hoping for a reversal."}, {"q": "Should I use indicators with trendlines?", "a": "No. Trendline trading is naked price action for a reason. Adding RSI, MACD, or moving averages creates noise that conflicts with what the chart is actually telling you. The discipline of trading pure trendlines builds a skill that no indicator can replicate. Trust the line or do not take the trade."}], "scalp": [{"q": "Why only 3 trades maximum?", "a": "Because statistically, most scalping losses come from trade 4, 5, and 6 — not the first three. After 3 trades your cognitive load is high, your discipline drops, and you start making emotional decisions. The 3-trade limit is not a restriction — it is a protection. The market will be there tomorrow."}, {"q": "How tight should my stop actually be?", "a": "On the scalp system, 3-5 ticks is ideal. 8 ticks is the absolute maximum. If the setup requires more than 8 ticks to properly place a stop — the setup is not clean enough to take. A wide stop on a scalp means you have entered at a bad price. Better to skip it."}, {"q": "What is the difference between a trendline break and a structure break entry?", "a": "A trendline break requires you to draw the micro trendline connecting pullback highs or lows and enter on a candle close through it plus a retest. A structure break is simpler — price takes out a recent swing high or low with a full body close, you enter on the retest of that level. Both are valid. Use whichever is clearest on the current chart."}, {"q": "Should I scalp every day?", "a": "No. Scalp only on days with clear directional momentum on the 5-min. If the 5-min is choppy, ranging, or unclear — there is no trade today. Forcing scalp entries in a ranging market is the fastest way to hit your 3-trade limit with 3 losses. Wait for clean days."}]};
-
-  function renderQuickQs(strat) {
-    const container = document.getElementById('cp-quick-qs');
-    const qa = STRATEGY_QA[strat] || [];
-    container.innerHTML = qa.map((item, i) =>
-      `<button onclick="showAnswer(${i})" style="background:var(--dark3);border:1px solid var(--border);color:var(--gray);padding:8px 12px;border-radius:3px;font-size:12px;text-align:left;cursor:pointer;transition:all 0.2s;font-family:'Barlow',sans-serif;line-height:1.4;width:100%;" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--white)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--gray)'">${item.q}</button>`
-    ).join('');
+  function gradeClass(g){
+    if(g==='A')return 'ga';
+    if(g==='B')return 'gb';
+    return 'gc';
   }
 
-  function showAnswer(index) {
-    const qa = STRATEGY_QA[currentStrat] || [];
-    if (!qa[index]) return;
-    const answerEl = document.getElementById('cp-strat-answer');
-    const textEl = document.getElementById('cp-strat-answer-text');
-    textEl.textContent = qa[index].a;
-    answerEl.style.display = 'block';
-    document.getElementById('cp-strat-input').value = qa[index].q;
-    answerEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  // Render session feedback cards
+  const feed = document.getElementById('feedback-feed');
+  SESSIONS.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'feedback-card';
+    card.innerHTML = `
+      <div class="feedback-header" onclick="toggleFeedback(${s.id})">
+        <div class="feedback-meta">
+          <div class="coach-av" style="width:28px;height:28px;font-size:11px;background:var(--green);color:#000;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;">CP</div>
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="feedback-strat">${s.strategy}</div>
+              <div class="feedback-date">${s.date}</div>
+            </div>
+            <div style="font-size:11px;color:var(--gray);margin-top:2px;">Click to see coaching notes</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="feedback-score" style="color:${scoreColor(s.score)};">${s.score}</div>
+          <div class="feedback-grade ${gradeClass(s.grade)}">${s.grade}</div>
+          <div class="chevron" id="chev-${s.id}">▾</div>
+        </div>
+      </div>
+      <div class="feedback-body" id="body-${s.id}">
+        <div class="fb-notes">
+          <div class="fb-note win"><span class="fb-note-icon">✓</span><div><div class="fb-note-title">${s.notes.win.title}</div><div class="fb-note-text">${s.notes.win.text}</div></div></div>
+          <div class="fb-note loss"><span class="fb-note-icon">⚠</span><div><div class="fb-note-title">${s.notes.loss.title}</div><div class="fb-note-text">${s.notes.loss.text}</div></div></div>
+          <div class="fb-note warn"><span class="fb-note-icon">◎</span><div><div class="fb-note-title">${s.notes.warn.title}</div><div class="fb-note-text">${s.notes.warn.text}</div></div></div>
+          <div class="fb-note focus"><span class="fb-note-icon">→</span><div><div class="fb-note-title">${s.notes.focus.title}</div><div class="fb-note-text">${s.notes.focus.text}</div></div></div>
+        </div>
+      </div>`;
+    feed.appendChild(card);
+  });
+
+  function toggleFeedback(id){
+    const body = document.getElementById('body-'+id);
+    const chev = document.getElementById('chev-'+id);
+    const isOpen = body.classList.contains('open');
+    document.querySelectorAll('.feedback-body').forEach(b=>b.classList.remove('open'));
+    document.querySelectorAll('.chevron').forEach(c=>c.classList.remove('open'));
+    if(!isOpen){ body.classList.add('open'); chev.classList.add('open'); }
   }
 
-  function askCP() {
-    const input = document.getElementById('cp-strat-input');
+  function quickAsk(q){
+    document.getElementById('ask-input').value = q;
+    sendQuestion();
+  }
+
+  function sendQuestion(){
+    const input = document.getElementById('ask-input');
     const q = input.value.trim();
-    if (!q) return;
-    const qa = STRATEGY_QA[currentStrat] || [];
-    const match = qa.find(item => item.q.toLowerCase().includes(q.toLowerCase().slice(0,10)));
-    const answerEl = document.getElementById('cp-strat-answer');
-    const textEl = document.getElementById('cp-strat-answer-text');
-    if (match) {
-      textEl.textContent = match.a;
-    } else {
-      textEl.textContent = "Great question. Come back Sunday when Coach Prime's AI engine is live — I'll give you a fully personalized answer based on your exact session data and this strategy's rules.";
-    }
-    answerEl.style.display = 'block';
+    if(!q) return;
+    input.value = '';
+
+    const feed = document.getElementById('chat-feed');
+
+    // User message
+    const userMsg = document.createElement('div');
+    userMsg.className = 'chat-msg';
+    userMsg.innerHTML = `
+      <div class="chat-av user">ME</div>
+      <div class="chat-bubble user">
+        <div class="chat-name user">You</div>
+        <div class="chat-text">${q}</div>
+        <div class="chat-time">Just now</div>
+      </div>`;
+    feed.appendChild(userMsg);
+
+    // Typing indicator
+    const typing = document.createElement('div');
+    typing.className = 'chat-msg';
+    typing.id = 'typing';
+    typing.innerHTML = `
+      <div class="chat-av cp">CP</div>
+      <div class="chat-bubble cp">
+        <div class="chat-name cp">Coach Prime</div>
+        <div class="typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>
+      </div>`;
+    feed.appendChild(typing);
+    feed.scrollTop = feed.scrollHeight;
+
+    setTimeout(() => {
+      document.getElementById('typing')?.remove();
+      const answer = ANSWERS[q] || 'That\'s a great question. <strong>Come back Sunday</strong> when Coach Prime\'s AI engine goes live — I\'ll be able to give you a fully personalized answer based on your exact session data. For now, keep focusing on your pre-trade checklist and rule compliance.';
+      const cpMsg = document.createElement('div');
+      cpMsg.className = 'chat-msg';
+      cpMsg.innerHTML = `
+        <div class="chat-av cp">CP</div>
+        <div class="chat-bubble cp">
+          <div class="chat-name cp">Coach Prime</div>
+          <div class="chat-text">${answer}</div>
+          <div class="chat-time">Just now</div>
+        </div>`;
+      feed.appendChild(cpMsg);
+      feed.scrollTop = feed.scrollHeight;
+    }, 1400);
   }
-
-  function toggleCheck(i) {
-    const box = document.getElementById('chk-'+i);
-    const txt = document.getElementById('chktxt-'+i);
-    box.classList.toggle('checked');
-    txt.classList.toggle('checked');
-  }
-
-  function resetChecklist() {
-    document.querySelectorAll('.check-box').forEach(b => b.classList.remove('checked'));
-    document.querySelectorAll('.check-txt').forEach(t => t.classList.remove('checked'));
-  }
-
-  function handleSwitch(sel) {
-    currentStrat = sel.value;
-    render(currentStrat);
-    resetChecklist();
-    updateToggle();
-  }
-
-  function updateToggle() {
-    try {
-      const active = localStorage.getItem('pt_strategy');
-      const wrap = document.getElementById('toggle-wrap');
-      const knob = document.getElementById('toggle-knob');
-      const lbl = document.getElementById('toggle-label');
-      const sub = document.getElementById('toggle-sub');
-      if (active === currentStrat) {
-        wrap.classList.add('toggle-on');
-        knob.classList.add('toggle-knob-on');
-        lbl.textContent = 'Active ✓';
-        lbl.style.color = 'var(--green)';
-        sub.textContent = 'Session page is configured for this strategy';
-        sub.style.color = 'var(--green)';
-      } else {
-        wrap.classList.remove('toggle-on');
-        knob.classList.remove('toggle-knob-on');
-        lbl.textContent = 'Not Active';
-        lbl.style.color = 'var(--gray)';
-        sub.textContent = 'Your session page will be configured for this strategy';
-        sub.style.color = 'var(--gray)';
-      }
-    } catch(e) {}
-  }
-
-  function toggleActive() {
-    try {
-      const active = localStorage.getItem('pt_strategy');
-      if (active === currentStrat) {
-        // turn off — revert to none
-        localStorage.removeItem('pt_strategy');
-      } else {
-        // set this as active
-        localStorage.setItem('pt_strategy', currentStrat);
-      }
-      updateToggle();
-    } catch(e) {}
-  }
-
-  function saveStrategyNotes(val) {
-    try {
-      const notes = JSON.parse(localStorage.getItem('pt_strategy_notes') || '{}');
-      notes[currentStrat] = val;
-      localStorage.setItem('pt_strategy_notes', JSON.stringify(notes));
-    } catch(e) {}
-  }
-
-  function loadStrategyNotes(strat) {
-    try {
-      const notes = JSON.parse(localStorage.getItem('pt_strategy_notes') || '{}');
-      const el = document.getElementById('strategy-notes');
-      if (el) el.value = notes[strat] || '';
-    } catch(e) {}
-  }
-
-  // Load strategy from localStorage (set during onboarding/path)
-  try {
-    const saved = localStorage.getItem('pt_strategy');
-    if (saved && STRATEGIES[saved]) {
-      currentStrat = saved;
-      document.getElementById('strat-select').value = saved;
-    }
-  } catch(e) {}
-
-  render(currentStrat);
-  loadStrategyNotes(currentStrat);
-  updateToggle();
 </script>
 </body>
 </html>
