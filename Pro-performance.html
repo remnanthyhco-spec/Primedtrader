@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pro Performance — Primed Trader</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{--green:#00e87a;--green-dim:rgba(0,232,122,0.12);--navy:#0c0f14;--dark:#080b10;--dark2:#0f1420;--dark3:#141928;--dark4:#1a2030;--border:rgba(255,255,255,0.07);--gray:#7a8599;--white:#e8ecf0;--red:#ff4560;--yellow:#f0c040;--gold:#d4a82a;--purple:#9b59b6;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;background:var(--navy);color:var(--white);font-family:'Barlow',sans-serif;}
+body{display:flex;}
+.sidebar{width:56px;min-width:56px;background:var(--dark);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:14px 0;z-index:20;height:100vh;}
+.sb-logo{width:32px;height:32px;margin-bottom:20px;cursor:pointer;}
+.sb-item{width:44px;height:44px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray);font-size:17px;transition:all 0.18s;position:relative;}
+.sb-item:hover{background:var(--dark3);color:var(--white);}
+.sb-item.active{background:var(--green-dim);color:var(--green);}
+.tip{position:absolute;left:52px;top:50%;transform:translateY(-50%);background:var(--dark4);border:1px solid var(--border);color:var(--white);font-size:11px;font-weight:600;padding:5px 10px;white-space:nowrap;border-radius:4px;opacity:0;pointer-events:none;transition:opacity 0.15s;letter-spacing:1px;text-transform:uppercase;z-index:100;}
+.sb-item:hover .tip{opacity:1;}
+.sb-nav{display:flex;flex-direction:column;gap:2px;flex:1;width:100%;padding:0 6px;}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{height:56px;min-height:56px;background:var(--dark);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;flex-wrap:wrap;}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;letter-spacing:3px;text-transform:uppercase;}
+.pro-tag{background:var(--gold);color:#000;font-size:9px;font-weight:900;letter-spacing:2px;padding:2px 7px;border-radius:2px;}
+.tb-sp{flex:1;}
+.readiness-badge{display:flex;align-items:center;gap:8px;background:var(--dark2);border:1px solid rgba(0,232,122,0.15);padding:5px 14px;border-radius:3px;}
+.rb-label{font-size:10px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;}
+.rb-score{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:22px;color:var(--green);line-height:1;}
+.period-btn{background:var(--dark2);border:1px solid var(--border);color:var(--gray);padding:6px 14px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+.period-btn:hover,.period-btn.active{border-color:var(--green);color:var(--green);background:var(--green-dim);}
+.strat-select{background:var(--dark2);border:1px solid var(--border);color:var(--white);padding:6px 12px;font-size:12px;border-radius:3px;outline:none;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;cursor:pointer;appearance:none;padding-right:24px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a8599' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;}
+.strat-select:focus{border-color:var(--green);}
+.logout-btn{background:none;border:1px solid rgba(255,255,255,0.1);color:var(--gray);padding:6px 14px;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+.logout-btn:hover{border-color:var(--red);color:var(--red);}
+.content{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;}
+.content::-webkit-scrollbar{width:3px;}
+.content::-webkit-scrollbar-thumb{background:var(--dark4);}
+/* READINESS HERO */
+.readiness-hero{background:var(--dark2);border:1px solid rgba(0,232,122,0.15);border-radius:4px;padding:20px 24px;display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;}
+.rh-gauge{position:relative;display:flex;align-items:center;justify-content:center;}
+.rh-num{position:absolute;text-align:center;}
+.rh-score{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:44px;color:var(--green);line-height:1;}
+.rh-max{font-size:13px;color:var(--gray);}
+.rh-center{}
+.rh-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.rh-msg{font-size:13px;color:var(--gray);line-height:1.7;max-width:500px;}
+.rh-msg strong{color:var(--white);font-weight:500;}
+.rh-stages{display:flex;flex-direction:column;gap:8px;min-width:200px;}
+.rh-stage{display:flex;align-items:center;gap:10px;}
+.rh-ic{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:900;}
+.rh-ic.done{background:var(--green);color:#000;}
+.rh-ic.active{background:rgba(0,232,122,0.15);border:2px solid var(--green);color:var(--green);}
+.rh-ic.locked{background:var(--dark4);color:var(--gray);border:1px solid var(--border);}
+.rh-stage-name{font-size:13px;flex:1;}
+.rh-stage-name.done{color:var(--gray);text-decoration:line-through;}
+.rh-stage-name.active{color:var(--green);font-weight:500;}
+.rh-stage-name.locked{color:var(--gray);}
+.rh-bar{flex:1;height:4px;background:var(--dark4);border-radius:2px;overflow:hidden;}
+.rh-fill{height:100%;background:var(--green);}
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
+.sc{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:13px 14px;position:relative;overflow:hidden;}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:2px 2px 0 0;}
+.sc.green::before{background:var(--green);}
+.sc.gold::before{background:var(--gold);}
+.sc.yellow::before{background:var(--yellow);}
+.sc.purple::before{background:var(--purple);}
+.sc.red::before{background:var(--red);}
+.sc-lbl{font-size:10px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.sc-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;line-height:1;}
+.sc-val.g{color:var(--green);}
+.sc-val.r{color:var(--red);}
+.sc-val.w{color:var(--white);}
+.sc-val.y{color:var(--yellow);}
+.sc-val.gold{color:var(--gold);}
+.sc-val.purple{color:var(--purple);}
+.sc-sub{font-size:10px;color:var(--gray);margin-top:3px;}
+.sc-trend{position:absolute;bottom:10px;right:12px;font-size:11px;font-weight:600;}
+.sc-trend.up{color:var(--green);}
+.sc-trend.dn{color:var(--red);}
+/* CHARTS */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.chart-card{background:var(--dark2);border:1px solid var(--border);border-radius:4px;padding:16px;}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;letter-spacing:3px;text-transform:uppercase;}
+.card-sub{font-size:11px;color:var(--gray);}
+.chart-wrap{position:relative;height:180px;}
+.chart-wrap.tall{height:220px;}
+/* RULE COMPLIANCE */
+.rule-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.rule-row:last-child{border-bottom:none;}
+.rule-name{font-size:12px;color:var(--gray);min-width:220px;}
+.rule-bar-bg{flex:1;height:6px;background:var(--dark4);border-radius:3px;overflow:hidden;}
+.rule-bar-fill{height:100%;border-radius:3px;transition:width 0.8s ease;}
+.rule-pct{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;min-width:36px;text-align:right;}
+.rule-trend{font-size:11px;min-width:24px;text-align:right;}
+/* STRATEGY ROWS */
+.strat-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.strat-row:last-child{border-bottom:none;}
+.strat-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;min-width:130px;}
+.strat-bar-bg{flex:1;height:6px;background:var(--dark4);border-radius:3px;overflow:hidden;}
+.strat-bar-fill{height:100%;border-radius:3px;}
+.strat-score{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;min-width:34px;text-align:right;}
+.strat-sessions{font-size:11px;color:var(--gray);min-width:60px;text-align:right;}
+/* BEST SESSION */
+.best-session{background:rgba(0,232,122,0.04);border:1px solid rgba(0,232,122,0.15);border-radius:4px;padding:16px;}
+.worst-session{background:rgba(255,69,96,0.03);border:1px solid rgba(255,69,96,0.12);border-radius:4px;padding:16px;}
+.session-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.session-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;}
+.session-pnl{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;}
+.pos{color:var(--green);}
+.neg{color:var(--red);}
+.session-stat{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+.session-stat:last-child{border-bottom:none;}
+/* CP INSIGHT */
+.cp-insight{background:var(--dark2);border:1px solid rgba(0,232,122,0.15);border-radius:4px;padding:18px;}
+.cp-insight-hdr{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.cp-av{width:36px;height:36px;background:var(--green);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;color:#000;flex-shrink:0;}
+/* FIRM COMPARISON */
+.firm-comp-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:3px;margin-bottom:6px;border:1px solid var(--border);transition:all 0.2s;}
+.firm-comp-row.match{border-color:rgba(0,232,122,0.25);background:rgba(0,232,122,0.04);}
+.firm-comp-row:last-child{margin-bottom:0;}
+.firm-comp-rank{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;color:var(--green);opacity:0.3;min-width:18px;}
+.firm-comp-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;flex:1;}
+.firm-comp-bar-bg{width:80px;height:4px;background:var(--dark4);border-radius:2px;overflow:hidden;}
+.firm-comp-bar-fill{height:100%;border-radius:2px;}
+.firm-comp-score{font-size:11px;font-weight:600;min-width:60px;text-align:right;}
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:900px){.two-col,.three-col{grid-template-columns:1fr;}html,body{height:auto;overflow:auto;}.content{overflow:visible;}}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <svg class="sb-logo" viewBox="0 0 120 120" fill="none" onclick="window.location.href='pro-dashboard.html'">
+    <rect x="8" y="52" width="7" height="30" fill="#00e87a" rx="1"/>
+    <line x1="11.5" y1="46" x2="11.5" y2="52" stroke="#00e87a" stroke-width="2"/>
+    <line x1="11.5" y1="82" x2="11.5" y2="88" stroke="#00e87a" stroke-width="2"/>
+    <rect x="20" y="40" width="7" height="36" fill="#00e87a" rx="1"/>
+    <line x1="23.5" y1="33" x2="23.5" y2="40" stroke="#00e87a" stroke-width="2"/>
+    <line x1="23.5" y1="76" x2="23.5" y2="83" stroke="#00e87a" stroke-width="2"/>
+    <rect x="32" y="28" width="7" height="40" fill="#00e87a" rx="1"/>
+    <line x1="35.5" y1="20" x2="35.5" y2="28" stroke="#00e87a" stroke-width="2"/>
+    <line x1="35.5" y1="68" x2="35.5" y2="76" stroke="#00e87a" stroke-width="2"/>
+    <rect x="44" y="18" width="7" height="44" fill="#00e87a" rx="1"/>
+    <line x1="47.5" y1="10" x2="47.5" y2="18" stroke="#00e87a" stroke-width="2"/>
+    <line x1="47.5" y1="62" x2="47.5" y2="70" stroke="#00e87a" stroke-width="2"/>
+    <line x1="18" y1="95" x2="58" y2="55" stroke="#00e87a" stroke-width="3" stroke-linecap="round"/>
+    <defs><linearGradient id="lg" x1="55" y1="15" x2="55" y2="105" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#00e87a"/></linearGradient></defs>
+    <path d="M58 18 L58 102 M58 18 L85 18 Q105 18 105 42 Q105 66 85 66 L58 66" stroke="url(#lg)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </svg>
+  <div class="sb-item" style="margin-bottom:6px;" onclick="window.location.href='pro-account.html'"><span>⚙</span><div class="tip">My Account</div></div>
+  <div style="width:32px;height:1px;background:rgba(255,255,255,0.06);margin-bottom:6px;"></div>
+  <div class="sb-nav">
+    <div class="sb-item" onclick="window.location.href='pro-dashboard.html'"><span>⌂</span><div class="tip">Dashboard</div></div>
+    <div class="sb-item" onclick="window.location.href='pro-session.html'"><span>▶</span><div class="tip">Start Session</div></div>
+    <div class="sb-item" onclick="window.location.href='pro-journal.html'"><span>📓</span><div class="tip">Journal</div></div>
+    <div class="sb-item" onclick="window.location.href='pro-strategy.html'"><span>🎯</span><div class="tip">My Strategy</div></div>
+    <div class="sb-item active"><span>📊</span><div class="tip">Performance</div></div>
+    <div class="sb-item" onclick="window.location.href='pro-coachprime.html'"><span>💬</span><div class="tip">Coach Prime</div></div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="page-title">Performance</div>
+    <div class="pro-tag">PRO</div>
+    <div class="tb-sp"></div>
+    <div class="readiness-badge">
+      <div><div class="rb-label">Readiness</div><div style="font-size:10px;color:var(--green);letter-spacing:1px;">Path to funded</div></div>
+      <div class="rb-score">63</div>
+    </div>
+    <select class="strat-select" id="strat-select" onchange="updateInsight()">
+      <option value="all">All Strategies</option>
+      <option value="FVG">Fair Value Gap</option>
+      <option value="ICT">ICT Kill Zone</option>
+      <option value="ORB">Opening Range Breakout</option>
+      <option value="Trendline">Trendline Model</option>
+      <option value="Scalp">Scalp System</option>
+    </select>
+    <button class="period-btn active" onclick="setPeriod(this)">30D</button>
+    <button class="period-btn" onclick="setPeriod(this)">90D</button>
+    <button class="period-btn" onclick="setPeriod(this)">All</button>
+    <button class="logout-btn" onclick="window.location.href='index.html'">Log Out</button>
+  </div>
+
+  <div class="content">
+
+    <!-- IDENTITY QUOTE -->
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 18px;background:rgba(0,232,122,0.04);border:1px solid rgba(0,232,122,0.1);border-radius:4px;">
+      <div style="width:28px;height:28px;background:var(--green);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;color:#000;flex-shrink:0;">CP</div>
+      <div style="font-size:13px;color:var(--gray);">Funded traders aren't born. <strong style="color:var(--white);font-weight:500;">They're built — one compliant session at a time.</strong></div>
+    </div>
+
+    <!-- READINESS HERO -->
+    <div class="readiness-hero">
+      <div class="rh-gauge">
+        <svg width="130" height="82" viewBox="0 0 130 82">
+          <defs><linearGradient id="gg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#ff4560"/><stop offset="50%" stop-color="#f0c040"/><stop offset="100%" stop-color="#00e87a"/></linearGradient></defs>
+          <path d="M 10 74 A 56 56 0 0 1 120 74" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M 10 74 A 56 56 0 0 1 120 74" fill="none" stroke="url(#gg)" stroke-width="8" stroke-linecap="round" stroke-dasharray="176" stroke-dashoffset="65"/>
+        </svg>
+        <div class="rh-num"><div class="rh-score">63</div><div class="rh-max">/100</div></div>
+      </div>
+      <div class="rh-center">
+        <div class="rh-title" style="color:var(--green);">You're closer than you think.</div>
+        <div class="rh-msg"><strong>63 puts you in the consistency phase</strong> — the hardest part of the journey. Most traders quit here. You haven't. Your compliance is trending up and your stop loss discipline is already at a professional level. <strong>Get your average score above 75 across 10 sessions</strong> and the Mock Eval stage unlocks. You are on the right path.</div>
+      </div>
+      <div class="rh-stages">
+        <div class="rh-stage"><div class="rh-ic done">✓</div><div class="rh-stage-name done">Foundation</div><div class="rh-bar"><div class="rh-fill" style="width:100%"></div></div></div>
+        <div class="rh-stage"><div class="rh-ic active">●</div><div class="rh-stage-name active">Consistency</div><div class="rh-bar"><div class="rh-fill" style="width:30%"></div></div></div>
+        <div class="rh-stage"><div class="rh-ic locked">🔒</div><div class="rh-stage-name locked">Mock Eval</div><div class="rh-bar"><div class="rh-fill" style="width:0%"></div></div></div>
+        <div class="rh-stage"><div class="rh-ic locked">🔒</div><div class="rh-stage-name locked">Ready to Fund</div><div class="rh-bar"><div class="rh-fill" style="width:0%"></div></div></div>
+      </div>
+    </div>
+
+    <!-- STAT CARDS -->
+    <div class="stats-grid">
+      <div class="sc green"><div class="sc-lbl">Total Sessions</div><div class="sc-val w">2</div><div class="sc-sub">Lifetime</div><div class="sc-trend up">↑ Active</div></div>
+      <div class="sc green"><div class="sc-lbl">Win Rate</div><div class="sc-val g">50%</div><div class="sc-sub">Profitable sessions</div><div class="sc-trend up">↑ Building</div></div>
+      <div class="sc yellow"><div class="sc-lbl">Avg Compliance</div><div class="sc-val y">63</div><div class="sc-sub">Rule adherence</div><div class="sc-trend up">↑ Improving</div></div>
+      <div class="sc gold"><div class="sc-lbl">Readiness Score</div><div class="sc-val gold">63</div><div class="sc-sub">Path to funded</div></div>
+      <div class="sc green"><div class="sc-lbl">Total P&L</div><div class="sc-val g">+$187.50</div><div class="sc-sub">Sim account</div></div>
+      <div class="sc purple"><div class="sc-lbl">Best Session Score</div><div class="sc-val purple">74</div><div class="sc-sub">Your personal best</div></div>
+    </div>
+
+    <!-- P&L + READINESS CHARTS -->
+    <div class="two-col">
+      <div class="chart-card">
+        <div class="card-hdr">
+          <div><div class="card-title">P&L Over Time</div><div class="card-sub">Cumulative sim account</div></div>
+          <div style="display:flex;gap:10px;">
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray);"><div style="width:8px;height:8px;border-radius:50%;background:#00e87a;"></div>Balance</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray);"><div style="width:14px;height:2px;background:#ff4560;"></div>Max Loss</div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="pnl-chart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="card-hdr">
+          <div><div class="card-title" style="color:var(--gold);">Readiness Trend</div><div class="card-sub">Score over time — target: 80</div></div>
+        </div>
+        <div class="chart-wrap"><canvas id="readiness-chart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- RULE COMPLIANCE BREAKDOWN -->
+    <div class="chart-card">
+      <div class="card-hdr">
+        <div><div class="card-title">Rule Compliance Breakdown</div><div class="card-sub">Which rules you follow — and which cost you the most</div></div>
+      </div>
+      <div id="compliance-list"></div>
+    </div>
+
+    <!-- STRATEGY + BEST/WORST -->
+    <div class="two-col">
+      <div class="chart-card">
+        <div class="card-hdr"><div class="card-title">Strategy Breakdown</div><div class="card-sub">Avg score per strategy</div></div>
+        <div id="strat-list"></div>
+      </div>
+      <div class="chart-card">
+        <div class="card-hdr"><div class="card-title">P&L vs Compliance</div><div class="card-sub">Discipline = money — see the correlation</div></div>
+        <div class="chart-wrap"><canvas id="corr-chart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- BEST + WORST SESSION -->
+    <div class="two-col">
+      <div class="best-session">
+        <div class="session-hdr">
+          <div><div class="session-title" style="color:var(--green);">Best Session</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">Apr 24 · FVG Strategy</div></div>
+          <div class="session-pnl pos">+$312.50</div>
+        </div>
+        <div class="session-stat"><span style="color:var(--gray);">Performance Score</span><span style="color:var(--green);font-weight:600;">74/100</span></div>
+        <div class="session-stat"><span style="color:var(--gray);">Compliance</span><span style="font-weight:600;">78%</span></div>
+        <div class="session-stat"><span style="color:var(--gray);">Trades taken</span><span>3</span></div>
+        <div class="session-stat"><span style="color:var(--gray);">What you did right</span><span style="color:var(--green);font-size:11px;">Waited for full confirmation</span></div>
+        <div style="margin-top:10px;font-size:12px;color:var(--gray);line-height:1.6;font-style:italic;">"This session is your standard. Every future session gets measured against it. 74 is not your ceiling — it is your floor."<br><span style="color:var(--green);font-size:11px;">— Coach Prime</span></div>
+      </div>
+      <div class="worst-session">
+        <div class="session-hdr">
+          <div><div class="session-title" style="color:var(--red);">Needs Most Work</div><div style="font-size:11px;color:var(--gray);margin-top:2px;">Apr 23 · FVG Strategy</div></div>
+          <div class="session-pnl neg">-$125.00</div>
+        </div>
+        <div class="session-stat"><span style="color:var(--gray);">Performance Score</span><span style="color:var(--red);font-weight:600;">52/100</span></div>
+        <div class="session-stat"><span style="color:var(--gray);">Compliance</span><span style="font-weight:600;">55%</span></div>
+        <div class="session-stat"><span style="color:var(--gray);">Trades taken</span><span>2</span></div>
+        <div class="session-stat"><span style="color:var(--gray);">Root cause</span><span style="color:var(--red);font-size:11px;">Revenge trade after loss</span></div>
+        <div style="margin-top:10px;font-size:12px;color:var(--gray);line-height:1.6;font-style:italic;">"A 52 is not a failure — it is data. You now know exactly what not to do. The loss paid for a lesson most traders never learn."<br><span style="color:var(--green);font-size:11px;">— Coach Prime</span></div>
+      </div>
+    </div>
+
+    <!-- FIRM COMPARISON -->
+    <div class="chart-card">
+      <div class="card-hdr">
+        <div><div class="card-title" style="color:var(--gold);">Prop Firm Compatibility</div><div class="card-sub">Based on your trading style, risk management, and session consistency</div></div>
+        <div style="font-size:11px;color:var(--gray);letter-spacing:1px;">Updates after every session</div>
+      </div>
+      <div id="firm-list"></div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:14px;line-height:1.6;">Compatibility score based on: drawdown style match, daily loss discipline, profit target achievability at your current win rate, and consistency rating. Sunday: pulls live from your Supabase session data.</div>
+    </div>
+
+    <!-- COACH PRIME PRO INSIGHT -->
+    <div class="cp-insight">
+      <div class="cp-insight-hdr">
+        <div class="cp-av">CP</div>
+        <div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Coach Prime Pro — Deep Performance Insight</div>
+          <div style="display:inline-flex;align-items:center;gap:4px;margin-top:3px;"><div style="width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;"></div><div style="font-size:10px;color:var(--green);letter-spacing:1px;text-transform:uppercase;">Pro Analysis Active</div></div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--gray);line-height:1.9;" id="cp-insight-text">
+        <strong style="color:var(--white);font-weight:500;">Here is what your data actually shows.</strong> Your two sessions tell a clear story — the difference between a 74 and a 52 is not talent, not luck, and not the market. It is a 23-point compliance gap. The session where you followed your rules produced +$312.50. The session where you skipped your checklist and revenge traded produced -$125.00. <strong style="color:var(--white);font-weight:500;">That single habit — the pre-trade checklist — is worth $437.50 per session to you.</strong><br><br>
+        Your stop loss discipline is already at a professional level. You have not moved a stop against you in either session. That is rare. Most traders take years to build that habit — you already have it.<br><br>
+        <strong style="color:var(--green);font-weight:500;">The path forward is simple: complete the checklist on every entry. Not most entries. Every entry. Do that for 10 consecutive sessions and your readiness score will cross 80. That unlocks Mock Eval mode and puts you one stage away from funded.</strong>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}</style>
+
+<script>
+const SESSIONS = [
+  { date:'2026-04-24', strategy:'FVG', pnl:312.50, score:74, compliance:78,
+    rules:{ htf:true, checklist:false, stop:true, nokill:false, maxloss:true } },
+  { date:'2026-04-23', strategy:'FVG', pnl:-125.00, score:52, compliance:55,
+    rules:{ htf:false, checklist:false, stop:true, nokill:true, maxloss:true } }
+];
+
+const RULE_LABELS = {
+  htf: 'Higher timeframe bias confirmed',
+  checklist: 'Pre-trade checklist completed',
+  stop: 'Stop loss set before entry',
+  nokill: 'No-trade zone respected',
+  maxloss: 'Max daily loss not exceeded'
+};
+
+const FIRM_DATA = [
+  { rank:1, name:'TopStep', type:'Fixed Drawdown', score:82, match:true,  reason:'Your fixed daily loss discipline matches TopStep\'s structure perfectly.' },
+  { rank:2, name:'Take Profit Trader', type:'Fixed Drawdown', score:74, match:false, reason:'Lower profit target is achievable at your current win rate.' },
+  { rank:3, name:'Alpha Trader', type:'Fixed Drawdown', score:68, match:false, reason:'Good fit — slightly higher profit target requires consistency improvement.' },
+  { rank:4, name:'Apex', type:'Trailing Drawdown', score:51, match:false, reason:'Trailing drawdown requires tighter daily management than your current pattern.' },
+  { rank:5, name:'Tradify', type:'Trailing Drawdown', score:44, match:false, reason:'Aggressive trailing drawdown not well matched to your current style.' },
+];
+
+const STRATEGY_INSIGHTS = {
+  all: 'Your two sessions tell a clear story — the difference between a 74 and a 52 is not talent or luck. It is a 23-point compliance gap. <strong style="color:var(--white);font-weight:500;">Complete the checklist on every entry for 10 consecutive sessions and your readiness score crosses 80.</strong>',
+  FVG: 'Your FVG sessions show you understand the setup structure. <strong style="color:var(--white);font-weight:500;">The gap between your best and worst session is your next target to close.</strong> Early entry is the only thing separating you from consistent profitability on this strategy.',
+  ICT: 'No ICT sessions yet. When you start, focus on the New York AM kill zone first — highest volume, most reliable setups. Study the Asian range every morning before the open.',
+  ORB: 'No ORB sessions yet. This is the most mechanical strategy available. Define the range, wait for the break, execute the plan. One setup, one trade, maximum discipline.',
+  Trendline: 'No Trendline sessions yet. Draw your lines before the session — never during. The best entries come on the third touch. Patience is the entire edge.',
+  Scalp: 'No Scalp sessions yet. Maximum 3 trades. If the 5-min is choppy — no trade today. The 3-trade limit will save your account more than any other rule.'
+};
+
+function scoreColor(s){return s>=80?'var(--green)':s>=60?'var(--yellow)':'var(--red)';}
+
+function setPeriod(btn){
+  document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function updateInsight() {
+  const strat = document.getElementById('strat-select').value;
+  const el = document.getElementById('cp-insight-text');
+  if (el) {
+    const insight = STRATEGY_INSIGHTS[strat] || STRATEGY_INSIGHTS.all;
+    el.innerHTML = insight;
+  }
+}
+
+// P&L Chart
+new Chart(document.getElementById('pnl-chart').getContext('2d'), {
+  type:'line',
+  data:{
+    labels:['Start','Apr 23','Apr 24'],
+    datasets:[
+      {label:'Balance',data:[50000,49875,50187.50],borderColor:'#00e87a',backgroundColor:'rgba(0,232,122,0.06)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#00e87a',pointBorderColor:'#0c0f14',pointBorderWidth:2,fill:true,tension:0.4},
+      {label:'Max Loss',data:[48500,48500,48500],borderColor:'#ff4560',borderWidth:1.5,borderDash:[5,3],pointRadius:0,fill:false},
+      {label:'Target',data:[53000,53000,53000],borderColor:'rgba(0,232,122,0.3)',borderWidth:1.5,borderDash:[5,3],pointRadius:0,fill:false}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:'#141928',borderColor:'rgba(255,255,255,0.08)',borderWidth:1,titleColor:'#7a8599',bodyColor:'#e8ecf0',callbacks:{label:c=>' '+c.dataset.label+': $'+c.raw?.toLocaleString()}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#7a8599',font:{size:10}}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#7a8599',font:{size:10},callback:v=>'$'+(v/1000).toFixed(0)+'k'}}}}
+});
+
+// Readiness Chart
+new Chart(document.getElementById('readiness-chart').getContext('2d'), {
+  type:'line',
+  data:{
+    labels:['Start','Apr 23','Apr 24'],
+    datasets:[
+      {label:'Readiness',data:[null,52,63],borderColor:'#d4a82a',backgroundColor:'rgba(212,168,42,0.06)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#d4a82a',pointBorderColor:'#0c0f14',pointBorderWidth:2,fill:true,tension:0.4},
+      {label:'Target',data:[80,80,80],borderColor:'rgba(0,232,122,0.3)',borderWidth:1.5,borderDash:[5,3],pointRadius:0,fill:false}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#141928',borderColor:'rgba(255,255,255,0.08)',borderWidth:1,titleColor:'#7a8599',bodyColor:'#e8ecf0',callbacks:{label:c=>' '+c.dataset.label+': '+(c.raw??'—')+'/100'}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#7a8599',font:{size:10}}},y:{min:0,max:100,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#7a8599',font:{size:10},callback:v=>v+'/100'}}}}
+});
+
+// P&L vs Compliance scatter
+new Chart(document.getElementById('corr-chart').getContext('2d'), {
+  type:'scatter',
+  data:{
+    datasets:[{
+      label:'Sessions',
+      data:[{x:55,y:-125},{x:78,y:312.50}],
+      backgroundColor:['rgba(255,69,96,0.6)','rgba(0,232,122,0.6)'],
+      borderColor:['#ff4560','#00e87a'],
+      borderWidth:2,
+      pointRadius:10,
+      pointHoverRadius:12
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'#141928',borderColor:'rgba(255,255,255,0.08)',borderWidth:1,bodyColor:'#e8ecf0',callbacks:{label:c=>`Compliance: ${c.raw.x}% → P&L: ${c.raw.y>=0?'+':''}$${Math.abs(c.raw.y).toFixed(2)}`}}},
+    scales:{
+      x:{min:0,max:100,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#7a8599',font:{size:10},callback:v=>v+'%'},title:{display:true,text:'Compliance Score',color:'#7a8599',font:{size:10}}},
+      y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#7a8599',font:{size:10},callback:v=>'$'+v},title:{display:true,text:'P&L',color:'#7a8599',font:{size:10}}}
+    }
+  }
+});
+
+// Rule compliance
+const compList = document.getElementById('compliance-list');
+Object.entries(RULE_LABELS).forEach(([key, label]) => {
+  const passed = SESSIONS.filter(s=>s.rules[key]).length;
+  const pct = Math.round((passed/SESSIONS.length)*100);
+  const color = scoreColor(pct);
+  const trend = pct >= 70 ? '<span style="color:var(--green);">✓</span>' : pct >= 50 ? '<span style="color:var(--yellow);">◎</span>' : '<span style="color:var(--red);">✗</span>';
+  const note = key==='stop' ? '— Your biggest strength' : key==='checklist' ? '— Most impactful to fix' : '';
+  const div = document.createElement('div');
+  div.className = 'rule-row';
+  div.innerHTML = `<div class="rule-name">${label}<span style="font-size:10px;color:${key==='stop'?'var(--green)':key==='checklist'?'var(--red)':'transparent'};margin-left:6px;">${note}</span></div><div class="rule-bar-bg"><div class="rule-bar-fill" style="width:${pct}%;background:${color};"></div></div><div class="rule-pct" style="color:${color};">${pct}%</div><div class="rule-trend">${trend}</div>`;
+  compList.appendChild(div);
+});
+
+// Strategy breakdown
+const stratMap = {};
+SESSIONS.forEach(s=>{if(!stratMap[s.strategy])stratMap[s.strategy]={total:0,count:0};stratMap[s.strategy].total+=s.score;stratMap[s.strategy].count++;});
+const stratList = document.getElementById('strat-list');
+Object.entries(stratMap).sort((a,b)=>(b[1].total/b[1].count)-(a[1].total/a[1].count)).forEach(([name,data])=>{
+  const avg = Math.round(data.total/data.count);
+  const div = document.createElement('div');
+  div.className = 'strat-row';
+  div.innerHTML = `<div class="strat-name">${name}</div><div class="strat-bar-bg"><div class="strat-bar-fill" style="width:${avg}%;background:${scoreColor(avg)};"></div></div><div class="strat-score" style="color:${scoreColor(avg)};">${avg}</div><div class="strat-sessions">${data.count} session${data.count!==1?'s':''}</div>`;
+  stratList.appendChild(div);
+});
+
+// Firm comparison
+const firmList = document.getElementById('firm-list');
+FIRM_DATA.forEach(f=>{
+  const div = document.createElement('div');
+  div.className = 'firm-comp-row' + (f.match?' match':'');
+  div.innerHTML = `<div class="firm-comp-rank">${f.rank}</div><div style="flex:1;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;"><div class="firm-comp-name" style="color:${f.match?'var(--white)':'var(--gray)'};">${f.name}</div><div style="font-size:10px;color:var(--gray);letter-spacing:1px;">${f.type}</div>${f.match?'<div style="font-size:9px;background:rgba(0,232,122,0.15);border:1px solid rgba(0,232,122,0.25);color:var(--green);padding:1px 6px;border-radius:2px;font-weight:700;letter-spacing:1px;">BEST FIT</div>':''}</div><div style="font-size:11px;color:var(--gray);">${f.reason}</div></div><div style="text-align:right;flex-shrink:0;"><div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:${scoreColor(f.score)};">${f.score}</div><div style="font-size:10px;color:var(--gray);">/ 100</div></div>`;
+  firmList.appendChild(div);
+});
+</script>
+</body>
+</html>
