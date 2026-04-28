@@ -644,7 +644,14 @@
   }
 
   function completeOnboarding() {
-    window.location.href = 'path.html';
+    // Save email for verify page to reference
+    try {
+      const email = document.getElementById('setup-email').value.trim();
+      localStorage.setItem('pt_pending_email', email);
+    } catch(e) {}
+    // Sunday: Supabase sends real OTP to email
+    // For now route through verify page then to path
+    window.location.href = 'verify.html?next=path.html';
   }
 
   function skipToEnd() {
