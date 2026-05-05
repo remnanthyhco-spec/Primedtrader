@@ -284,52 +284,42 @@
       <div class="coach-avatar">CP</div>
       <div class="coach-name">Coach Prime</div>
     </div>
-    <div class="step-eyebrow">Step 2 — Your Strategy</div>
-    <h2 class="step-headline">Pick your<br><span>playbook.</span></h2>
-    <p class="step-body">Every great trader has a system. Pick the one that resonates with you — or the one you want to master. You can change this anytime.</p>
+    <div class="step-eyebrow">Step 2 — Your Experience</div>
+    <h2 class="step-headline">How long have<br>you been <span>trading?</span></h2>
+    <p class="step-body">No judgment here. Where you are right now shapes how I coach you. Beginners and experienced traders need very different feedback.</p>
 
-    <div class="options-grid" style="grid-template-columns:1fr 1fr;gap:12px;">
-      <div class="option-card" onclick="selectOption(this,'strategy','fvg')">
-        <div class="option-check"></div>
-        <span class="option-icon">📊</span>
-        <div class="option-title">Fair Value Gap</div>
-        <p class="option-desc">ICT-based price imbalance entries. High probability when done right.</p>
-        <div class="rec-badge rec-both">⚡ Scalper &amp; Day Trader</div>
+    <div class="goal-options">
+      <div class="goal-item" onclick="selectGoal(this,'experience','new')">
+        <div class="goal-dot"></div>
+        <div class="goal-content">
+          <div class="goal-title">Just getting started</div>
+          <div class="goal-desc">Less than 6 months. I'm still learning the basics of price action and market structure.</div>
+        </div>
+        <div class="goal-time">New Trader</div>
       </div>
-      <div class="option-card" onclick="selectOption(this,'strategy','ict')">
-        <div class="option-check"></div>
-        <span class="option-icon">🎯</span>
-        <div class="option-title">ICT Kill Zone</div>
-        <p class="option-desc">Liquidity sweeps + displacement during NY session windows.</p>
-        <div class="rec-badge rec-day">📅 Recommended: Day Trader</div>
+      <div class="goal-item" onclick="selectGoal(this,'experience','developing')">
+        <div class="goal-dot"></div>
+        <div class="goal-content">
+          <div class="goal-title">6 months – 2 years</div>
+          <div class="goal-desc">I understand the basics but I'm still working on consistency and discipline.</div>
+        </div>
+        <div class="goal-time">Developing</div>
       </div>
-      <div class="option-card" onclick="selectOption(this,'strategy','orb')">
-        <div class="option-check"></div>
-        <span class="option-icon">📈</span>
-        <div class="option-title">Opening Range Breakout</div>
-        <p class="option-desc">One mechanical trade per session. Clean, structured, repeatable.</p>
-        <div class="rec-badge rec-day">📅 Recommended: Day Trader</div>
+      <div class="goal-item" onclick="selectGoal(this,'experience','experienced')">
+        <div class="goal-dot"></div>
+        <div class="goal-content">
+          <div class="goal-title">2–5 years</div>
+          <div class="goal-desc">I have a system. I just need to execute it consistently and pass the eval.</div>
+        </div>
+        <div class="goal-time">Experienced</div>
       </div>
-      <div class="option-card" onclick="selectOption(this,'strategy','trendline')">
-        <div class="option-check"></div>
-        <span class="option-icon">📉</span>
-        <div class="option-title">Trendline Model</div>
-        <p class="option-desc">Naked price action. Trendline bounces and breaks. No indicators.</p>
-        <div class="rec-badge rec-day">📅 Recommended: Day Trader</div>
-      </div>
-      <div class="option-card" onclick="selectOption(this,'strategy','scalp')">
-        <div class="option-check"></div>
-        <span class="option-icon">⚡</span>
-        <div class="option-title">Scalp System</div>
-        <p class="option-desc">1-min structure breaks. Fast entries, tight stops, quick targets.</p>
-        <div class="rec-badge rec-scalp">⚡ Recommended: Scalper</div>
-      </div>
-      <div class="option-card" onclick="selectOption(this,'strategy','custom')" style="border-style:dashed;">
-        <div class="option-check"></div>
-        <span class="option-icon">🛠</span>
-        <div class="option-title">Build My Own</div>
-        <p class="option-desc">Define your own entry, stop, and target rules from scratch.</p>
-        <div class="rec-badge rec-both">⚡ Scalper &amp; Day Trader</div>
+      <div class="goal-item" onclick="selectGoal(this,'experience','veteran')">
+        <div class="goal-dot"></div>
+        <div class="goal-content">
+          <div class="goal-title">5+ years</div>
+          <div class="goal-desc">I know what I'm doing. I want the discipline framework and the readiness tracking.</div>
+        </div>
+        <div class="goal-time">Veteran</div>
       </div>
     </div>
 
@@ -339,30 +329,48 @@
     </div>
   </div>
 
-  <!-- ── STEP 3: STYLE ── -->
+  <!-- ── STEP 3: BIGGEST CHALLENGE ── -->
   <div class="step" id="step-3">
     <div class="coach-tag">
       <div class="coach-avatar">CP</div>
       <div class="coach-name">Coach Prime</div>
     </div>
-    <div class="step-eyebrow">Step 3 — Your Trading Style</div>
-    <h2 class="step-headline">How do<br>you <span>trade?</span></h2>
-    <p class="step-body">This shapes how Coach Prime coaches you and how your sessions are structured. Scalpers and day traders need different feedback — be honest with yourself.</p>
+    <div class="step-eyebrow">Step 3 — Your Biggest Challenge</div>
+    <h2 class="step-headline">What's<br><span>holding you back?</span></h2>
+    <p class="step-body">This is the most important question I'll ask you. Be honest — your answer shapes everything Coach Prime focuses on from day one.</p>
 
-    <div class="options-grid cols-2">
-      <div class="option-card" onclick="selectOption(this,'style','scalper')" style="padding:32px 24px;">
-        <div class="option-check"></div>
-        <span class="option-icon">⚡</span>
-        <div class="option-title">Scalper</div>
-        <p class="option-desc">Trades held 5 minutes or less. Fast decisions, tight stops, high frequency. You live on the 1-min and 3-min charts.</p>
-        <div style="margin-top:16px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);font-weight:700;">Max 3 trades/session</div>
+    <div class="goal-options">
+      <div class="goal-item" onclick="selectGoal(this,'challenge','discipline')">
+        <div class="goal-dot"></div>
+        <div class="goal-content">
+          <div class="goal-title">Discipline — I know the rules but don't follow them</div>
+          <div class="goal-desc">I break my own rules in the moment. I move stops, overtrade, or enter setups I know aren't valid.</div>
+        </div>
+        <div class="goal-time">Most common</div>
       </div>
-      <div class="option-card" onclick="selectOption(this,'style','daytrader')" style="padding:32px 24px;">
-        <div class="option-check"></div>
-        <span class="option-icon">📅</span>
-        <div class="option-title">Day Trader</div>
-        <p class="option-desc">Trades held up to the full session. Patience, bigger targets, fewer setups. You work the 5-min, 15-min, and 1-hour charts.</p>
-        <div style="margin-top:16px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);font-weight:700;">1-3 quality setups/session</div>
+      <div class="goal-item" onclick="selectGoal(this,'challenge','consistency')">
+        <div class="goal-dot"></div>
+        <div class="goal-content">
+          <div class="goal-title">Consistency — I have good days and terrible days</div>
+          <div class="goal-desc">My results are unpredictable. I can't seem to replicate what works across sessions.</div>
+        </div>
+        <div class="goal-time">Very common</div>
+      </div>
+      <div class="goal-item" onclick="selectGoal(this,'challenge','psychology')">
+        <div class="goal-dot"></div>
+        <div class="goal-content">
+          <div class="goal-title">Psychology — emotions take over when real money is at stake</div>
+          <div class="goal-desc">Fear, greed, and revenge trading cost me more than any bad setup ever has.</div>
+        </div>
+        <div class="goal-time">Very common</div>
+      </div>
+      <div class="goal-item" onclick="selectGoal(this,'challenge','strategy')">
+        <div class="goal-dot"></div>
+        <div class="goal-content">
+          <div class="goal-title">Strategy — I don't have a clear system I trust yet</div>
+          <div class="goal-desc">I'm still looking for a setup that makes sense to me and that I can execute confidently.</div>
+        </div>
+        <div class="goal-time">Common for new traders</div>
       </div>
     </div>
 
@@ -379,41 +387,41 @@
       <div class="coach-name">Coach Prime</div>
     </div>
     <div class="step-eyebrow">Step 4 — Your Goal</div>
-    <h2 class="step-headline">What are<br>you <span>training</span><br>for?</h2>
-    <p class="step-body">Be real with me. Your goal shapes your timeline, your coaching focus, and when I tell you you're ready. No judgment — just honesty.</p>
+    <h2 class="step-headline">What are you<br><span>training for?</span></h2>
+    <p class="step-body">Your goal sets your target. Coach Prime will track every session against it and tell you exactly how far away you are at all times.</p>
 
     <div class="goal-options">
-      <div class="goal-item" onclick="selectGoal(this,'eval')">
+      <div class="goal-item" onclick="selectGoal(this,'goal','funded')">
         <div class="goal-dot"></div>
         <div class="goal-content">
-          <div class="goal-title">Pass a prop firm evaluation</div>
-          <div class="goal-desc">TopStep, Apex, MyFunded Futures or similar. I want to get funded.</div>
+          <div class="goal-title">Get funded — I want to pass a prop firm eval</div>
+          <div class="goal-desc">TopStep, Apex, Take Profit or similar. I want real capital behind me. This is my primary target.</div>
         </div>
-        <div class="goal-time">Goal: 30–90 days</div>
+        <div class="goal-time">30–90 days</div>
       </div>
-      <div class="goal-item" onclick="selectGoal(this,'consistent')">
+      <div class="goal-item" onclick="selectGoal(this,'goal','consistent')">
         <div class="goal-dot"></div>
         <div class="goal-content">
-          <div class="goal-title">Become a consistent trader</div>
-          <div class="goal-desc">I want to build a real system and stop making emotional decisions.</div>
+          <div class="goal-title">Get consistent — I want to stop the losing streaks</div>
+          <div class="goal-desc">I want a process I can trust and results I can replicate. Funded comes after consistency.</div>
         </div>
-        <div class="goal-time">Goal: 60–120 days</div>
+        <div class="goal-time">60–120 days</div>
       </div>
-      <div class="goal-item" onclick="selectGoal(this,'strategy')">
+      <div class="goal-item" onclick="selectGoal(this,'goal','master')">
         <div class="goal-dot"></div>
         <div class="goal-content">
-          <div class="goal-title">Master a specific strategy</div>
-          <div class="goal-desc">I want to get really good at one setup before expanding my playbook.</div>
+          <div class="goal-title">Master one strategy — before anything else</div>
+          <div class="goal-desc">I want to be so good at one setup that it becomes automatic. Then I'll go for funding.</div>
         </div>
-        <div class="goal-time">Goal: 30–60 days</div>
+        <div class="goal-time">30–60 days</div>
       </div>
-      <div class="goal-item" onclick="selectGoal(this,'explore')">
+      <div class="goal-item" onclick="selectGoal(this,'goal','learn')">
         <div class="goal-dot"></div>
         <div class="goal-content">
-          <div class="goal-title">Just exploring for now</div>
-          <div class="goal-desc">I'm learning the markets and want to build good habits from the start.</div>
+          <div class="goal-title">Learn properly — I'm building from the ground up</div>
+          <div class="goal-desc">I want to understand the markets, develop discipline, and build real foundations first.</div>
         </div>
-        <div class="goal-time">No pressure</div>
+        <div class="goal-time">No rush</div>
       </div>
     </div>
 
@@ -431,7 +439,7 @@
     </div>
     <div class="step-eyebrow">Step 5 — Create Your Account</div>
     <h2 class="step-headline">Almost<br><span>there.</span></h2>
-    <p class="step-body">One last thing. Create your account so your sessions, journal, and progress are saved. <strong>Free forever — no card needed.</strong></p>
+    <p class="step-body">Last step. Create your account to save your profile. Your 14-day free trial starts the moment you verify your email.</p>
 
     <div class="setup-form">
       <div class="form-row">
@@ -463,10 +471,7 @@
       <button class="btn-back" onclick="prevStep()">← Back</button>
       <button class="btn-next" id="btn-5" onclick="completeOnboarding()" disabled>Let's Go →</button>
     </div>
-    <p style="margin-top:16px;text-align:center;font-size:12px;color:rgba(255,255,255,0.25);letter-spacing:1px;">
-      Want the full path to funded? 
-      <a href="pricing.html" style="color:rgba(255,255,255,0.4);text-decoration:underline;transition:color 0.2s;" onmouseover="this.style.color='var(--green)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">See Pro plan →</a>
-    </p>
+
 
   <!-- ── COMPLETE SCREEN ── -->
   <div class="complete-screen" id="complete">
@@ -628,11 +633,17 @@
     document.getElementById(btnId).disabled = false;
   }
 
-  function selectGoal(el, value) {
-    document.querySelectorAll('.goal-item').forEach(g => g.classList.remove('selected'));
+  function selectGoal(el, key, value) {
+    const step = el.closest('.step');
+    step.querySelectorAll('.goal-item').forEach(g => {
+      g.classList.remove('selected');
+      g.querySelector('.goal-dot').style.background = '';
+    });
     el.classList.add('selected');
-    selections.goal = value;
-    document.getElementById('btn-4').disabled = false;
+    el.querySelector('.goal-dot').style.background = 'var(--green)';
+    selections[key] = value;
+    try { localStorage.setItem('pt_' + key, value); } catch(e) {}
+    document.getElementById('btn-' + currentStep).disabled = false;
   }
 
   function checkSetup() {
@@ -644,14 +655,15 @@
   }
 
   function completeOnboarding() {
-    // Save email for verify page to reference
     try {
       const email = document.getElementById('setup-email').value.trim();
+      const first = document.getElementById('first-name').value.trim();
+      const last = document.getElementById('last-name').value.trim();
       localStorage.setItem('pt_pending_email', email);
+      localStorage.setItem('pt_name', first + ' ' + last);
     } catch(e) {}
-    // Sunday: Supabase sends real OTP to email
-    // For now route through verify page then to path
-    window.location.href = 'verify.html?next=path.html';
+    // Route: verify email → pricing → pro-dashboard
+    window.location.href = 'verify-signup.html?next=pricing.html';
   }
 
   function skipToEnd() {
