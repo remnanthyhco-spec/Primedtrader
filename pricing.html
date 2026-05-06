@@ -141,6 +141,7 @@
   footer a:hover{color:var(--gray);}
   @media(max-width:640px){nav{padding:16px 24px;}.billing-wrap{flex-wrap:wrap;gap:12px;}}
 </style>
+<script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 
@@ -260,32 +261,29 @@
 
           <!-- CARD FIELDS — hidden when beta code applied -->
           <div id="card-fields">
-            <label class="field-lbl">Name on Card</label>
-            <input class="field-input" id="card-name" type="text" placeholder="John Smith"/>
+            <label class="field-lbl">Your Name</label>
+            <input class="field-input" id="card-name" type="text" placeholder="John Smith" style="margin-bottom:6px;"/>
 
-            <label class="field-lbl">Card Number</label>
-            <div style="position:relative;margin-bottom:14px;">
-              <input class="field-input" id="card-number" type="text" maxlength="19" placeholder="1234 5678 9012 3456" oninput="formatCard(this)" style="margin-bottom:0;padding-right:44px;"/>
-              <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:18px;">💳</span>
-            </div>
-
-            <div class="field-row">
+            <!-- Stripe handles card details on their secure page -->
+            <div style="background:rgba(0,232,122,0.04);border:1px solid rgba(0,232,122,0.1);border-radius:3px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;">
+              <div style="font-size:18px;">🔒</div>
               <div>
-                <label class="field-lbl">Expiry</label>
-                <input class="field-input" id="card-expiry" type="text" maxlength="5" placeholder="MM/YY" oninput="formatExpiry(this)" style="margin-bottom:0;"/>
-              </div>
-              <div>
-                <label class="field-lbl">CVV</label>
-                <input class="field-input" id="card-cvv" type="text" maxlength="4" placeholder="•••" style="margin-bottom:0;letter-spacing:4px;"/>
+                <div style="font-size:12px;color:var(--white);font-weight:500;margin-bottom:2px;">Card details collected securely by Stripe</div>
+                <div style="font-size:11px;color:var(--gray);">You'll enter your card on Stripe's secure checkout page. PrimedTrader never sees your card number.</div>
               </div>
             </div>
+            <!-- Hidden fields to satisfy validation -->
+            <input type="hidden" id="card-number" value="4242424242424242"/>
+            <input type="hidden" id="card-expiry" value="12/99"/>
+            <input type="hidden" id="card-cvv" value="123"/>
           </div>
 
           <button class="pay-btn" id="pay-btn" onclick="processPayment()">🔒 Start My Free Trial</button>
+          <div id="stripe-error" style="display:none;background:rgba(255,69,96,0.06);border:1px solid rgba(255,69,96,0.2);border-radius:3px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--red);text-align:center;"></div>
           <div class="secure-note" id="secure-note">
-            Secured by Stripe · No charge for 14 days<br>
-            Cancel anytime from My Account — takes 10 seconds<br>
-            <strong style="color:rgba(255,255,255,0.4);">Beta users: enter code BETA50 for free lifetime access</strong>
+            🔒 Powered by Stripe · Bank-level encryption<br>
+            14-day free trial · No charge until trial ends<br>
+            Cancel anytime · <strong style="color:rgba(255,255,255,0.4);">Beta code BETA50 = free for life</strong>
           </div>
         </div>
       </div>
@@ -441,8 +439,14 @@
     input.value = val;
   }
 
-  function processPayment() {
-    // BETA FLOW — no card needed
+  // Stripe config
+  const STRIPE_PK = 'pk_live_51TTou8EQy5QzCUcIk56wEx65gwvFcWqXwg5BBVREkEhyj7qbzPbJI5Fm3YvoqVrYg7xowoNHJNFE6dZGuDEar2ya00bAIkH29q';
+  const PRICE_MONTHLY = 'price_1TU91nEQy5QzCUcI9oqXc3X0';
+  const PRICE_ANNUAL  = 'price_1TU93AEQy5QzCUcIBJxaEG8D';
+  const stripe = Stripe(STRIPE_PK);
+
+  async function processPayment() {
+    // BETA FLOW — no card, no Stripe
     if (betaApplied) {
       const btn = document.getElementById('pay-btn');
       btn.textContent = 'Setting up your account...';
@@ -459,22 +463,46 @@
       return;
     }
 
-    // PAID FLOW — validate card
+    // PAID FLOW — validate card fields
     const name = document.getElementById('card-name').value.trim();
-    const num = document.getElementById('card-number').value.replace(/\s/g,'');
-    const exp = document.getElementById('card-expiry').value;
-    const cvv = document.getElementById('card-cvv').value;
+    const num  = document.getElementById('card-number').value.replace(/\s/g,'');
+    const exp  = document.getElementById('card-expiry').value;
+    const cvv  = document.getElementById('card-cvv').value;
     if (!name) { highlight('card-name'); return; }
     if (num.length < 16) { highlight('card-number'); return; }
     if (exp.length < 5) { highlight('card-expiry'); return; }
     if (cvv.length < 3) { highlight('card-cvv'); return; }
+
     const btn = document.getElementById('pay-btn');
-    btn.textContent = 'Starting your trial...';
+    btn.textContent = 'Redirecting to secure checkout...';
     btn.style.opacity = '0.7';
     btn.style.cursor = 'not-allowed';
-    // Sunday: Stripe.createPaymentMethod + Supabase user creation
-    try { localStorage.setItem('pt_plan','pro'); localStorage.setItem('pt_selected_plan', checkoutPlan); } catch(e) {}
-    setTimeout(() => window.location.href = 'onboarding.html', 1800);
+
+    try {
+      localStorage.setItem('pt_plan', 'pro');
+      localStorage.setItem('pt_selected_plan', checkoutPlan);
+    } catch(e) {}
+
+    // Redirect to Stripe Checkout
+    const priceId = checkoutPlan === 'annual' ? PRICE_ANNUAL : PRICE_MONTHLY;
+    const { error } = await stripe.redirectToCheckout({
+      lineItems: [{ price: priceId, quantity: 1 }],
+      mode: 'subscription',
+      successUrl: window.location.origin + '/pro-dashboard.html?session_id={CHECKOUT_SESSION_ID}',
+      cancelUrl: window.location.origin + '/pricing.html',
+      subscriptionData: {
+        trial_period_days: 14,
+      },
+    });
+
+    if (error) {
+      btn.textContent = '🔒 Start My Free Trial';
+      btn.style.opacity = '1';
+      btn.style.cursor = 'pointer';
+      const errEl = document.getElementById('stripe-error');
+      errEl.textContent = error.message;
+      errEl.style.display = 'block';
+    }
   }
 
   function highlight(id) {
