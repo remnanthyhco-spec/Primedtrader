@@ -141,7 +141,6 @@
   footer a:hover{color:var(--gray);}
   @media(max-width:640px){nav{padding:16px 24px;}.billing-wrap{flex-wrap:wrap;gap:12px;}}
 </style>
-<script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 
@@ -197,14 +196,14 @@
       <!-- FRONT -->
       <div class="flip-front">
         <div class="price-card">
-          <div class="card-badge"><div class="card-badge-dot"></div><div class="card-badge-txt">14-Day Free Trial — No Card Required</div></div>
+          <div class="card-badge"><div class="card-badge-dot"></div><div class="card-badge-txt">Full Access — Everything Included</div></div>
           <div class="card-name">PrimedTrader</div>
           <div class="price-row">
             <div class="price-amount" id="front-price">$20</div>
             <div class="price-period">/month</div>
           </div>
           <div class="price-annual-note" id="front-annual-note">&nbsp;</div>
-          <div class="trial-line">
+          <div style="margin-bottom:28px;">
             <div class="trial-tag">14 Days Free</div>
             <div class="trial-txt">Start training today. No card needed.</div>
           </div>
@@ -220,7 +219,7 @@
             <li><span class="check" style="color:var(--yellow);">◎</span><span class="feat-text" style="color:var(--gray);">Live Charts <span style="font-size:10px;background:rgba(240,192,64,0.12);border:1px solid rgba(240,192,64,0.25);color:var(--yellow);padding:1px 7px;border-radius:2px;letter-spacing:1px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;margin-left:4px;">Coming Soon</span></span></li>
           </ul>
           <button class="cta-btn" onclick="flipCard()">Start Free Trial →</button>
-          <div class="card-note">14 days free. Then <span id="front-note-price">$20/mo</span>. Cancel before trial ends and you won't be charged a cent.</div>
+          <div class="card-note">Cancel anytime from My Account. Price locks in at signup — forever.</div>
         </div>
       </div>
 
@@ -229,7 +228,7 @@
         <div class="back-card">
           <button class="back-btn" onclick="flipCard()">← Back</button>
           <div class="checkout-title">Start Your Free Trial</div>
-          <div class="checkout-sub">14 days free. Choose your plan for after the trial.</div>
+          <div class="checkout-sub">Choose your billing cycle and get instant access.</div>
 
           <div class="plan-toggle">
             <div class="plan-opt active" id="tog-monthly" onclick="setCheckoutPlan('monthly')">Monthly — $20</div>
@@ -238,7 +237,7 @@
 
           <div class="price-display">
             <div class="price-big" id="checkout-price">$20</div>
-            <div class="price-desc" id="checkout-desc">per month · billed monthly after 14-day trial</div>
+            <div class="price-desc" id="checkout-desc">per month · billed monthly</div>
             <div class="price-savings" id="checkout-savings">You save $120 a year vs monthly</div>
           </div>
 
@@ -278,12 +277,12 @@
             <input type="hidden" id="card-cvv" value="123"/>
           </div>
 
-          <button class="pay-btn" id="pay-btn" onclick="processPayment()">🔒 Start My Free Trial</button>
+          <button class="pay-btn" id="pay-btn" onclick="processPayment()">🔒 Get Instant Access</button>
           <div id="stripe-error" style="display:none;background:rgba(255,69,96,0.06);border:1px solid rgba(255,69,96,0.2);border-radius:3px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--red);text-align:center;"></div>
           <div class="secure-note" id="secure-note">
             🔒 Powered by Stripe · Bank-level encryption<br>
-            14-day free trial · No charge until trial ends<br>
-            Cancel anytime · <strong style="color:rgba(255,255,255,0.4);">Beta code BETA50 = free for life</strong>
+            Cancel anytime · Price locks in at signup forever<br>
+            <strong style="color:rgba(255,255,255,0.4);">Beta code BETA50 = free for life</strong>
           </div>
         </div>
       </div>
@@ -344,12 +343,12 @@
 <div class="faq-wrap">
   <div class="faq-title">Questions</div>
   <div class="faq-item">
-    <button class="faq-q" onclick="toggleFaq(this)">Do I need a credit card to start the trial? <span class="faq-arrow">+</span></button>
-    <div class="faq-a">No. The 14-day free trial requires no card. You only enter payment details when you're ready to continue after the trial ends.</div>
+    <button class="faq-q" onclick="toggleFaq(this)">Can I try PrimedTrader before paying? <span class="faq-arrow">+</span></button>
+    <div class="faq-a">Yes — the free dashboard at primedtrader.com/dashboard.html gives you full access to sessions, journal, strategies, and Coach Prime at no cost. When you're ready to unlock Pro features, come back here and subscribe.</div>
   </div>
   <div class="faq-item">
-    <button class="faq-q" onclick="toggleFaq(this)">What happens after 14 days? <span class="faq-arrow">+</span></button>
-    <div class="faq-a">If you added a card, your subscription starts at $20/mo or $10/mo annual. If you never added a card, your access pauses. You can resubscribe anytime — your data stays.</div>
+    <button class="faq-q" onclick="toggleFaq(this)">What does Pro include that the free version doesn't? <span class="faq-arrow">+</span></button>
+    <div class="faq-a">Pro unlocks the Readiness Score, Mock Eval Mode, intra-session Coach Prime coaching, firm recommendation engine, advanced analytics, and PDF export. The free version covers strategies, sim sessions, journal, and post-session coaching.</div>
   </div>
   <div class="faq-item">
     <button class="faq-q" onclick="toggleFaq(this)">Can I cancel anytime? <span class="faq-arrow">+</span></button>
@@ -418,12 +417,12 @@
     if (plan === 'annual') {
       togA.classList.add('active'); togM.classList.remove('active');
       document.getElementById('checkout-price').textContent = '$10';
-      document.getElementById('checkout-desc').textContent = 'per month · $120 billed annually after 14-day trial';
+      document.getElementById('checkout-desc').textContent = 'per month · $120 billed annually';
       document.getElementById('checkout-savings').style.display = 'block';
     } else {
       togM.classList.add('active'); togA.classList.remove('active');
       document.getElementById('checkout-price').textContent = '$20';
-      document.getElementById('checkout-desc').textContent = 'per month · billed monthly after 14-day trial';
+      document.getElementById('checkout-desc').textContent = 'per month · billed monthly';
       document.getElementById('checkout-savings').style.display = 'none';
     }
   }
@@ -439,13 +438,15 @@
     input.value = val;
   }
 
-  // Stripe config
-  const STRIPE_PK = 'pk_live_51TTou8EQy5QzCUcIk56wEx65gwvFcWqXwg5BBVREkEhyj7qbzPbJI5Fm3YvoqVrYg7xowoNHJNFE6dZGuDEar2ya00bAIkH29q';
-  const PRICE_MONTHLY = 'price_1TU91nEQy5QzCUcI9oqXc3X0';
-  const PRICE_ANNUAL  = 'price_1TU93AEQy5QzCUcIBJxaEG8D';
-  const stripe = Stripe(STRIPE_PK);
+  // Stripe Payment Links — create these in your Stripe dashboard
+  // Products → your product → Payment Link → copy URL
+  // Paste your actual payment links here once created
+  const PAYMENT_LINKS = {
+    monthly: 'https://buy.stripe.com/MONTHLY_LINK',
+    annual:  'https://buy.stripe.com/ANNUAL_LINK'
+  };
 
-  async function processPayment() {
+  function processPayment() {
     // BETA FLOW — no card, no Stripe
     if (betaApplied) {
       const btn = document.getElementById('pay-btn');
@@ -463,46 +464,24 @@
       return;
     }
 
-    // PAID FLOW — validate card fields
+    // PAID FLOW — validate name
     const name = document.getElementById('card-name').value.trim();
-    const num  = document.getElementById('card-number').value.replace(/\s/g,'');
-    const exp  = document.getElementById('card-expiry').value;
-    const cvv  = document.getElementById('card-cvv').value;
     if (!name) { highlight('card-name'); return; }
-    if (num.length < 16) { highlight('card-number'); return; }
-    if (exp.length < 5) { highlight('card-expiry'); return; }
-    if (cvv.length < 3) { highlight('card-cvv'); return; }
 
     const btn = document.getElementById('pay-btn');
-    btn.textContent = 'Redirecting to secure checkout...';
+    btn.textContent = 'Redirecting to Stripe...';
     btn.style.opacity = '0.7';
     btn.style.cursor = 'not-allowed';
 
     try {
       localStorage.setItem('pt_plan', 'pro');
       localStorage.setItem('pt_selected_plan', checkoutPlan);
+      localStorage.setItem('pt_name', name);
     } catch(e) {}
 
-    // Redirect to Stripe Checkout
-    const priceId = checkoutPlan === 'annual' ? PRICE_ANNUAL : PRICE_MONTHLY;
-    const { error } = await stripe.redirectToCheckout({
-      lineItems: [{ price: priceId, quantity: 1 }],
-      mode: 'subscription',
-      successUrl: window.location.origin + '/pro-dashboard.html?session_id={CHECKOUT_SESSION_ID}',
-      cancelUrl: window.location.origin + '/pricing.html',
-      subscriptionData: {
-        trial_period_days: 14,
-      },
-    });
-
-    if (error) {
-      btn.textContent = '🔒 Start My Free Trial';
-      btn.style.opacity = '1';
-      btn.style.cursor = 'pointer';
-      const errEl = document.getElementById('stripe-error');
-      errEl.textContent = error.message;
-      errEl.style.display = 'block';
-    }
+    // Redirect to Stripe Payment Link
+    const link = PAYMENT_LINKS[checkoutPlan];
+    window.location.href = link;
   }
 
   function highlight(id) {
