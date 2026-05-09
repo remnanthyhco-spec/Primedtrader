@@ -355,6 +355,35 @@ async function redirectIfLoggedIn(redirectTo = 'pro-dashboard.html') {
       document.getElementById('sent-email').textContent = 'Code sent to ' + email;
     }
   } catch(e) {}
+  // Handle Supabase magic link redirect
+  // When user clicks email link, Supabase adds tokens to the URL
+  async function handleEmailConfirmation() {
+    const hash = window.location.hash;
+    const params = new URLSearchParams(window.location.search);
+
+    // Check for Supabase auth tokens in URL
+    if (hash.includes('access_token') || hash.includes('type=signup') || params.get('token_hash')) {
+      document.getElementById('verify-btn').textContent = 'Verifying...';
+
+      // Let Supabase handle the session from the URL
+      const { data, error } = await sb.auth.getSession();
+
+      if (data?.session || !error) {
+        document.getElementById('verify-status').style.display = 'block';
+        setTimeout(() => window.location.href = 'pricing.html', 1500);
+        return;
+      }
+    }
+
+    // Also check if already logged in
+    const session = await sbGetSession();
+    if (session) {
+      window.location.href = 'pricing.html';
+      return;
+    }
+  }
+
+  handleEmailConfirmation();
   document.getElementById('c1').focus();
 </script>
 </body>
