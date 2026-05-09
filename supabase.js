@@ -5,8 +5,7 @@ const SUPABASE_URL = 'https://fjvsceetttikpmnigvcs.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdnNjZWV0dHRpa3BtbmlndmNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTM5MzMsImV4cCI6MjA5Mjk2OTkzM30.cPpBDGwMFrIkUL0yxKKeLaEAjoWdjXQUfGVlANlHosM';
 
 // Initialize Supabase client
-const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ── AUTH HELPERS ──────────────────────────────────────
 
