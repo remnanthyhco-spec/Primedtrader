@@ -58,6 +58,8 @@
   .security-icon{font-size:14px;flex-shrink:0;margin-top:1px;opacity:0.5;}
   .security-text{font-size:11px;color:rgba(255,255,255,0.3);line-height:1.6;}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
 </head>
 <body>
 
@@ -167,20 +169,33 @@
     return boxes.map(id => document.getElementById(id).value).join('');
   }
 
-  function verifyCode() {
+  async function verifyCode() {
     const code = getCode();
     const errEl = document.getElementById('code-err');
     errEl.style.display = 'none';
     boxes.forEach(id => document.getElementById(id).classList.remove('error'));
 
-    // Sunday: verify with Supabase OTP
-    // supabase.auth.verifyOtp({ email, token: code, type: 'email' })
-    // For now: any 6-digit code works in demo
     if (code.length === 6) {
+      document.getElementById('verify-btn').textContent = 'Verifying...';
+      document.getElementById('verify-btn').disabled = true;
+
+      const email = localStorage.getItem('pt_pending_email') || '';
+      const { data, error } = await sbVerifyOTP(email, code);
+
+      if (error) {
+        document.getElementById('verify-btn').textContent = 'Verify →';
+        document.getElementById('verify-btn').disabled = false;
+        // Shake the inputs
+        document.querySelectorAll('.code-box').forEach(b => {
+          b.style.borderColor = 'var(--red)';
+          setTimeout(() => b.style.borderColor = '', 2000);
+        });
+        return;
+      }
+
       document.getElementById('verify-btn').textContent = 'Verified ✓';
       document.getElementById('verify-btn').style.background = 'var(--white)';
-      // Route to ?next param or default to dashboard
-      const next = new URLSearchParams(window.location.search).get('next') || 'dashboard.html';
+      const next = new URLSearchParams(window.location.search).get('next') || 'pro-dashboard.html';
       setTimeout(() => window.location.href = next, 800);
     } else {
       boxes.forEach(id => document.getElementById(id).classList.add('error'));
