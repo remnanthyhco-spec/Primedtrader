@@ -206,6 +206,8 @@
     .btn-next, .btn-back { text-align: center; }
   }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
 </head>
 <body>
 
@@ -551,7 +553,7 @@
       </div>
     </div>
 
-    <a href="path.html" class="btn-dashboard">Enter My Dashboard →</a>
+    <a href="pro-dashboard.html" class="btn-dashboard">Enter My Dashboard →</a>
 
     <!-- NEXT PHASE LINK -->
     <div style="margin-top:24px;padding:20px 24px;background:rgba(0,232,122,0.04);border:1px solid rgba(0,232,122,0.12);text-align:center;">
@@ -654,15 +656,46 @@
     document.getElementById('btn-5').disabled = !(first && email.includes('@') && pass.length >= 8 && pass === confirm);
   }
 
-  function completeOnboarding() {
+  async function completeOnboarding() {
+    const email    = document.getElementById('setup-email').value.trim();
+    const password = document.getElementById('setup-password').value;
+    const first    = document.getElementById('first-name').value.trim();
+    const last     = document.getElementById('last-name') ? document.getElementById('last-name').value.trim() : '';
+    const name     = (first + ' ' + last).trim();
+
+    const btn = document.getElementById('btn-5');
+    btn.textContent = 'Creating account...';
+    btn.disabled = true;
+
+    const { data, error } = await sbSignUp(email, password, name);
+
+    if (error) {
+      btn.textContent = "Let's Go →";
+      btn.disabled = false;
+      // Show error
+      let errEl = document.getElementById('signup-error');
+      if (!errEl) {
+        errEl = document.createElement('div');
+        errEl.id = 'signup-error';
+        errEl.style.cssText = 'color:var(--red);font-size:13px;text-align:center;margin-top:10px;';
+        btn.parentNode.appendChild(errEl);
+      }
+      errEl.textContent = error.message;
+      return;
+    }
+
+    // Save to localStorage for verify page
+    localStorage.setItem('pt_pending_email', email);
+    localStorage.setItem('pt_name', name);
+
+    // Save profile data from onboarding steps
     try {
-      const email = document.getElementById('setup-email').value.trim();
-      const first = document.getElementById('first-name').value.trim();
-      const last = document.getElementById('last-name').value.trim();
-      localStorage.setItem('pt_pending_email', email);
-      localStorage.setItem('pt_name', first + ' ' + last);
+      localStorage.setItem('pt_experience', selections.experience || '');
+      localStorage.setItem('pt_challenge',  selections.challenge  || '');
+      localStorage.setItem('pt_goal',       selections.goal       || '');
     } catch(e) {}
-    // Route: verify email → pricing → pro-dashboard
+
+    // Route to 2FA verify → pricing
     window.location.href = 'verify-signup.html?next=pricing.html';
   }
 
