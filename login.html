@@ -72,6 +72,86 @@
   .twofa-text{font-size:12px;color:var(--gray);line-height:1.6;}
   .twofa-text strong{color:var(--white);font-weight:500;}
 </style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html" class="logo">
+    <svg width="36" height="36" viewBox="0 0 120 120" fill="none">
+      <rect x="8" y="52" width="7" height="30" fill="#00e87a" rx="1"/>
+      <line x1="11.5" y1="46" x2="11.5" y2="52" stroke="#00e87a" stroke-width="2"/>
+      <line x1="11.5" y1="82" x2="11.5" y2="88" stroke="#00e87a" stroke-width="2"/>
+      <rect x="20" y="40" width="7" height="36" fill="#00e87a" rx="1"/>
+      <line x1="23.5" y1="33" x2="23.5" y2="40" stroke="#00e87a" stroke-width="2"/>
+      <line x1="23.5" y1="76" x2="23.5" y2="83" stroke="#00e87a" stroke-width="2"/>
+      <rect x="32" y="28" width="7" height="40" fill="#00e87a" rx="1"/>
+      <line x1="35.5" y1="20" x2="35.5" y2="28" stroke="#00e87a" stroke-width="2"/>
+      <line x1="35.5" y1="68" x2="35.5" y2="76" stroke="#00e87a" stroke-width="2"/>
+      <rect x="44" y="18" width="7" height="44" fill="#00e87a" rx="1"/>
+      <line x1="47.5" y1="10" x2="47.5" y2="18" stroke="#00e87a" stroke-width="2"/>
+      <line x1="47.5" y1="62" x2="47.5" y2="70" stroke="#00e87a" stroke-width="2"/>
+      <line x1="18" y1="95" x2="58" y2="55" stroke="#00e87a" stroke-width="3" stroke-linecap="round"/>
+      <defs><linearGradient id="lg" x1="55" y1="15" x2="55" y2="105" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#00e87a"/></linearGradient></defs>
+      <path d="M58 18 L58 102 M58 18 L85 18 Q105 18 105 42 Q105 66 85 66 L58 66" stroke="url(#lg)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+    <div class="logo-text">PRIMED <span>TRADER</span></div>
+  </a>
+  <a href="index.html" class="back-link">← Back to home</a>
+</div>
+
+<div class="main">
+  <div class="card">
+
+    <!-- Coach Prime welcome back -->
+    <div class="coach-welcome">
+      <div class="coach-av">CP</div>
+      <div class="coach-bubble">
+        <div class="coach-name">Coach Prime</div>
+        <div class="coach-text"><strong>Welcome back.</strong> The market is open and your system is ready. Sign in and let's get to work.</div>
+      </div>
+    </div>
+
+    <!-- Login form -->
+    <div class="form-card">
+      <div class="form-title">Sign In</div>
+      <div class="form-sub">Enter your email and password to access your dashboard</div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <input class="form-input" id="email" type="email" placeholder="your@email.com" autocomplete="email"
+          onkeydown="if(event.key==='Enter')document.getElementById('password').focus()"/>
+        <div class="error-msg" id="email-err">Please enter a valid email address</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input class="form-input" id="password" type="password" placeholder="Enter your password" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter')submitLogin()"/>
+        <div class="error-msg" id="pass-err">Password must be at least 6 characters</div>
+        <div class="forgot-row">
+          <a href="#" class="forgot-link">Forgot email?</a>
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+      </div>
+
+      <button class="submit-btn" onclick="submitLogin()">Sign In →</button>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-txt">or</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <div class="signup-row">
+        Don't have an account? <a href="onboarding.html" class="signup-link">Start free →</a>
+      </div>
+
+
+    </div>
+
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // PrimedTrader — Supabase Client
@@ -193,121 +273,53 @@ async function redirectIfLoggedIn(redirectTo = 'pro-dashboard.html') {
   }
 }
 
-</script>
-</head>
-<body>
 
-<div class="topbar">
-  <a href="index.html" class="logo">
-    <svg width="36" height="36" viewBox="0 0 120 120" fill="none">
-      <rect x="8" y="52" width="7" height="30" fill="#00e87a" rx="1"/>
-      <line x1="11.5" y1="46" x2="11.5" y2="52" stroke="#00e87a" stroke-width="2"/>
-      <line x1="11.5" y1="82" x2="11.5" y2="88" stroke="#00e87a" stroke-width="2"/>
-      <rect x="20" y="40" width="7" height="36" fill="#00e87a" rx="1"/>
-      <line x1="23.5" y1="33" x2="23.5" y2="40" stroke="#00e87a" stroke-width="2"/>
-      <line x1="23.5" y1="76" x2="23.5" y2="83" stroke="#00e87a" stroke-width="2"/>
-      <rect x="32" y="28" width="7" height="40" fill="#00e87a" rx="1"/>
-      <line x1="35.5" y1="20" x2="35.5" y2="28" stroke="#00e87a" stroke-width="2"/>
-      <line x1="35.5" y1="68" x2="35.5" y2="76" stroke="#00e87a" stroke-width="2"/>
-      <rect x="44" y="18" width="7" height="44" fill="#00e87a" rx="1"/>
-      <line x1="47.5" y1="10" x2="47.5" y2="18" stroke="#00e87a" stroke-width="2"/>
-      <line x1="47.5" y1="62" x2="47.5" y2="70" stroke="#00e87a" stroke-width="2"/>
-      <line x1="18" y1="95" x2="58" y2="55" stroke="#00e87a" stroke-width="3" stroke-linecap="round"/>
-      <defs><linearGradient id="lg" x1="55" y1="15" x2="55" y2="105" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fff"/><stop offset="100%" stop-color="#00e87a"/></linearGradient></defs>
-      <path d="M58 18 L58 102 M58 18 L85 18 Q105 18 105 42 Q105 66 85 66 L58 66" stroke="url(#lg)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-    </svg>
-    <div class="logo-text">PRIMED <span>TRADER</span></div>
-  </a>
-  <a href="index.html" class="back-link">← Back to home</a>
-</div>
-
-<div class="main">
-  <div class="card">
-
-    <!-- Coach Prime welcome back -->
-    <div class="coach-welcome">
-      <div class="coach-av">CP</div>
-      <div class="coach-bubble">
-        <div class="coach-name">Coach Prime</div>
-        <div class="coach-text"><strong>Welcome back.</strong> The market is open and your system is ready. Sign in and let's get to work.</div>
-      </div>
-    </div>
-
-    <!-- Login form -->
-    <div class="form-card">
-      <div class="form-title">Sign In</div>
-      <div class="form-sub">Enter your email and password to access your dashboard</div>
-
-      <div class="form-group">
-        <label class="form-label" for="email">Email Address</label>
-        <input class="form-input" id="email" type="email" placeholder="your@email.com" autocomplete="email"
-          onkeydown="if(event.key==='Enter')document.getElementById('password').focus()"/>
-        <div class="error-msg" id="email-err">Please enter a valid email address</div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="password">Password</label>
-        <input class="form-input" id="password" type="password" placeholder="Enter your password" autocomplete="current-password"
-          onkeydown="if(event.key==='Enter')submitLogin()"/>
-        <div class="error-msg" id="pass-err">Password must be at least 6 characters</div>
-        <div class="forgot-row">
-          <a href="#" class="forgot-link">Forgot email?</a>
-          <a href="#" class="forgot-link">Forgot password?</a>
-        </div>
-      </div>
-
-      <button class="submit-btn" onclick="submitLogin()">Sign In →</button>
-
-      <div class="divider">
-        <div class="divider-line"></div>
-        <div class="divider-txt">or</div>
-        <div class="divider-line"></div>
-      </div>
-
-      <div class="signup-row">
-        Don't have an account? <a href="onboarding.html" class="signup-link">Start free →</a>
-      </div>
-
-      <!-- 2FA note -->
-      <div class="twofa-note">
-        <div class="twofa-icon">🔐</div>
-        <div class="twofa-text"><strong>Two-factor authentication is enabled.</strong> After signing in you'll receive a 6-digit verification code by email to confirm it's you.</div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<script>
-  function submitLogin() {
-    const email = document.getElementById('email');
-    const pass = document.getElementById('password');
+  async function submitLogin() {
+    const emailEl = document.getElementById('email');
+    const passEl  = document.getElementById('password');
     const emailErr = document.getElementById('email-err');
-    const passErr = document.getElementById('pass-err');
+    const passErr  = document.getElementById('pass-err');
     let valid = true;
 
-    // reset
-    email.classList.remove('error');
-    pass.classList.remove('error');
+    emailEl.classList.remove('error');
+    passEl.classList.remove('error');
     emailErr.style.display = 'none';
     passErr.style.display = 'none';
 
-    if (!email.value.trim() || !email.value.includes('@')) {
-      email.classList.add('error');
+    if (!emailEl.value.trim() || !emailEl.value.includes('@')) {
+      emailEl.classList.add('error');
       emailErr.style.display = 'block';
       valid = false;
     }
-    if (!pass.value || pass.value.length < 6) {
-      pass.classList.add('error');
+    if (!passEl.value || passEl.value.length < 6) {
+      passEl.classList.add('error');
       passErr.style.display = 'block';
       valid = false;
     }
     if (!valid) return;
 
-    // Sunday: Supabase auth here
-    // supabase.auth.signInWithPassword({ email, password }) → then send OTP
-    window.location.href = 'verify.html';
+    const btn = document.querySelector('.login-btn');
+    btn.textContent = 'Signing in...';
+    btn.disabled = true;
+
+    const { data, error } = await sbSignIn(emailEl.value.trim(), passEl.value);
+
+    if (error) {
+      btn.textContent = 'Log In →';
+      btn.disabled = false;
+      emailEl.classList.add('error');
+      emailErr.textContent = error.message;
+      emailErr.style.display = 'block';
+      return;
+    }
+
+    // Logged in — go straight to pro dashboard
+    localStorage.setItem('pt_pending_email', emailEl.value.trim());
+    window.location.href = 'pro-dashboard.html';
   }
+
+  // Redirect if already logged in
+  redirectIfLoggedIn('pro-dashboard.html');
 </script>
 </body>
 </html>
