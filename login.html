@@ -307,8 +307,14 @@ async function redirectIfLoggedIn(redirectTo = 'pro-dashboard.html') {
     if (error) {
       btn.textContent = 'Log In →';
       btn.disabled = false;
+      let msg = error.message;
+      if (msg.includes('Email not confirmed')) {
+        msg = 'Please confirm your email first — check your inbox for the confirmation link.';
+      } else if (msg.includes('Invalid login')) {
+        msg = 'Incorrect email or password. Please try again.';
+      }
       emailEl.classList.add('error');
-      emailErr.textContent = error.message;
+      emailErr.textContent = msg;
       emailErr.style.display = 'block';
       return;
     }
