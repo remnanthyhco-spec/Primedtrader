@@ -298,7 +298,7 @@ async function redirectIfLoggedIn(redirectTo = 'pro-dashboard.html') {
     }
     if (!valid) return;
 
-    const btn = document.querySelector('.login-btn');
+    const btn = document.querySelector('.submit-btn');
     btn.textContent = 'Signing in...';
     btn.disabled = true;
 
