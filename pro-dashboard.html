@@ -567,6 +567,46 @@ body{display:flex;}
     if (el) el.textContent = value;
   }
 
+  // ── STRIPE PAYMENT ACTIVATION ───────────────────────
+  async function activateProPlan() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const sessionId = params.get('session_id');
+      const betaCode = params.get('beta');
+      if (!sessionId && !betaCode) return;
+
+      const sb = supabase.createClient(PT_URL, PT_KEY);
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) return;
+
+      // Activate pro plan in Supabase
+      await sb.from('profiles').update({
+        plan: 'pro',
+        beta_lifetime: betaCode ? true : false,
+      }).eq('id', user.id);
+
+      // Save to localStorage
+      localStorage.setItem('pt_plan', 'pro');
+
+      // Clean URL without reloading
+      window.history.replaceState({}, '', 'pro-dashboard.html');
+
+      // Show welcome toast
+      showWelcomeToast();
+    } catch(e) {
+      console.log('Activation error:', e);
+    }
+  }
+
+  function showWelcomeToast() {
+    const toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;padding:12px 24px;border-radius:4px;font-family:"Barlow Condensed",sans-serif;font-weight:900;font-size:14px;letter-spacing:2px;text-transform:uppercase;z-index:9999;box-shadow:0 8px 32px rgba(0,232,122,0.3);animation:slideDown 0.3s ease;';
+    toast.textContent = '🎉 Welcome to PrimedTrader Pro!';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+  }
+
+  activateProPlan();
   loadDashboardData();
 
 </script>
