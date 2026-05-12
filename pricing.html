@@ -417,7 +417,7 @@
     if (plan === 'annual') {
       togA.classList.add('active'); togM.classList.remove('active');
       document.getElementById('checkout-price').textContent = '$10';
-      document.getElementById('checkout-desc').textContent = 'per month · 14-day free trial · then $120/year';
+      document.getElementById('checkout-desc').textContent = 'per month · billed $120/year · no trial needed';
       document.getElementById('checkout-savings').style.display = 'block';
     } else {
       togM.classList.add('active'); togA.classList.remove('active');
@@ -501,7 +501,7 @@
   }
 
   // Valid beta codes — add more as needed
-  const BETA_CODES = ['BETA10', 'PRIMEDVIP', 'FOUNDER50'];
+  const BETA_CODES = ['BETA10', 'PRIMEDVIP'];
   let betaApplied = false;
 
   function applyCoupon() {
