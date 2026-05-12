@@ -306,39 +306,6 @@
   </div>
 </div>
 
-<!-- SCALING ROADMAP -->
-<div class="scaling-wrap">
-  <div class="scaling-title">Pricing Roadmap — We're transparent about this</div>
-  <div class="scaling-row">
-    <div class="scale-item now">
-      <div class="scale-now-tag">NOW</div>
-      <div class="scale-price">$20</div>
-      <div class="scale-lbl">Launch</div>
-    </div>
-    <div class="scale-item">
-      <div class="scale-price">$22</div>
-      <div class="scale-lbl">Month 6</div>
-    </div>
-    <div class="scale-item">
-      <div class="scale-price">$24</div>
-      <div class="scale-lbl">Month 12</div>
-    </div>
-    <div class="scale-item">
-      <div class="scale-price">$26</div>
-      <div class="scale-lbl">Month 18</div>
-    </div>
-    <div class="scale-item">
-      <div class="scale-price">$28</div>
-      <div class="scale-lbl">Month 24</div>
-    </div>
-    <div class="scale-item">
-      <div class="scale-price">$30</div>
-      <div class="scale-lbl">Ceiling</div>
-    </div>
-  </div>
-  <div style="font-size:12px;color:rgba(255,255,255,0.2);text-align:center;margin-top:12px;line-height:1.7;">Your price locks in at the rate when you subscribe — forever. Sign up today at $20 and pay $20 even as new users pay $30.</div>
-</div>
-
 <!-- FAQ -->
 <div class="faq-wrap">
   <div class="faq-title">Questions</div>
@@ -545,7 +512,7 @@
   // Beta spots counter
   try {
     const signups = parseInt(localStorage.getItem('pt_signup_count') || '0');
-    document.getElementById('beta-spots').textContent = Math.max(0, 50 - signups);
+    document.getElementById('beta-spots').textContent = Math.max(0, 10 - signups);
   } catch(e) {}
 
   // Allow Enter key in coupon field
