@@ -196,7 +196,7 @@
       <!-- FRONT -->
       <div class="flip-front">
         <div class="price-card">
-          <div class="card-badge"><div class="card-badge-dot"></div><div class="card-badge-txt">Full Access — Everything Included</div></div>
+          <div class="card-badge"><div class="card-badge-dot"></div><div class="card-badge-txt">14-Day Free Trial — Then $20/mo</div></div>
           <div class="card-name">PrimedTrader</div>
           <div class="price-row">
             <div class="price-amount" id="front-price">$20</div>
@@ -228,7 +228,7 @@
         <div class="back-card">
           <button class="back-btn" onclick="flipCard()">← Back</button>
           <div class="checkout-title">Start Your Free Trial</div>
-          <div class="checkout-sub">Choose your billing cycle and get instant access.</div>
+          <div class="checkout-sub">14 days free. Card required. Cancel before trial ends and pay nothing.</div>
 
           <div class="plan-toggle">
             <div class="plan-opt active" id="tog-monthly" onclick="setCheckoutPlan('monthly')">Monthly — $20</div>
@@ -237,7 +237,7 @@
 
           <div class="price-display">
             <div class="price-big" id="checkout-price">$20</div>
-            <div class="price-desc" id="checkout-desc">per month · billed monthly</div>
+            <div class="price-desc" id="checkout-desc">per month · 14-day free trial · then billed monthly</div>
             <div class="price-savings" id="checkout-savings">You save $120 a year vs monthly</div>
           </div>
 
@@ -277,12 +277,12 @@
             <input type="hidden" id="card-cvv" value="123"/>
           </div>
 
-          <button class="pay-btn" id="pay-btn" onclick="processPayment()">🔒 Get Instant Access</button>
+          <button class="pay-btn" id="pay-btn" onclick="processPayment()">🔒 Start Free Trial</button>
           <div id="stripe-error" style="display:none;background:rgba(255,69,96,0.06);border:1px solid rgba(255,69,96,0.2);border-radius:3px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--red);text-align:center;"></div>
           <div class="secure-note" id="secure-note">
             🔒 Powered by Stripe · Bank-level encryption<br>
-            Cancel anytime · Price locks in at signup forever<br>
-            <strong style="color:rgba(255,255,255,0.4);">Beta code BETA50 = free for life</strong>
+            14-day free trial · Cancel before trial ends and pay nothing<br>
+            <strong style="color:rgba(255,255,255,0.4);">Beta code BETA10 = free for life (10 spots only)</strong>
           </div>
         </div>
       </div>
@@ -417,12 +417,12 @@
     if (plan === 'annual') {
       togA.classList.add('active'); togM.classList.remove('active');
       document.getElementById('checkout-price').textContent = '$10';
-      document.getElementById('checkout-desc').textContent = 'per month · $120 billed annually';
+      document.getElementById('checkout-desc').textContent = 'per month · 14-day free trial · then $120/year';
       document.getElementById('checkout-savings').style.display = 'block';
     } else {
       togM.classList.add('active'); togA.classList.remove('active');
       document.getElementById('checkout-price').textContent = '$20';
-      document.getElementById('checkout-desc').textContent = 'per month · billed monthly';
+      document.getElementById('checkout-desc').textContent = 'per month · 14-day free trial · then billed monthly';
       document.getElementById('checkout-savings').style.display = 'none';
     }
   }
@@ -458,7 +458,7 @@
         localStorage.setItem('pt_beta_lifetime', 'true');
         const count = parseInt(localStorage.getItem('pt_signup_count') || '0');
         localStorage.setItem('pt_signup_count', count + 1);
-        document.getElementById('beta-spots').textContent = Math.max(0, 49 - count);
+        document.getElementById('beta-spots').textContent = Math.max(0, 9 - count);
       } catch(e) {}
       setTimeout(() => window.location.href = 'onboarding.html', 1800);
       return;
@@ -469,7 +469,7 @@
     if (!name) { highlight('card-name'); return; }
 
     const btn = document.getElementById('pay-btn');
-    btn.textContent = 'Redirecting to Stripe...';
+    btn.textContent = 'Starting your free trial...';
     btn.style.opacity = '0.7';
     btn.style.cursor = 'not-allowed';
 
@@ -501,7 +501,7 @@
   }
 
   // Valid beta codes — add more as needed
-  const BETA_CODES = ['BETA50', 'PRIMEDVIP', 'FOUNDER50'];
+  const BETA_CODES = ['BETA10', 'PRIMEDVIP', 'FOUNDER50'];
   let betaApplied = false;
 
   function applyCoupon() {
@@ -514,9 +514,9 @@
 
     // Check beta spots remaining
     const signups = parseInt(localStorage.getItem('pt_signup_count') || '0');
-    const spotsLeft = Math.max(0, 50 - signups);
+    const spotsLeft = Math.max(0, 10 - signups);
 
-    if (BETA_CODES.includes(code) && spotsLeft > 0) {
+    if (BETA_CODES.includes(code) && spotsLeft > 0 && signups < 10) {
       betaApplied = true;
       success.style.display = 'block';
       error.style.display = 'none';
