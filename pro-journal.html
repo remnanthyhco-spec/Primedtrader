@@ -123,6 +123,7 @@ tbody td{padding:10px 16px;font-size:13px;vertical-align:middle;}
 .compare-stat-val{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;}
 @media(max-width:900px){.summary-row{grid-template-columns:1fr 1fr 1fr;}.monthly-grid{grid-template-columns:1fr;}.detail-grid{grid-template-columns:1fr;}.compare-grid{grid-template-columns:1fr;}html,body{height:auto;overflow:auto;}.content{overflow:visible;}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -700,6 +701,87 @@ function exportPDF() {
   calcStreak();
 
   renderTable();
+
+  // ── SUPABASE REAL DATA ────────────────────────────────
+  const PT_URL = 'https://fjvsceetttikpmnigvcs.supabase.co';
+  const PT_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdnNjZWV0dHRpa3BtbmlndmNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTM5MzMsImV4cCI6MjA5Mjk2OTkzM30.cPpBDGwMFrIkUL0yxKKeLaEAjoWdjXQUfGVlANlHosM';
+
+  async function loadJournalData() {
+    try {
+      const sb = supabase.createClient(PT_URL, PT_KEY);
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) return;
+
+      const { data: sessions } = await sb
+        .from('sessions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (!sessions || sessions.length === 0) {
+        const emptyEl = document.getElementById('journal-empty') || document.getElementById('journal-list');
+        if (emptyEl) emptyEl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray);font-size:13px;">No sessions yet — complete your first session to start your journal.</div>';
+        return;
+      }
+
+      // Stats
+      const totalPnl = sessions.reduce((a, s) => a + (s.pnl || 0), 0);
+      const avgComp = Math.round(sessions.reduce((a, s) => a + (s.compliance || 0), 0) / sessions.length);
+      const wins = sessions.filter(s => s.pnl > 0).length;
+      let streak = 0;
+      for (const s of sessions) { if ((s.compliance||0) >= 60) streak++; else break; }
+
+      // Update journal header stats
+      const statUpdates = {
+        'journal-total': sessions.length,
+        'journal-pnl': (totalPnl >= 0 ? '+$' : '-$') + Math.abs(totalPnl).toFixed(0),
+        'journal-compliance': avgComp + '%',
+        'journal-streak': streak,
+        'journal-wins': wins,
+        'journal-winrate': Math.round((wins/sessions.length)*100) + '%',
+      };
+      Object.entries(statUpdates).forEach(([id, val]) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      });
+
+      // Build journal entries
+      const listEl = document.getElementById('journal-list') || document.getElementById('journal-entries');
+      if (listEl) {
+        listEl.innerHTML = sessions.map(s => `
+          <div style="background:var(--dark2);border:1px solid rgba(255,255,255,0.06);border-radius:4px;padding:16px 18px;margin-bottom:10px;transition:border-color 0.2s;" onmouseover="this.style.borderColor='rgba(0,232,122,0.15)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;color:var(--white);">${s.strategy||'FVG'}</div>
+                <div style="font-size:11px;color:var(--gray);">${new Date(s.created_at).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})}</div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;padding:1px 8px;border-radius:2px;background:${s.grade==='A'?'rgba(0,232,122,0.1)':s.grade==='B'?'rgba(240,192,64,0.1)':'rgba(255,69,96,0.1)'};color:${s.grade==='A'?'var(--green)':s.grade==='B'?'var(--yellow)':'var(--red)'};">${s.grade||'—'}</div>
+              </div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;color:${(s.pnl||0)>=0?'var(--green)':'var(--red)'};">${(s.pnl||0)>=0?'+':'-'}$${Math.abs(s.pnl||0).toFixed(0)}</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+              <div style="background:var(--dark3);border-radius:3px;padding:8px 10px;">
+                <div style="font-size:9px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;">Compliance</div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:${(s.compliance||0)>=80?'var(--green)':(s.compliance||0)>=60?'var(--yellow)':'var(--red)'};">${s.compliance||0}%</div>
+              </div>
+              <div style="background:var(--dark3);border-radius:3px;padding:8px 10px;">
+                <div style="font-size:9px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;">Score</div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:var(--white);">${s.score||0}</div>
+              </div>
+              <div style="background:var(--dark3);border-radius:3px;padding:8px 10px;">
+                <div style="font-size:9px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;">Firm</div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;color:var(--white);text-transform:capitalize;">${s.firm||'—'}</div>
+              </div>
+            </div>
+            ${s.notes ? `<div style="margin-top:10px;font-size:12px;color:var(--gray);line-height:1.6;padding:8px 10px;background:var(--dark3);border-radius:3px;">${s.notes}</div>` : ''}
+          </div>`).join('');
+      }
+
+    } catch(e) { console.log('Journal load error:', e); }
+  }
+
+  loadJournalData();
+
 </script>
 </body>
 </html>
