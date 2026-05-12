@@ -831,11 +831,175 @@ const TV_SYMBOLS = {
 
 function openTV(sym) {
   document.querySelectorAll('[id^="sym-"]').forEach(b => b.classList.remove('tf-active'));
-  const key = sym.replace('1!','').toLowerCase();
+  const key = sym.replace('1!','').replace('MNQ','mnq').replace('MES','mes').toLowerCase();
   const btn = document.getElementById('sym-' + key);
   if (btn) btn.classList.add('tf-active');
   window.open(TV_SYMBOLS[sym] || TV_SYMBOLS['NQ1!'], '_blank');
 }
+
+function showTab(tab) {
+  ['setup','indicators','briefing'].forEach(t => {
+    document.getElementById('tab-' + t + '-content').style.display = t === tab ? 'flex' : 'none';
+    document.getElementById('tab-' + t).classList.toggle('tf-active', t === tab);
+  });
+}
+
+// Strategy-specific setup steps
+const SETUP_STEPS = {
+  fvg: [
+    { icon:'1', title:'Set your timeframes', desc:'Open the 1-hour chart first to identify HTF bias. Then switch to the 5-minute chart for your entries. Keep both charts open in separate tabs.', color:'var(--green)' },
+    { icon:'2', title:'Mark the daily levels', desc:'Before looking at setups — draw horizontal lines at the previous day high, previous day low, and current day open. These are your key levels.', color:'var(--green)' },
+    { icon:'3', title:'Confirm HTF bias', desc:'Is the 1-hour chart showing bullish or bearish displacement? Only take trades in the direction of the higher timeframe bias. No counter-trend FVGs.', color:'var(--yellow)' },
+    { icon:'4', title:'Identify the FVG', desc:'Find a 3-candle pattern where a strong displacement candle left a gap between the wick of candle 1 and the wick of candle 3. Mark the top and bottom of that gap.', color:'var(--yellow)' },
+    { icon:'5', title:'Wait for the return', desc:'Do not enter when price is away from the FVG. Wait for price to pull back INTO the gap. That pullback is your entry zone.', color:'var(--red)' },
+    { icon:'6', title:'Come back here', desc:'Once you have identified a valid setup on TradingView — complete your pre-trade checklist on this page before clicking buy or sell.', color:'var(--green)' },
+  ],
+  ict: [
+    { icon:'1', title:'Mark the Asian range', desc:'Draw a box from the high to the low of the Asian session (roughly 8PM-12AM EST). This range is where liquidity gets built.', color:'var(--green)' },
+    { icon:'2', title:'Identify kill zone', desc:'The NY morning kill zone runs 8:30-11:00 AM EST. This is your trading window. Do not look for setups outside this window.', color:'var(--green)' },
+    { icon:'3', title:'Wait for the liquidity sweep', desc:'Watch for price to spike above a recent high or below a recent low — taking stops — then immediately reverse. That spike is the trap.', color:'var(--yellow)' },
+    { icon:'4', title:'Confirm displacement', desc:'After the sweep, you need a strong displacement candle showing institutions are driving price in the opposite direction. No displacement = no trade.', color:'var(--yellow)' },
+    { icon:'5', title:'Enter on the retest', desc:'Enter when price comes back to retest the displacement level or the FVG created by the displacement candle. Set stop above/below the sweep high/low.', color:'var(--red)' },
+    { icon:'6', title:'Come back here', desc:'Setup identified? Complete your checklist on this page before entering.', color:'var(--green)' },
+  ],
+  orb: [
+    { icon:'1', title:'Set your chart to 5-minute', desc:'The ORB is best tracked on the 5-minute chart. Open NQ futures on TradingView and switch to 5m timeframe before 9:30 AM.', color:'var(--green)' },
+    { icon:'2', title:'Wait — do nothing for 15 minutes', desc:'From 9:30 to 9:45 AM — do not trade. Watch only. Let the opening range form. Mark the high and low of the first 15 minutes with horizontal lines.', color:'var(--yellow)' },
+    { icon:'3', title:'Watch for the breakout', desc:'After 9:45 — watch for price to break cleanly above the range high or below the range low. The breakout candle must close fully outside the range.', color:'var(--yellow)' },
+    { icon:'4', title:'Wait for the retest', desc:'Do NOT enter on the initial breakout candle. Wait for price to pull back and retest the broken level. That retest is your entry.', color:'var(--red)' },
+    { icon:'5', title:'One trade only', desc:'Once you take the ORB trade — your session is done regardless of outcome. No second trades. No revenge. The ORB is a one-shot setup.', color:'var(--red)' },
+    { icon:'6', title:'Come back here', desc:'Breakout confirmed? Retest happening? Complete your checklist here before entering.', color:'var(--green)' },
+  ],
+  trendline: [
+    { icon:'1', title:'Draw your trendlines before the session', desc:'Never draw trendlines during an active trade. Do your analysis before the session opens. Connect at least 2 significant swing highs (downtrend) or swing lows (uptrend) on the 1-hour chart.', color:'var(--green)' },
+    { icon:'2', title:'Validate the line', desc:'A valid trendline must not cut through any candle bodies between the two anchor points. If it does — redraw it. Only clean lines are tradeable.', color:'var(--green)' },
+    { icon:'3', title:'Switch to 5-minute for entry', desc:'Once you have a valid 1-hour trendline — switch to 5-minute to watch for the approach and reaction. The rejection candle is your entry signal.', color:'var(--yellow)' },
+    { icon:'4', title:'Wait for the third touch', desc:'The third touch of a trendline has the highest probability. If price is approaching for the first or second time — observe only. Third touch = consider entry.', color:'var(--yellow)' },
+    { icon:'5', title:'Entry on candle close — never mid-candle', desc:'Wait for the rejection candle to fully close before entering. Mid-candle entries are emotional entries. Wait for confirmation.', color:'var(--red)' },
+    { icon:'6', title:'Come back here', desc:'Third touch confirmed? Rejection candle closed? Complete your checklist here.', color:'var(--green)' },
+  ],
+  scalp: [
+    { icon:'1', title:'Set your chart to 1-minute', desc:'Scalping is a 1-minute game. Open TradingView on the 1-minute NQ chart. Also keep the 5-minute open in a second tab for structure reference.', color:'var(--green)' },
+    { icon:'2', title:'Check 5-minute bias first', desc:'What is the 5-minute chart showing? Is price in a clear trend or ranging? Only scalp in the direction of the 5-minute trend. No counter-trend scalps.', color:'var(--green)' },
+    { icon:'3', title:'Identify the micro structure break', desc:'Look for a clear swing high or swing low on the 1-minute chart. A structure break is when price takes out that level with a full candle body close.', color:'var(--yellow)' },
+    { icon:'4', title:'Enter on the retest only', desc:'After the structure break — wait for price to pull back and retest the broken level. Enter on that retest. Never chase a breakout candle.', color:'var(--yellow)' },
+    { icon:'5', title:'Hard limit: 3 trades maximum', desc:'After 3 trades your session is done. Full stop. No exceptions. Come back tomorrow.', color:'var(--red)' },
+    { icon:'6', title:'Come back here', desc:'Setup valid? Retest confirmed? Complete your checklist here before entering.', color:'var(--green)' },
+  ],
+};
+
+// Strategy-specific indicators
+const STRATEGY_INDICATORS = {
+  fvg: [
+    { name:'VWAP', why:'Shows where the majority of volume traded — FVGs above VWAP are bullish, below are bearish.', search:'VWAP', essential:true },
+    { name:'EMA 9 + EMA 21', why:'Quick momentum read. When 9 is above 21 — bullish bias. Below — bearish.', search:'EMA', essential:true },
+    { name:'Volume', why:'High volume displacement candles create the strongest FVGs. Low volume gaps get filled quickly.', search:'Volume', essential:true },
+    { name:'EMA 50', why:'Identifies the medium-term trend direction. Only take FVG entries above the 50 EMA for longs.', search:'EMA', essential:false },
+    { name:'Sessions (Killzones)', why:'Highlights the NY, London, and Asian sessions. Best FVGs form during active sessions.', search:'Sessions', essential:false },
+  ],
+  ict: [
+    { name:'VWAP', why:'Key institutional reference level. ICT setups near VWAP carry higher probability.', search:'VWAP', essential:true },
+    { name:'Volume', why:'The liquidity sweep should show a volume spike. Confirms institutional participation.', search:'Volume', essential:true },
+    { name:'Sessions (Killzones)', why:'Essential for ICT. Highlights the exact kill zone windows you trade.', search:'Sessions Killzones', essential:true },
+    { name:'EMA 20', why:'Quick bias indicator. Price above = bullish, below = bearish for your entries.', search:'EMA', essential:false },
+    { name:'Highs and Lows', why:'Marks previous session highs and lows — the liquidity levels ICT sweeps.', search:'Previous High Low', essential:false },
+  ],
+  orb: [
+    { name:'VWAP', why:'If price breaks out in the same direction as VWAP placement — higher probability trade.', search:'VWAP', essential:true },
+    { name:'Volume', why:'A valid ORB breakout needs above-average volume on the breakout candle.', search:'Volume', essential:true },
+    { name:'EMA 9', why:'Quick momentum confirmation. Price above the 9 EMA after breakout confirms momentum.', search:'EMA', essential:false },
+    { name:'Opening Range (Manual)', why:'Draw a manual box from 9:30 to 9:45 AM high and low — this is your ORB zone.', search:'Box', essential:false },
+  ],
+  trendline: [
+    { name:'Volume', why:'Trendline touches with declining volume = weaker reaction. Rising volume at touch = stronger entry.', search:'Volume', essential:true },
+    { name:'RSI', why:'Oversold RSI (below 30) at trendline support = stronger bounce probability.', search:'RSI', essential:true },
+    { name:'EMA 50', why:'Trendlines that align with the 50 EMA carry the most weight.', search:'EMA', essential:false },
+    { name:'VWAP', why:'A trendline touch that also coincides with VWAP = confluence entry.', search:'VWAP', essential:false },
+  ],
+  scalp: [
+    { name:'VWAP', why:'The single most important scalping indicator. Price above = long bias, below = short bias. Do not fight VWAP.', search:'VWAP', essential:true },
+    { name:'EMA 9', why:'Your fastest momentum indicator. Price above 9 EMA on 1-minute = bullish scalp bias.', search:'EMA', essential:true },
+    { name:'Volume', why:'Every scalp entry should have volume confirmation. No volume = no follow-through.', search:'Volume', essential:true },
+    { name:'Stochastic RSI', why:'Oversold/overbought on 1-minute helps time scalp entries with precision.', search:'Stochastic RSI', essential:false },
+    { name:'Bollinger Bands', why:'Price touching the lower band = potential long scalp. Upper band = potential short.', search:'Bollinger Bands', essential:false },
+  ],
+};
+
+// Pre-session briefings
+const CP_BRIEFINGS = {
+  fvg: "Before you open that chart — remember why you're here. You're not here to make money today. You're here to execute your process. The money is a byproduct of discipline.
+
+For FVG trading: your only job today is to find ONE clean gap formed by genuine displacement. Not two. Not three. One. If you find it, complete your checklist, and enter clean — that is a perfect session regardless of outcome.
+
+The traders who pass prop firm evaluations are not the best analysts. They are the most disciplined executors. Be that trader today.",
+  ict: "The ICT Kill Zone is a patience game. Most traders lose money because they trade outside the window, chase setups that aren't there, or enter in the direction of the sweep instead of against it.
+
+Your job today is simple: wait for the NY kill zone (8:30-11:00 AM), watch for a liquidity sweep, confirm displacement, and enter the reversal. If those four things don't line up today — there is no trade today. That is not failure. That is discipline.
+
+One clean setup beats five mediocre ones every single time.",
+  orb: "The Opening Range Breakout is the most mechanical strategy in your playbook. It removes almost all subjectivity. You either have a clean breakout with a valid retest or you don't.
+
+Before you start: check the economic calendar. Major news events (CPI, FOMC, NFP) make ORBs unreliable — the moves are news-driven, not technical. If today has major news — consider sitting out or reducing size significantly.
+
+Remember: one trade. One direction. Done.",
+  trendline: "Trendline trading requires more patience than any other strategy. The setup comes to you — you do not go to the setup.
+
+Your lines are already drawn. Your levels are already marked. Today your only job is to wait at those levels, watch for rejection, and execute when the candle confirms. If price never reaches your trendline today — perfect session. You exercised patience. That is what funded traders do.",
+  scalp: "Scalping is the hardest strategy to execute with discipline because the pace is fast and emotional decisions happen in seconds.
+
+The three-trade limit is not a suggestion. It is the most important rule in your playbook. After three trades — your session is over. Walk away. Come back tomorrow.
+
+Before you start: is the 5-minute in a clear trend or is it ranging? If it's ranging — seriously consider waiting for better conditions. Scalping a ranging market is the fastest way to hit your daily loss limit.",
+};
+
+function renderSetupSteps() {
+  const steps = SETUP_STEPS[currentStrat] || SETUP_STEPS.fvg;
+  const container = document.getElementById('session-setup-steps');
+  if (!container) return;
+  container.innerHTML = steps.map(s => `
+    <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--dark3);border-radius:3px;border-left:3px solid ${s.color};">
+      <div style="width:22px;height:22px;border-radius:50%;background:${s.color};display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;color:#000;flex-shrink:0;">${s.icon}</div>
+      <div><div style="font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px;">${s.title}</div><div style="font-size:12px;color:var(--gray);line-height:1.6;">${s.desc}</div></div>
+    </div>`).join('');
+}
+
+function renderIndicators() {
+  const inds = STRATEGY_INDICATORS[currentStrat] || STRATEGY_INDICATORS.fvg;
+  const container = document.getElementById('indicator-list');
+  if (!container) return;
+  container.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      ${inds.map(ind => `
+        <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--dark3);border-radius:3px;border:1px solid ${ind.essential?'rgba(0,232,122,0.15)':'var(--border)'};">
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:1px;color:var(--white);">${ind.name}</div>
+              ${ind.essential ? '<div style="font-size:9px;background:rgba(0,232,122,0.12);border:1px solid rgba(0,232,122,0.25);color:var(--green);padding:1px 6px;border-radius:2px;font-weight:700;letter-spacing:1px;">ESSENTIAL</div>' : ''}
+            </div>
+            <div style="font-size:12px;color:var(--gray);line-height:1.6;">${ind.why}</div>
+          </div>
+          <a href="https://www.tradingview.com/chart/?symbol=CME_MINI%3ANQ1%21" target="_blank" style="background:var(--dark4);border:1px solid var(--border);color:var(--gray);padding:5px 10px;border-radius:2px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:1px;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--gray)'">Add in TV ↗</a>
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderBriefing() {
+  const el = document.getElementById('cp-briefing-text');
+  if (!el) return;
+  const briefing = CP_BRIEFINGS[currentStrat] || CP_BRIEFINGS.fvg;
+  el.innerHTML = briefing.split('
+
+').map(p => `<p style="margin-bottom:10px;">${p}</p>`).join('');
+}
+
+// Init launcher content
+function initLauncher() {
+  renderSetupSteps();
+  renderIndicators();
+  renderBriefing();
+}
+
+setTimeout(initLauncher, 100);
 
 </body>
 </html>
