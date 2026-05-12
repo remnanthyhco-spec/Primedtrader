@@ -156,6 +156,7 @@ body{display:flex;}
 @media(max-width:1100px){.stats-grid{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:900px){.right{display:none;}.two-col{grid-template-columns:1fr;}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -471,6 +472,103 @@ body{display:flex;}
 
   const ro=document.getElementById('readiness-chart').getContext('2d');
   new Chart(ro,{type:'line',data:{labels:['Start','Apr 23','Apr 24'],datasets:[{label:'Readiness',data:[null,52,63],borderColor:'#d4a82a',backgroundColor:'rgba(212,168,42,0.06)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#d4a82a',pointBorderColor:'#0c0f14',pointBorderWidth:2,fill:true,tension:0.4},{label:'Target',data:[80,80,80],borderColor:'rgba(0,232,122,0.3)',borderWidth:1.5,borderDash:[5,3],pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#141928',borderColor:'rgba(255,255,255,0.08)',borderWidth:1,titleColor:'#7a8599',bodyColor:'#e8ecf0',callbacks:{label:c=>' '+c.dataset.label+': '+(c.raw??'—')+'/100'}}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#7a8599',font:{size:10}}},y:{min:0,max:100,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#7a8599',font:{size:10},callback:v=>v+'/100'}}}}});
+
+  // ── SUPABASE REAL DATA ────────────────────────────────
+  const PT_URL = 'https://fjvsceetttikpmnigvcs.supabase.co';
+  const PT_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqdnNjZWV0dHRpa3BtbmlndmNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczOTM5MzMsImV4cCI6MjA5Mjk2OTkzM30.cPpBDGwMFrIkUL0yxKKeLaEAjoWdjXQUfGVlANlHosM';
+
+  async function loadDashboardData() {
+    try {
+      const sb = supabase.createClient(PT_URL, PT_KEY);
+      const { data: { user } } = await sb.auth.getUser();
+      if (!user) return;
+
+      // Load profile
+      const { data: profile } = await sb.from('profiles').select('*').eq('id', user.id).single();
+      if (profile) {
+        // Update name in welcome banner
+        const nameEl = document.querySelector('.welcome-name, [id*="user-name"], h1');
+        if (profile.name) {
+          const greeting = document.getElementById('greeting-name') || document.querySelector('.greeting');
+          if (greeting) greeting.textContent = profile.name.split(' ')[0];
+        }
+      }
+
+      // Load sessions
+      const { data: sessions } = await sb
+        .from('sessions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (!sessions || sessions.length === 0) return;
+
+      // Calculate stats
+      const wins = sessions.filter(s => s.pnl > 0).length;
+      const totalPnl = sessions.reduce((a, s) => a + (s.pnl || 0), 0);
+      const avgComp = Math.round(sessions.reduce((a, s) => a + (s.compliance || 0), 0) / sessions.length);
+      const avgScore = Math.round(sessions.reduce((a, s) => a + (s.score || 0), 0) / sessions.length);
+      const winRate = Math.round((wins / sessions.length) * 100);
+
+      // Streak
+      let streak = 0;
+      for (const s of sessions) { if ((s.compliance||0) >= 60) streak++; else break; }
+
+      // Readiness
+      const readiness = Math.min(Math.round((avgComp * 0.5) + (Math.min(streak,5) * 5) + (Math.min(sessions.length, 10) * 2.5)), 100);
+
+      // Update readiness gauge
+      const readEl = document.querySelector('.readiness-score, [id*="readiness-score"], .gauge-val');
+      if (readEl) readEl.textContent = readiness;
+
+      // Update readiness badge
+      const badgeEl = document.querySelector('.readiness-badge .score, .readiness-num');
+      if (badgeEl) badgeEl.textContent = readiness;
+
+      // Update stat cards
+      updateStat('stat-sessions', sessions.length);
+      updateStat('stat-winrate', winRate + '%');
+      updateStat('stat-compliance', avgComp + '%');
+      updateStat('stat-pnl', (totalPnl >= 0 ? '+$' : '-$') + Math.abs(totalPnl).toFixed(0));
+      updateStat('stat-streak', streak + ' sessions');
+      updateStat('stat-score', avgScore);
+
+      // Update recent sessions list
+      const recentEl = document.getElementById('recent-sessions');
+      if (recentEl && sessions.length > 0) {
+        recentEl.innerHTML = sessions.slice(0, 5).map(s => `
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+            <div>
+              <div style="font-size:13px;color:var(--white);font-weight:500;">${s.strategy || 'FVG'} · ${new Date(s.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>
+              <div style="font-size:11px;color:var(--gray);">Compliance: ${s.compliance||0}% · Grade: ${s.grade||'—'}</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:${(s.pnl||0)>=0?'var(--green)':'var(--red)'};">${(s.pnl||0)>=0?'+':'-'}$${Math.abs(s.pnl||0).toFixed(0)}</div>
+              <div style="font-size:10px;color:var(--gray);">${s.score||0} pts</div>
+            </div>
+          </div>`).join('');
+      }
+
+      // Update Coach Prime message with real data
+      const cpMsg = document.querySelector('.cp-analysis, [id*="cp-msg"], .coach-analysis');
+      if (cpMsg) {
+        const topMiss = avgComp < 70 ? 'checklist compliance' : streak < 3 ? 'session consistency' : 'execution quality';
+        cpMsg.innerHTML = `<strong style="color:var(--white)">Readiness score: ${readiness}</strong> — ${readiness >= 80 ? 'You are approaching eval-ready. Maintain this consistency.' : readiness >= 60 ? 'Consistency phase. Focus on ' + topMiss + ' to push above 80.' : 'Foundation phase. ' + sessions.length + ' sessions logged. Keep building the habit.'} <strong style="color:var(--white)">Streak: ${streak} sessions.</strong>`;
+      }
+
+    } catch(e) {
+      console.log('Dashboard data load error:', e);
+    }
+  }
+
+  function updateStat(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+
+  loadDashboardData();
+
 </script>
 </body>
 </html>
