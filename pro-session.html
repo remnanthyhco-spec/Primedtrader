@@ -199,6 +199,42 @@
 
   <div class="body">
 
+  <!-- PULLOUT CHECKLIST TAB — RIGHT SIDE -->
+  <div id="checklist-drawer" style="position:fixed;right:-280px;top:50%;transform:translateY(-50%);z-index:1000;transition:right 0.3s ease;display:flex;align-items:stretch;">
+
+    <!-- PULL TAB — on left side of drawer -->
+    <div onclick="toggleChecklist()" style="width:28px;background:var(--green);border-radius:6px 0 0 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:background 0.2s;flex-shrink:0;" onmouseover="this.style.background='var(--white)'" onmouseout="this.style.background='var(--green)'">
+      <div style="writing-mode:vertical-rl;text-orientation:mixed;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#000;transform:rotate(180deg);">Checklist</div>
+      <div id="drawer-arrow" style="color:#000;font-size:14px;font-weight:900;">‹</div>
+      <div id="drawer-badge" style="width:16px;height:16px;background:#000;border-radius:50%;font-size:9px;font-weight:900;color:var(--green);display:none;align-items:center;justify-content:center;">0</div>
+    </div>
+
+    <!-- DRAWER PANEL -->
+    <div style="width:280px;background:var(--dark2);border:1px solid rgba(0,232,122,0.2);border-right:none;border-radius:8px 0 0 8px;overflow:hidden;box-shadow:-8px 0 32px rgba(0,0,0,0.4);">
+
+      <!-- HEADER -->
+      <div style="background:rgba(0,232,122,0.08);border-bottom:1px solid rgba(0,232,122,0.15);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:20px;height:20px;background:var(--green);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:9px;color:#000;">CP</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Pre-Trade Checklist</div>
+        </div>
+        <div id="checklist-progress" style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;color:var(--gray);">0/6</div>
+      </div>
+
+      <!-- CHECKLIST ITEMS -->
+      <div style="padding:12px;display:flex;flex-direction:column;gap:6px;" id="drawer-checklist"></div>
+
+      <!-- BOTTOM STATUS -->
+      <div style="padding:10px 14px;border-top:1px solid rgba(255,255,255,0.05);">
+        <div id="drawer-status" style="font-size:11px;color:var(--gray);text-align:center;">Complete checklist before entering a trade</div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+
     <!-- CHART AREA -->
     <div class="chart-area">
 
@@ -221,7 +257,7 @@
           </div>
           <div style="margin-left:auto;display:flex;align-items:center;gap:12px;">
             <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--green);font-weight:700;">27,183.50 <span style="color:var(--green);font-size:11px;">▲ +124.25 (+0.46%)</span></div>
-            <div style="font-size:10px;background:rgba(0,232,122,0.08);border:1px solid rgba(0,232,122,0.15);color:var(--green);padding:2px 8px;border-radius:2px;letter-spacing:1px;font-family:'Barlow Condensed',sans-serif;font-weight:700;">POWERED CHARTS — COMING SUNDAY</div>
+
           </div>
         </div>
 
@@ -425,6 +461,12 @@
           <button id="dir-loss" onclick="setDir('LOSS')" style="padding:9px;background:transparent;border:1px solid var(--border);border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:2px;color:var(--gray);cursor:pointer;transition:all 0.2s;">✗ LOSS</button>
         </div>
 
+        <!-- BUY/SELL DIRECTION TOGGLE -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
+          <button id="trade-long" onclick="setTradeDir('long')" style="padding:7px;background:rgba(0,232,122,0.08);border:1px solid rgba(0,232,122,0.2);border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;letter-spacing:2px;color:var(--green);cursor:pointer;transition:all 0.2s;">▲ BUY / LONG</button>
+          <button id="trade-short" onclick="setTradeDir('short')" style="padding:7px;background:transparent;border:1px solid var(--border);border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;letter-spacing:2px;color:var(--gray);cursor:pointer;transition:all 0.2s;">▼ SELL / SHORT</button>
+        </div>
+
         <!-- SETUP SCORE -->
         <div style="margin-bottom:10px;">
           <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
@@ -435,19 +477,15 @@
           <div style="font-size:10px;color:var(--green);margin-top:3px;text-align:center;" id="setup-score-label">Strong setup — all criteria met</div>
         </div>
 
-        <!-- ENTRY / STOP / TARGET -->
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:8px;">
+        <!-- TP / SL -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px;">
           <div>
-            <div style="font-size:9px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;">Entry</div>
-            <input id="entry-price" type="number" placeholder="0.00" oninput="calcRR()" style="width:100%;background:var(--dark3);border:1px solid var(--border);color:var(--white);padding:6px 7px;font-family:'Barlow Condensed',sans-serif;font-size:13px;border-radius:2px;outline:none;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'"/>
-          </div>
-          <div>
-            <div style="font-size:9px;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;">Stop</div>
-            <input id="stop-price" type="number" placeholder="0.00" oninput="calcRR()" style="width:100%;background:var(--dark3);border:1px solid rgba(255,69,96,0.2);color:var(--white);padding:6px 7px;font-family:'Barlow Condensed',sans-serif;font-size:13px;border-radius:2px;outline:none;" onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='rgba(255,69,96,0.2)'"/>
-          </div>
-          <div>
-            <div style="font-size:9px;color:var(--yellow);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;">Target</div>
+            <div style="font-size:9px;color:var(--yellow);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;">Take Profit</div>
             <input id="target-price" type="number" placeholder="0.00" oninput="calcRR()" style="width:100%;background:var(--dark3);border:1px solid rgba(240,192,64,0.2);color:var(--white);padding:6px 7px;font-family:'Barlow Condensed',sans-serif;font-size:13px;border-radius:2px;outline:none;" onfocus="this.style.borderColor='var(--yellow)'" onblur="this.style.borderColor='rgba(240,192,64,0.2)'"/>
+          </div>
+          <div>
+            <div style="font-size:9px;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;">Stop Loss</div>
+            <input id="stop-price" type="number" placeholder="0.00" oninput="calcRR()" style="width:100%;background:var(--dark3);border:1px solid rgba(255,69,96,0.2);color:var(--white);padding:6px 7px;font-family:'Barlow Condensed',sans-serif;font-size:13px;border-radius:2px;outline:none;" onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='rgba(255,69,96,0.2)'"/>
           </div>
         </div>
 
@@ -636,7 +674,7 @@
   const primaryFirm = selectedFirms[0];
   if (primaryFirm && TRAILING_FIRMS[primaryFirm]) {
     const warn = document.getElementById('firm-warning');
-    document.getElementById('firm-warning-text').innerHTML = TRAILING_FIRMS[primaryFirm].warning;
+    const fwEl = document.getElementById('firm-warning-text'); if(fwEl) fwEl.innerHTML = TRAILING_FIRMS[primaryFirm].warning;
     warn.style.display = 'flex';
   }
 
@@ -678,7 +716,7 @@
 
   // ── INDICATORS ──
   function renderIndicators() {
-    document.getElementById('indicators-list').innerHTML = strat.indicators.map(ind => `
+    const indListEl = document.getElementById('indicators-list'); if(indListEl) indListEl.innerHTML = strat.indicators.map(ind => `
       <div class="ind-item">
         <div class="ind-icon">${ind.icon}</div>
         <div>
@@ -839,69 +877,154 @@
       alert('Maximum 3 trades per session reached. End your session to review with Coach Prime.');
       return;
     }
-    const entry = autoEntry || '—';
-    const stop = autoStop || '—';
-    const target = autoTarget || '—';
-    const note = document.getElementById('setup-note').value || 'No note';
-    const contracts = document.getElementById('contracts').value || 1;
 
+    const stopVal   = parseFloat(document.getElementById('stop-price')?.value) || 0;
+    const targetVal = parseFloat(document.getElementById('target-price')?.value) || 0;
+    const pnlVal    = parseFloat(document.getElementById('pnl-input')?.value) || 0;
+    const setupScore = parseInt(document.getElementById('setup-score')?.value || 8);
+    const note      = document.getElementById('setup-note')?.value || 'No note';
+    const contracts = document.getElementById('contracts')?.value || 1;
 
+    // Calculate R:R
+    const risk   = Math.abs(stopVal);
+    const reward = Math.abs(targetVal);
+    const rr     = risk > 0 ? (reward / risk) : 0;
+
+    // Checklist completion
+    const checksDone = checkStates.filter(Boolean).length;
+    const totalChecks = checkStates.length;
+    const compliance = totalChecks > 0 ? Math.round((checksDone / totalChecks) * 100) : 0;
 
     const tradeNum = trades.length + 1;
-    trades.push({ num: tradeNum, dir: sessionDirection, entry, stop, target, note, contracts });
+    trades.push({
+      num: tradeNum,
+      dir: selectedDir,
+      tradeDir: tradeDirection,
+      stop: stopVal,
+      target: targetVal,
+      pnl: pnlVal,
+      setupScore,
+      rr: rr.toFixed(2),
+      compliance,
+      note,
+      contracts,
+      screenshot: screenshotData
+    });
 
     document.getElementById('trade-count').textContent = trades.length;
 
-    // Update trade log
+    // ── SMART CP POST-TRADE FEEDBACK ──────────────────
+    const feedback = generateCPFeedback({
+      tradeNum, selectedDir, tradeDirection,
+      stopVal, targetVal, pnlVal,
+      setupScore, rr, compliance,
+      totalTrades: trades.length
+    });
+
+    // Update trade log with CP feedback
     const logEl = document.getElementById('trade-log');
     if (trades.length === 1) logEl.innerHTML = '';
     logEl.innerHTML += `
-      <div class="trade-log-item">
+      <div class="trade-log-item" style="border-left:3px solid ${selectedDir==='WIN'?'var(--green)':'var(--red)'};padding-left:10px;">
         <div class="trade-log-hdr">
-          <div class="trade-log-num">Trade #${tradeNum} — ${sessionDirection.toUpperCase()}</div>
-          <div class="trade-log-pnl" style="color:var(--gray);">Open</div>
+          <div class="trade-log-num">Trade #${tradeNum} · ${tradeDirection.toUpperCase()} · ${selectedDir}</div>
+          <div class="trade-log-pnl ${pnlVal>=0?'pos':'neg'}">${pnlVal>=0?'+':'-'}$${Math.abs(pnlVal).toFixed(0)}</div>
         </div>
-        <div class="trade-log-detail">Entry: ${entry} · Stop: ${stop} · Target: ${target}</div>
-        <div class="trade-log-detail" style="margin-top:2px;font-style:italic;opacity:0.7;">${note}</div>
+        <div class="trade-log-detail">TP: ${targetVal||'—'} · SL: ${stopVal||'—'} · R:R 1:${rr.toFixed(1)} · Setup: ${setupScore}/10</div>
+        <div style="margin-top:8px;padding:8px 10px;background:rgba(0,232,122,0.04);border:1px solid rgba(0,232,122,0.1);border-radius:3px;display:flex;gap:8px;align-items:flex-start;">
+          <div style="width:16px;height:16px;background:var(--green);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:8px;color:#000;flex-shrink:0;margin-top:1px;">CP</div>
+          <div style="font-size:11px;color:var(--gray);line-height:1.6;">${feedback}</div>
+        </div>
       </div>`;
 
-    // Update coach message
+    // Update live coach message
     const msgEl = document.getElementById('coach-live-msg');
-    const msgs = [
-      `Trade #${tradeNum} logged. <strong>Now manage it — do not move your stop.</strong> Your target is set. Let price do the work.`,
-      `Two trades in. <strong>One more and your session is done.</strong> Make it count. Only take the next trade if the setup meets all your criteria.`,
-      `<strong>Three trades — session complete.</strong> Close your platform. End the session and let me review your work.`
-    ];
-    msgEl.innerHTML = msgs[tradeNum - 1] || msgs[2];
+    if (msgEl) {
+      const liveMsg = tradeNum === 1
+        ? `Trade #1 logged. <strong>Now manage it — do not move your stop.</strong> Let price do the work.`
+        : tradeNum === 2
+        ? `Two trades in. <strong>One more and your session is done.</strong> Only take it if the setup is perfect.`
+        : `<strong>Three trades — session complete.</strong> Close your platform and end the session now.`;
+      msgEl.innerHTML = liveMsg;
+    }
 
-    // Store in localStorage as backup
+    // Store backup
     try {
       const existing = JSON.parse(localStorage.getItem('pt_sessions') || '[]');
       existing.unshift({
         id: Date.now(),
         date: new Date().toISOString().split('T')[0],
         strategy: currentStrat.toUpperCase(),
-        pnl: pnlVal,
-        setupScore: parseInt(document.getElementById('setup-score')?.value || 8),
-        screenshot: screenshotData,
-        dir: selectedDir
+        pnl: pnlVal, setupScore, screenshot: screenshotData, dir: selectedDir
       });
       localStorage.setItem('pt_sessions', JSON.stringify(existing.slice(0, 50)));
     } catch(e) {}
     screenshotData = null;
 
     // Reset fields
-    document.getElementById('entry-price').value = '';
-    document.getElementById('stop-price').value = '';
-    document.getElementById('target-price').value = '';
-    document.getElementById('setup-note').value = '';
-    const stEl3 = document.getElementById('submit-trade'); if(stEl3) stEl3.disabled = true;
+    const resetFields = ['stop-price','target-price','setup-note','pnl-input'];
+    resetFields.forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+    const rrDisplay = document.getElementById('rr-display');
+    if (rrDisplay) rrDisplay.style.display = 'none';
+    removeScreenshot();
     resetChecklist();
+    setDir('WIN');
 
-    if (trades.length >= 3) {
-      document.getElementById('submit-trade').disabled = true;
-      document.getElementById('submit-trade').textContent = 'Max Trades Reached';
+    const stEl2 = document.getElementById('submit-trade');
+    if (trades.length >= 3 && stEl2) {
+      stEl2.disabled = true;
+      stEl2.textContent = 'Max Trades Reached';
     }
+  }
+
+  // ── COACH PRIME FEEDBACK ENGINE ──────────────────────
+  function generateCPFeedback({ tradeNum, selectedDir, tradeDirection, stopVal, targetVal, pnlVal, setupScore, rr, compliance, totalTrades }) {
+    const isWin = selectedDir === 'WIN';
+    const isLong = tradeDirection === 'long';
+    const goodRR = rr >= 2;
+    const okRR = rr >= 1.5;
+    const fullChecklist = compliance === 100;
+    const goodSetup = setupScore >= 7;
+    const badSetup = setupScore <= 4;
+
+    // Win scenarios
+    if (isWin && fullChecklist && goodRR && goodSetup) {
+      return `<strong style="color:var(--green)">Textbook execution.</strong> Full checklist, strong setup score, and a ${rr.toFixed(1)}:1 R:R. This is exactly the standard. File this trade in your memory — this is what it looks like when you do it right.`;
+    }
+    if (isWin && fullChecklist && !goodRR) {
+      return `<strong style="color:var(--yellow)">Win — but watch the R:R.</strong> You completed the checklist which is the right process. However a ${rr.toFixed(1)}:1 R:R means you need to win more than 60% of trades to be profitable long term. Push your target further next time.`;
+    }
+    if (isWin && !fullChecklist) {
+      return `<strong style="color:var(--yellow)">Win — but incomplete checklist.</strong> You got away with it this time. But skipping checklist items and winning is more dangerous than losing — it trains you to skip the process. Don't let a win reward bad habits.`;
+    }
+    if (isWin && badSetup) {
+      return `<strong style="color:var(--yellow)">Win on a low-quality setup.</strong> You rated this a ${setupScore}/10 — meaning you knew it wasn't great before entering. A win here is lucky, not skillful. Prop firm evals punish this pattern. Only take 7+ setups.`;
+    }
+    if (isWin) {
+      return `<strong style="color:var(--green)">Good trade.</strong> Stay disciplined on the next one. Winning can create overconfidence — your next setup needs to meet the same standard as this one. No shortcuts.`;
+    }
+
+    // Loss scenarios
+    if (!isWin && fullChecklist && goodRR && goodSetup) {
+      return `<strong style="color:var(--white)">Clean loss.</strong> You followed the process perfectly — full checklist, ${rr.toFixed(1)}:1 R:R, and a ${setupScore}/10 setup. Losses on perfect process are part of the game. This is a funded trader loss. Move on.`;
+    }
+    if (!isWin && !fullChecklist) {
+      return `<strong style="color:var(--red)">Process failure.</strong> You took this trade with an incomplete checklist. That is the real problem — not the loss itself. The loss is the consequence. Fix the checklist first and the results will follow.`;
+    }
+    if (!isWin && !okRR) {
+      return `<strong style="color:var(--red)">R:R too low.</strong> A ${rr.toFixed(1)}:1 R:R on a losing trade means you need to win more than you lose just to break even. Never risk more than you stand to make. Minimum 1.5:1 — target 2:1 or better.`;
+    }
+    if (!isWin && badSetup) {
+      return `<strong style="color:var(--red)">You knew.</strong> A ${setupScore}/10 setup score means you knew this wasn't your best setup before you entered. That's the most expensive mistake in trading — taking setups you don't fully believe in. Be patient. Wait for the A+ setup.`;
+    }
+    if (!isWin && tradeNum >= 2) {
+      return `<strong style="color:var(--red)">Stay composed.</strong> ${tradeNum === 3 ? 'End your session now — do not look for a recovery trade.' : 'One trade left. Do not revenge trade. Take a 5-minute break before considering another setup.'} Losses after losses are where prop firm accounts go to die.`;
+    }
+    if (!isWin) {
+      return `<strong style="color:var(--white)">Log it and learn from it.</strong> What was the reason for the loss? Was it the setup, the timing, or execution? Write it in your note. The journal doesn't lie — and patterns become visible over time.`;
+    }
+
+    return `Trade #${tradeNum} logged. Stay focused on the process.`;
   }
 
   // ── END SESSION ──
@@ -1066,6 +1189,85 @@
   renderChecklist();
   renderIndicators();
   calcProb();
+
+  // ── PULLOUT CHECKLIST DRAWER ─────────────────────────
+
+  let drawerOpen = false;
+  let drawerCheckStates = [];
+
+  function buildDrawerChecklist() {
+    const strat = STRATEGIES[currentStrat];
+    if (!strat) return;
+    const items = strat.checklist || [];
+    drawerCheckStates = new Array(items.length).fill(false);
+
+    const container = document.getElementById('drawer-checklist');
+    if (!container) return;
+
+    container.innerHTML = items.map((item, i) => `
+      <div onclick="toggleDrawerItem(${i})" id="drawer-item-${i}"
+        style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--dark3);border-radius:3px;cursor:pointer;transition:all 0.2s;border:1px solid transparent;">
+        <div id="drawer-check-${i}" style="width:16px;height:16px;border:1.5px solid rgba(255,255,255,0.2);border-radius:2px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all 0.2s;"></div>
+        <div style="font-size:11px;color:var(--gray);line-height:1.5;">${item}</div>
+      </div>`).join('');
+
+    updateDrawerProgress();
+  }
+
+  function toggleDrawerItem(i) {
+    drawerCheckStates[i] = !drawerCheckStates[i];
+    const box = document.getElementById(`drawer-check-${i}`);
+    const row = document.getElementById(`drawer-item-${i}`);
+    if (drawerCheckStates[i]) {
+      box.textContent = '✓';
+      box.style.background = 'var(--green)';
+      box.style.borderColor = 'var(--green)';
+      box.style.color = '#000';
+      row.style.borderColor = 'rgba(0,232,122,0.15)';
+      row.style.background = 'rgba(0,232,122,0.04)';
+    } else {
+      box.textContent = '';
+      box.style.background = 'transparent';
+      box.style.borderColor = 'rgba(255,255,255,0.2)';
+      row.style.borderColor = 'transparent';
+      row.style.background = 'var(--dark3)';
+    }
+    updateDrawerProgress();
+  }
+
+  function updateDrawerProgress() {
+    const done = drawerCheckStates.filter(Boolean).length;
+    const total = drawerCheckStates.length;
+    const prog = document.getElementById('checklist-progress');
+    const badge = document.getElementById('drawer-badge');
+    const status = document.getElementById('drawer-status');
+    const arrow = document.getElementById('drawer-arrow');
+
+    if (prog) { prog.textContent = done + '/' + total; prog.style.color = done === total ? 'var(--green)' : 'var(--gray)'; }
+    if (badge) { badge.textContent = done; badge.style.display = done > 0 ? 'flex' : 'none'; }
+
+    if (status) {
+      if (done === total) {
+        status.textContent = '✓ Ready to trade';
+        status.style.color = 'var(--green)';
+      } else {
+        status.textContent = (total - done) + ' items remaining';
+        status.style.color = 'var(--gray)';
+      }
+    }
+  }
+
+  function toggleChecklist() {
+    drawerOpen = !drawerOpen;
+    const drawer = document.getElementById('checklist-drawer');
+    const arrow = document.getElementById('drawer-arrow');
+    if (drawer) drawer.style.right = drawerOpen ? '0px' : '-280px';
+    if (arrow) arrow.textContent = drawerOpen ? '›' : '‹';
+  }
+
+  // Build drawer on load
+  setTimeout(buildDrawerChecklist, 200);
+
 </script>
 </body>
 </html>
