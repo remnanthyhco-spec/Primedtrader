@@ -199,40 +199,6 @@
 
   <div class="body">
 
-  <!-- PULLOUT CHECKLIST TAB — RIGHT SIDE -->
-  <div id="checklist-drawer" style="position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:9999;display:flex;align-items:stretch;">
-
-    <!-- PULL TAB — always visible -->
-    <div onclick="toggleChecklist()" style="width:28px;background:var(--green);border-radius:6px 0 0 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:background 0.2s;flex-shrink:0;" onmouseover="this.style.background='var(--white)'" onmouseout="this.style.background='var(--green)'">
-      <div style="writing-mode:vertical-rl;text-orientation:mixed;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#000;transform:rotate(180deg);">Checklist</div>
-      <div id="drawer-arrow" style="color:#000;font-size:14px;font-weight:900;">‹</div>
-      <div id="drawer-badge" style="width:16px;height:16px;background:#000;border-radius:50%;font-size:9px;font-weight:900;color:var(--green);display:none;align-items:center;justify-content:center;">0</div>
-    </div>
-
-    <!-- DRAWER PANEL — slides in/out -->
-    <div id="drawer-panel" style="width:280px;background:var(--dark2);border:1px solid rgba(0,232,122,0.2);border-right:none;border-radius:8px 0 0 8px;overflow:hidden;box-shadow:-8px 0 32px rgba(0,0,0,0.4);transform:translateX(100%);transition:transform 0.3s ease;">
-
-      <!-- HEADER -->
-      <div style="background:rgba(0,232,122,0.08);border-bottom:1px solid rgba(0,232,122,0.15);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div style="width:20px;height:20px;background:var(--green);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:9px;color:#000;">CP</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Pre-Trade Checklist</div>
-        </div>
-        <div id="checklist-progress" style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;color:var(--gray);">0/6</div>
-      </div>
-
-      <!-- CHECKLIST ITEMS -->
-      <div style="padding:12px;display:flex;flex-direction:column;gap:6px;" id="drawer-checklist"></div>
-
-      <!-- BOTTOM STATUS -->
-      <div style="padding:10px 14px;border-top:1px solid rgba(255,255,255,0.05);">
-        <div id="drawer-status" style="font-size:11px;color:var(--gray);text-align:center;">Complete checklist before entering a trade</div>
-      </div>
-
-    </div>
-
-  </div>
-
 
 
     <!-- CHART AREA -->
@@ -447,85 +413,167 @@
         </svg>
       </div>
 
-      <!-- PREMIUM TRADE LOGGER -->
-      <div style="background:var(--dark2);border-top:1px solid var(--border);padding:14px;flex-shrink:0;">
+      <!-- CONCEPT A — THREE COLUMN COMMAND CENTER -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--border);flex-shrink:0;min-height:0;overflow:hidden;">
 
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gray);">Log Trade</div>
-          <div style="font-size:11px;color:var(--gray);">Trade <span id="trade-num-label">1</span> of 3</div>
-        </div>
+        <!-- COL 1: COACH PRIME -->
+        <div style="padding:14px;border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;gap:12px;">
 
-        <!-- WIN / LOSS -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
-          <button id="dir-win" onclick="setDir('WIN')" style="padding:9px;background:rgba(0,232,122,0.12);border:2px solid var(--green);border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:2px;color:var(--green);cursor:pointer;transition:all 0.2s;">✓ WIN</button>
-          <button id="dir-loss" onclick="setDir('LOSS')" style="padding:9px;background:transparent;border:1px solid var(--border);border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:14px;letter-spacing:2px;color:var(--gray);cursor:pointer;transition:all 0.2s;">✗ LOSS</button>
-        </div>
-
-        <!-- BUY/SELL DIRECTION TOGGLE -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
-          <button id="trade-long" onclick="setTradeDir('long')" style="padding:7px;background:rgba(0,232,122,0.08);border:1px solid rgba(0,232,122,0.2);border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;letter-spacing:2px;color:var(--green);cursor:pointer;transition:all 0.2s;">▲ BUY / LONG</button>
-          <button id="trade-short" onclick="setTradeDir('short')" style="padding:7px;background:transparent;border:1px solid var(--border);border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;letter-spacing:2px;color:var(--gray);cursor:pointer;transition:all 0.2s;">▼ SELL / SHORT</button>
-        </div>
-
-        <!-- SETUP SCORE -->
-        <div style="margin-bottom:10px;">
-          <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
-            <div style="font-size:9px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;">Setup Quality</div>
-            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:var(--green);" id="setup-score-display">8</div>
-          </div>
-          <input type="range" id="setup-score" min="1" max="10" value="8" oninput="updateSetupScore(this.value)" style="width:100%;accent-color:var(--green);cursor:pointer;"/>
-          <div style="font-size:10px;color:var(--green);margin-top:3px;text-align:center;" id="setup-score-label">Strong setup — all criteria met</div>
-        </div>
-
-        <!-- TP / SL -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px;">
+          <!-- Live Coaching -->
           <div>
-            <div style="font-size:9px;color:var(--yellow);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;">Take Profit</div>
-            <input id="target-price" type="number" placeholder="0.00" oninput="calcRR()" style="width:100%;background:var(--dark3);border:1px solid rgba(240,192,64,0.2);color:var(--white);padding:6px 7px;font-family:'Barlow Condensed',sans-serif;font-size:13px;border-radius:2px;outline:none;" onfocus="this.style.borderColor='var(--yellow)'" onblur="this.style.borderColor='rgba(240,192,64,0.2)'"/>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <div style="display:flex;align-items:center;gap:6px;">
+                <div style="width:20px;height:20px;background:var(--green);border-radius:2px;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:9px;color:#000;">CP</div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Live Coaching</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <div style="width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;"></div>
+                <div style="font-size:9px;color:var(--green);letter-spacing:1px;">WATCHING</div>
+              </div>
+            </div>
+            <div style="font-size:12px;color:var(--gray);line-height:1.7;padding:10px;background:rgba(0,232,122,0.04);border:1px solid rgba(0,232,122,0.1);border-radius:3px;" id="coach-live-msg">
+              <strong style="color:var(--white);">Session started.</strong> Complete your checklist before entering any trades. No checklist = no trade.
+            </div>
           </div>
+
+          <!-- Last Trade Feedback -->
           <div>
-            <div style="font-size:9px;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;">Stop Loss</div>
-            <input id="stop-price" type="number" placeholder="0.00" oninput="calcRR()" style="width:100%;background:var(--dark3);border:1px solid rgba(255,69,96,0.2);color:var(--white);padding:6px 7px;font-family:'Barlow Condensed',sans-serif;font-size:13px;border-radius:2px;outline:none;" onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='rgba(255,69,96,0.2)'"/>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:8px;">Last Trade Feedback</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.2);font-style:italic;padding:8px 0;" id="last-feedback-msg">No trades yet — feedback appears after each trade.</div>
           </div>
+
+          <!-- Session Stats -->
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);margin-bottom:8px;">Session Stats</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+              <div style="background:var(--dark3);border-radius:3px;padding:8px;text-align:center;">
+                <div style="font-size:9px;color:var(--gray);margin-bottom:2px;">P&L</div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:var(--white);" id="session-pnl-display">$0</div>
+              </div>
+              <div style="background:var(--dark3);border-radius:3px;padding:8px;text-align:center;">
+                <div style="font-size:9px;color:var(--gray);margin-bottom:2px;">Compliance</div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:var(--white);" id="session-comp-display">0%</div>
+              </div>
+              <div style="background:var(--dark3);border-radius:3px;padding:8px;text-align:center;">
+                <div style="font-size:9px;color:var(--gray);margin-bottom:2px;">Trades</div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:var(--white);"><span id="trade-count">0</span>/3</div>
+              </div>
+              <div style="background:var(--dark3);border-radius:3px;padding:8px;text-align:center;">
+                <div style="font-size:9px;color:var(--gray);margin-bottom:2px;">Setup Avg</div>
+                <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:16px;color:var(--white);" id="session-setup-avg">—</div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        <!-- R:R -->
-        <div id="rr-display" style="display:none;background:var(--dark3);border-radius:3px;padding:6px 10px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
-          <div style="font-size:10px;color:var(--gray);">Risk/Reward</div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;color:var(--green);" id="rr-value">—</div>
-          <div style="font-size:10px;" id="rr-verdict"></div>
-        </div>
+        <!-- COL 2: LOG TRADE -->
+        <div style="padding:14px;border-right:1px solid var(--border);overflow-y:auto;">
 
-        <!-- P&L -->
-        <div style="margin-bottom:8px;">
-          <div style="font-size:9px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;">P&L ($)</div>
-          <input id="pnl-input" type="number" placeholder="e.g. 312.50 or -125.00" style="width:100%;background:var(--dark3);border:1px solid var(--border);color:var(--white);padding:7px 8px;font-family:'Barlow Condensed',sans-serif;font-size:13px;border-radius:2px;outline:none;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'"/>
-        </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gray);">Log Trade</div>
+            <div style="font-size:11px;color:var(--gray);">Trade <span id="trade-num-label">1</span> of 3</div>
+          </div>
 
-        <!-- SCREENSHOT -->
-        <div style="margin-bottom:10px;">
-          <div style="font-size:9px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Chart Screenshot <span style="color:rgba(255,255,255,0.2);font-weight:300;">(optional)</span></div>
-          <label id="screenshot-label" style="display:flex;align-items:center;gap:8px;background:var(--dark3);border:1px dashed rgba(255,255,255,0.1);border-radius:3px;padding:8px 10px;cursor:pointer;transition:border-color 0.2s;" onmouseover="this.style.borderColor='rgba(0,232,122,0.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
-            <span style="font-size:16px;">📸</span>
-            <div style="font-size:11px;color:var(--gray);">Upload chart screenshot — Coach Prime analyzes your setup</div>
-            <input type="file" accept="image/*" style="display:none;" id="screenshot-input" onchange="handleScreenshot(this)"/>
-          </label>
+          <!-- WIN / LOSS -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:7px;">
+            <button id="dir-win" onclick="setDir('WIN')" style="padding:8px;background:rgba(0,232,122,0.12);border:2px solid var(--green);border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;color:var(--green);cursor:pointer;">✓ WIN</button>
+            <button id="dir-loss" onclick="setDir('LOSS')" style="padding:8px;background:transparent;border:1px solid var(--border);border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;color:var(--gray);cursor:pointer;">✗ LOSS</button>
+          </div>
+
+          <!-- BUY / SELL -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:7px;">
+            <button id="trade-long" onclick="setTradeDir('long')" style="padding:6px;background:rgba(0,232,122,0.08);border:1px solid rgba(0,232,122,0.2);border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;color:var(--green);cursor:pointer;">▲ BUY / LONG</button>
+            <button id="trade-short" onclick="setTradeDir('short')" style="padding:6px;background:transparent;border:1px solid var(--border);border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;color:var(--gray);cursor:pointer;">▼ SELL / SHORT</button>
+          </div>
+
+          <!-- SETUP SCORE -->
+          <div style="margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+              <div style="font-size:9px;color:var(--gray);letter-spacing:1px;text-transform:uppercase;">Setup Quality</div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;color:var(--green);" id="setup-score-display">8</div>
+            </div>
+            <input type="range" id="setup-score" min="1" max="10" value="8" oninput="updateSetupScore(this.value)" style="width:100%;accent-color:var(--green);cursor:pointer;"/>
+            <div style="font-size:10px;color:var(--green);margin-top:2px;text-align:center;" id="setup-score-label">Strong setup — all criteria met</div>
+          </div>
+
+          <!-- TP / SL -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px;">
+            <div>
+              <div style="font-size:9px;color:var(--yellow);text-transform:uppercase;margin-bottom:3px;">Take Profit</div>
+              <input id="target-price" type="number" placeholder="0.00" oninput="calcRR()" style="width:100%;background:var(--dark3);border:1px solid rgba(240,192,64,0.2);color:var(--white);padding:6px 7px;font-family:'Barlow Condensed',sans-serif;font-size:13px;border-radius:2px;outline:none;" onfocus="this.style.borderColor='var(--yellow)'" onblur="this.style.borderColor='rgba(240,192,64,0.2)'"/>
+            </div>
+            <div>
+              <div style="font-size:9px;color:var(--red);text-transform:uppercase;margin-bottom:3px;">Stop Loss</div>
+              <input id="stop-price" type="number" placeholder="0.00" oninput="calcRR()" style="width:100%;background:var(--dark3);border:1px solid rgba(255,69,96,0.2);color:var(--white);padding:6px 7px;font-family:'Barlow Condensed',sans-serif;font-size:13px;border-radius:2px;outline:none;" onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='rgba(255,69,96,0.2)'"/>
+            </div>
+          </div>
+
+          <!-- R:R -->
+          <div id="rr-display" style="display:none;background:var(--dark3);border-radius:3px;padding:5px 10px;margin-bottom:6px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-size:10px;color:var(--gray);">Risk / Reward</div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:15px;" id="rr-value">—</div>
+              <div style="font-size:10px;" id="rr-verdict"></div>
+            </div>
+          </div>
+
+          <!-- P&L -->
+          <div style="margin-bottom:7px;">
+            <div style="font-size:9px;color:var(--gray);text-transform:uppercase;margin-bottom:3px;">P&L ($)</div>
+            <input id="pnl-input" type="number" placeholder="e.g. 312.50 or -125.00" style="width:100%;background:var(--dark3);border:1px solid var(--border);color:var(--white);padding:6px 8px;font-family:'Barlow Condensed',sans-serif;font-size:13px;border-radius:2px;outline:none;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'"/>
+          </div>
+
+          <!-- SCREENSHOT + LOG -->
+          <div style="display:flex;gap:5px;">
+            <button id="log-trade-btn" onclick="submitTrade()" style="flex:1;background:var(--green);color:#000;border:none;padding:10px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;border-radius:3px;">Log Trade →</button>
+            <label style="background:var(--dark3);border:1px solid var(--border);border-radius:3px;padding:10px 12px;cursor:pointer;font-size:14px;display:flex;align-items:center;" title="Upload chart screenshot" onmouseover="this.style.borderColor='rgba(0,232,122,0.3)'" onmouseout="this.style.borderColor='var(--border)'">
+              📸<input type="file" accept="image/*" style="display:none;" id="screenshot-input" onchange="handleScreenshot(this)"/>
+            </label>
+          </div>
           <div id="screenshot-preview" style="display:none;margin-top:5px;border-radius:3px;overflow:hidden;border:1px solid rgba(0,232,122,0.2);">
-            <img id="screenshot-img" style="width:100%;display:block;max-height:100px;object-fit:cover;"/>
+            <img id="screenshot-img" style="width:100%;display:block;max-height:70px;object-fit:cover;"/>
             <div style="display:flex;align-items:center;justify-content:space-between;padding:3px 8px;background:rgba(0,232,122,0.06);">
-              <div style="font-size:10px;color:var(--green);">✓ Screenshot attached</div>
+              <div style="font-size:10px;color:var(--green);">✓ Attached</div>
               <button onclick="removeScreenshot()" style="background:none;border:none;color:var(--gray);font-size:10px;cursor:pointer;">✕</button>
             </div>
           </div>
+
         </div>
 
-        <!-- LOG BUTTON -->
-        <button onclick="submitTrade()" style="width:100%;background:var(--green);color:#000;border:none;padding:11px;font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;border-radius:3px;" onmouseover="this.style.background='var(--white)'" onmouseout="this.style.background='var(--green)'">Log Trade →</button>
+        <!-- COL 3: CHECKLIST -->
+        <div style="padding:14px;overflow-y:auto;">
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">Pre-Trade Checklist</div>
+            <div style="font-size:11px;color:var(--gray);"><span id="check-count">0</span>/<span id="check-total">0</span></div>
+          </div>
+
+          <div id="checklist-items"></div>
+
+          <div id="prob-wrap" style="margin-top:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <div style="font-size:9px;color:var(--gray);letter-spacing:2px;text-transform:uppercase;">Setup Probability</div>
+              <div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;" id="prob-score">—</div>
+            </div>
+            <div style="height:4px;background:var(--dark3);border-radius:2px;overflow:hidden;">
+              <div id="prob-bar" style="height:100%;width:0%;background:var(--green);transition:width 0.5s;border-radius:2px;"></div>
+            </div>
+            <div style="font-size:11px;color:var(--gray);margin-top:6px;" id="prob-verdict"></div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:3px;" id="prob-note"></div>
+          </div>
+
+        </div>
 
       </div>
 
       <!-- TRADE LOG -->
-
+      <div class="panel-card">
+        <div class="panel-title">Session Trade Log</div>
+        <div id="trade-log">
+          <div style="font-size:12px;color:var(--gray);text-align:center;padding:16px 0;opacity:0.6;">No trades yet this session</div>
+        </div>
+      </div>
       <div class="panel-card">
         <div class="panel-title">Session Trade Log</div>
         <div id="trade-log">
@@ -942,8 +990,19 @@
         </div>`;
     }
 
-    // Update live coach message
-    const msgEl = document.getElementById('coach-live-msg');
+    // Update session stats in col 1
+    const totalPnl = trades.reduce((s, t) => s + (t.pnl || 0), 0);
+    const avgSetup = Math.round(trades.reduce((s, t) => s + (t.setupScore || 8), 0) / trades.length);
+    const pnlEl = document.getElementById('session-pnl-display');
+    const compEl = document.getElementById('session-comp-display');
+    const setupAvgEl = document.getElementById('session-setup-avg');
+    if (pnlEl) { pnlEl.textContent = (totalPnl >= 0 ? '+$' : '-$') + Math.abs(totalPnl).toFixed(0); pnlEl.style.color = totalPnl >= 0 ? 'var(--green)' : 'var(--red)'; }
+    if (compEl) { compEl.textContent = compliance + '%'; compEl.style.color = compliance >= 80 ? 'var(--green)' : compliance >= 60 ? 'var(--yellow)' : 'var(--red)'; }
+    if (setupAvgEl) setupAvgEl.textContent = avgSetup + '/10';
+
+    // Update last feedback in col 1
+    const lastFeedback = document.getElementById('last-feedback-msg');
+    if (lastFeedback) { lastFeedback.textContent = ''; lastFeedback.innerHTML = feedback; lastFeedback.style.fontStyle = 'normal'; lastFeedback.style.color = 'var(--gray)'; }
     if (msgEl) {
       msgEl.innerHTML = tradeNum === 1
         ? `Trade #1 logged. <strong>Now manage it — do not move your stop.</strong> Let price do the work.`
@@ -1190,10 +1249,71 @@
     if (input) input.value = '';
   }
 
+  // ── INLINE CHECKLIST ─────────────────────────────────
+  let inlineCheckStates = [];
+
+  function buildInlineChecklist() {
+    const stratData = STRATEGIES[currentStrat];
+    if (!stratData) { console.log('No strat:', currentStrat); return; }
+    const items = stratData.checklist || [];
+    if (!items.length) { console.log('No checklist items'); return; }
+    inlineCheckStates = new Array(items.length).fill(false);
+    const container = document.getElementById('inline-checklist');
+    if (!container) { console.log('No container'); return; }
+    container.innerHTML = items.map((item, i) => `
+      <div onclick="toggleInlineItem(${i})" id="inline-item-${i}"
+        style="display:flex;align-items:flex-start;gap:8px;padding:7px 9px;background:var(--dark3);border-radius:3px;cursor:pointer;border:1px solid transparent;transition:all 0.15s;">
+        <div id="inline-check-${i}" style="width:15px;height:15px;border:1.5px solid rgba(255,255,255,0.2);border-radius:2px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:9px;"></div>
+        <div style="font-size:11px;color:var(--gray);line-height:1.5;">${item}</div>
+      </div>`).join('');
+    updateCheckProgress();
+    console.log('Built checklist:', items.length, 'items');
+  }
+
+  function toggleInlineItem(i) {
+    inlineCheckStates[i] = !inlineCheckStates[i];
+    const box = document.getElementById(`inline-check-${i}`);
+    const row = document.getElementById(`inline-item-${i}`);
+    if (inlineCheckStates[i]) {
+      box.textContent = '✓'; box.style.background = 'var(--green)';
+      box.style.borderColor = 'var(--green)'; box.style.color = '#000';
+      row.style.borderColor = 'rgba(0,232,122,0.15)';
+      row.style.background = 'rgba(0,232,122,0.04)';
+    } else {
+      box.textContent = ''; box.style.background = 'transparent';
+      box.style.borderColor = 'rgba(255,255,255,0.2)';
+      row.style.borderColor = 'transparent';
+      row.style.background = 'var(--dark3)';
+    }
+    updateCheckProgress();
+  }
+
+  function updateCheckProgress() {
+    const done = inlineCheckStates.filter(Boolean).length;
+    const total = inlineCheckStates.length;
+    const prog = document.getElementById('check-progress');
+    const status = document.getElementById('checklist-status');
+    if (prog) { prog.textContent = `${done}/${total}`; prog.style.color = done === total ? 'var(--green)' : 'var(--gray)'; }
+    if (status) {
+      if (done === total && total > 0) {
+        status.textContent = '✓ Checklist complete — cleared to trade';
+        status.style.color = 'var(--green)';
+        status.style.background = 'rgba(0,232,122,0.06)';
+      } else {
+        status.textContent = `${total - done} item${total-done!==1?'s':''} remaining before you trade`;
+        status.style.color = 'var(--gray)';
+        status.style.background = 'var(--dark3)';
+      }
+    }
+    // Also sync main checkStates for compliance calculation
+    checkStates = [...inlineCheckStates];
+  }
+
   // ── INIT ──
   renderChecklist();
   renderIndicators();
   calcProb();
+  buildInlineChecklist();
 
   // ── PULLOUT CHECKLIST DRAWER ─────────────────────────
 
